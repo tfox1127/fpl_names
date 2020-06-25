@@ -37,6 +37,9 @@ class Feedback(db.Model):
 def index():
     return render_template('index.html')
 
+@app.route('/lms')
+def lms():
+    return render_template('lms.html')
 
 @app.route('/submit', methods=['POST'])
 def submit():
