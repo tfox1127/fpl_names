@@ -41,6 +41,14 @@ def index():
 def lms():
     return render_template('lms.html')
 
+@app.route('/lcs')
+def lcs():
+    return render_template('lcs.html')
+
+@app.route('/cups')
+def cups():
+    return render_template('cups.html')
+
 @app.route('/submit', methods=['POST'])
 def submit():
     if request.method == 'POST':
