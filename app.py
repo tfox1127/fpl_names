@@ -49,6 +49,10 @@ def lcs():
 def cups():
     return render_template('cups.html')
 
+@app.route('/live')
+def live():
+    return render_template('live.html')
+
 @app.route('/submit', methods=['POST'])
 def submit():
     if request.method == 'POST':
