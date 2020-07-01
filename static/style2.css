@@ -4,3 +4,11 @@
   margin-right: auto;
   font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
 }
+
+.container-fluid {
+  margin-top: 50px;
+  margin-left: 500px;
+  margin-right: 500px;
+  padding: 500px;
+  font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
+}
