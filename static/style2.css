@@ -2,10 +2,16 @@
   margin-top: 50px;
   margin-left: auto;
   margin-right: auto;
+  font-family: gill sans, sans-sans-serif;
 }
 
 body {
   background-color: #fcfcfc;
+}
+
+nav {
+  font-family: gill sans, sans-sans-serif;
+
 }
 
 .container-fluid {
