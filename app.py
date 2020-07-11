@@ -53,6 +53,10 @@ def cups():
 def live():
     return render_template('live.html')
 
+@app.route('/leaderboard')
+def leaderboard():
+    return render_template('fpl_list.html')
+
 @app.route('/submit', methods=['POST'])
 def submit():
     if request.method == 'POST':
