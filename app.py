@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request
-from flask_sqlalchemy import SQLAlchemy
+#from flask_sqlalchemy import SQLAlchemy
 from send_mail import send_mail
+from sqlalchemy import create_engine
+from sqlalchemy.orm import scoped_session, sessionmaker
 
 app = Flask(__name__)
 
@@ -15,27 +17,14 @@ else:
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
-
-
-class Feedback(db.Model):
-    __tablename__ = 'feedback'
-    id = db.Column(db.Integer, primary_key=True)
-    customer = db.Column(db.String(200), unique=True)
-    dealer = db.Column(db.String(200))
-    rating = db.Column(db.Integer)
-    comments = db.Column(db.Text())
-
-    def __init__(self, customer, dealer, rating, comments):
-        self.customer = customer
-        self.dealer = dealer
-        self.rating = rating
-        self.comments = comments
-
+#db = SQLAlchemy(app)
+engine = create_engine('postgres://kbhpppsbtsabyk:6f9f47eb4721c77c17f1fccefeb2693a629e1f6e571bad88143561ba10e422be@ec2-52-20-248-222.compute-1.amazonaws.com:5432/d22l4qure274m')
+db = scoped_session(sessionmaker(bind=engine))
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    elements = db.execute("SELECT * FROM blog ORDER BY post_number DESC LIMIT 10").fetchall()
+    return render_template('index.html', elements=elements)
 
 @app.route('/lms')
 def lms():

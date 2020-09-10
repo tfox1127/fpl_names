@@ -33,189 +33,32 @@
 
     <div class="container">
 
-    <h2>FPL Mini League 2020/21</h2>
+    <h2>FPL Mini Leage 2020/21</h2>
+    <div class="container">
+        <img src="https://notrophy.s3.us-east-2.amazonaws.com/Screen+Shot+2020-09-09+at+9.39.21+PM.png" class="rounded mx-auto d-block" style="max-width: 800px" alt="...">
+        <br>
+    </div>
 
-    <p class="col-lg-12 col-sm-12">
-      <a href="/static/FPL 2020-21 Format.pdf" download>PDF Version of 2020/21 League Info</a>
-      <ul>
-        <li>Entry: $100</li>
-        <li>9 opprotunites to win big plus 38 small payouts</li>
-        <li>League Winner's Name engraved on perpetual trophy</li>
-      </ul>
-    </p>
-
-    <p class="col-lg-12 col-sm-12">
-      <h6>League (Classic Scoring)</h6>
-      <ul>
-          <li>Managed on FPL site www.fantasy.premierleague.com</li>
-          <li>Estimated Prizes 1st $600; 2nd $350; 3rd $200*</li>
-      </ul>
-    </p>
-    <!--<img src="/static/FPL202021.png" alt="Preseason" class="col-lg-5 col-sm-5">-->
-    <p class="col-lg-12 col-sm-12">
-      <h6>Last Man Standing (LMS)</h6>
-      <ul>
-          <li>Lowest gameweek score each week is eliminated</li>
-          <li>Reset and repeat each gameweek until 1 winner remains</li>
-          <li>Estimated Prize $200*</li>
-      </ul>
-    </p>
-    <p class="col-lg-12 col-sm-12">
-      <h6>Manager of the Week</h6>
-      <ul>
-          <li>Highest gameweek score each week (exclusing hits for extra transfers made)</li>
-          <li>Estimated Prize $10 per week; $20 on select weeks*</li>
-      </ul>
-    </p>
-    <p class="col-lg-12 col-sm-12">
-      <h6>Highest Score of the Year</h6>
-      <ul>
-          <li>Highest gameweek score of the year (excluding hits for extra transfers made)</li>
-          <li>Estimated Prize $50*</li>
-      </ul>
-    </p>
-
-    <p class="col-lg-12 col-sm-12">
-      <h6>European Cups</h6>
-      <ul>
-          <li>Round-Robin style Group Stage to determine qualification to Champions League (CL) or Europa League (EL) Knock-out stages</li>
-          <li>Knock-out stages are all 2 legs except the Finals</li>
-          <li>Estimated prize $350 (CL) and $200 (Europa)* Last Chance Saloon (LCS)</li>
-          <li>2 knock-out competitions for players not in contention of winning the league</li>
-          <li>Tier 1 (T1) and Tier 2 (T2) knock-out qualification determined by league position</li>
-          <li>Estimated prize $150 (T1) and $100 (T2)*</li>
-
-      </ul>
-    </p>
-
-    <p class="col-lg-12 col-sm-12">*Prize Estimates based on 26 entrants. Final prizes announced when number of entrants are finalized. No admin fee taken and trophy and engraving costs not taken out of prize pool.</p>
-
-
-
-
+    {% for element in elements %}
+        <p class="col-lg-5 col-sm-12">
+        <h2>{{ element[1] | safe }}</h2>
+        {{ element[2] | safe }}</p>
+    {% endfor %}
 
     <div class="container">
-      <h2>Week 37+ Update</h2>
-      <h6>2020-07-23</h6>
-      <p class="col-lg-12 col-sm-12"></p>
-      <p class="col-lg-12 col-sm-12"></p>
-      <p class="col-lg-12 col-sm-12">The penultimate week is over and only 4 days until the season is over.</p>
-      <p class="col-lg-12 col-sm-12">Congrats to Ray Bleth for winning this week's manager of the week with a big score of 86 after captaining Sterling for his 17 point haul.</p>
-      <p class="col-lg-12 col-sm-12">Congrats to Tom Fox and RC Aikens for advancing to the final of LCS Tier 1 beating out Mike Doherty and Aaron Grala.  Congrats to Mikael Nilsson and Mik Malo for defeating Luke/Kevin L and Syed in the Tier 2 competition.</p>
-      <p class="col-lg-12 col-sm-12">The finals will be played on Sunday with winners receiving $200 and $150 respectively for the Tier 1 and 2 cups.  Good luck everyone!</p>
-      <p class="col-lg-12 col-sm-12">The league will also be decided on Sunday with Ed currently 16 points ahead of Ryan and 45 points ahead of me.  RC also with an outside chance of making top 3 - prizes of $600, $350 and $200 will go to 1st, 2nd and 3rd respectively after Sunday's games.  Good luck all!</p>
-      <p class="col-lg-12 col-sm-12">Reminder that our website www.negatrophy.com is up and will be showing live scores of the LCS finals on the Last Chance Saloon tab as well as Live Manager of the Week and Live League tables on the Live Scores tab.</p>
-      <p class="col-lg-12 col-sm-12">Looking forward to seeing Leeds and West Brom in the PL next year - congrats to Chris Parkin who is a big Leeds fan, it's been a long wait!  I'm hoping Swansea can join them through the Playoffs after a crazy final day in the Championship today.</p>
-      <p class="col-lg-12 col-sm-12">Good luck in the final gameweek everyone - it's usually a crazy last day so strap in and enjoy the madness. Lots of interesting football to watch with Top 4 and Relegation still wide open.</p>
-      <p class="col-lg-12 col-sm-12"><a href="/static/FPL Update - GW37+.pdf" download>Week 37+ PDF Update Here</a></p>
-      <p class="col-lg-12 col-sm-12">DLC</p>
-
-      <img src="/static/scoreboard.png" alt="Week 37+" class="col-lg-12 col-sm-12">
+        <img src="https://notrophy.s3.us-east-2.amazonaws.com/trophy.jpeg" class="rounded mx-auto d-block" style="max-width: 300px" alt="...">
+    </div>
 
     </div>
 
     <div class="container">
-      <h2>Week 36+ Update</h2>
-      <h6>2020-07-18</h6>
-      <p class="col-lg-12 col-sm-12"></p>
-      <p class="col-lg-12 col-sm-12"></p>
-      <p class="col-lg-12 col-sm-12">Another Gameweek over and yet another beginning tomorrow.  A relatively low scoring gameweek saw Ed Tierney win Manager of the Week with a great score of 66 with his Free Hit - congrats Ed.  Ed and Ryan are in a close battle for the league with only two weeks left!</p>
-      <p class="col-lg-12 col-sm-12">LCS Quarter Finals are also complete - congrats to Tom, Mike D, Aaron and RC for making it through to the Tier 1 semis.  Congrats to Luke/Kevin, Michael, Mike M and Syed for making it through to the Tier 2 semi finals.  Commiserations to those that lost out this week.</p>
-      <p class="col-lg-12 col-sm-12">The semi finals will be played in GW37+, which kicks off tomorrow.</p>
-      <p class="col-lg-12 col-sm-12">This is the penultimate week, so if you still have chips left, there are only 2 weeks left to play them (and you can only play 1 in each week!).</p>
-      <p class="col-lg-12 col-sm-12">It's been extremely fast paced since the restart so great work if you've managed to keep up - I know I have found it tough.  Next season should be a much more relaxed schedule, almost back to normal so don't worry if you are struggling to keep up, you're not alone!</p>
-      <p class="col-lg-12 col-sm-12">Good luck in these last 2 weeks, the final games are the following Sunday so not long left now!</p>
-      <p class="col-lg-12 col-sm-12"><a href="/static/FPL Update - GW36+.pdf" download>Week 36+ PDF Update Here</a></p>
-      <p class="col-lg-12 col-sm-12">Dave</p>
-
-    </div>
-
-    <div class="container">
-      <h2>Week 35+ Update</h2>
-      <h6>2020-07-13</h6>
-      <p class="col-lg-12 col-sm-12"></p>
-      <p class="col-lg-12 col-sm-12"></p>
-      <p class="col-lg-12 col-sm-12">GW35+ is over as is the first round of LCS.</p>
-      <p class="col-lg-12 col-sm-12">Congrats to those that made it through the 1st round - results below.  The closest match up saw Steve and James just pipping Kevin A on the captain tiebreaker.</p>
-      <p class="col-lg-7 col-sm-12"><img src="/static/lcs_results.png" alt="Week 30+" class="col-lg-12 col-sm-12"></p>
-      <p class="col-lg-12 col-sm-12">The Quarter Finals kick off in GW36+, for which the deadline is tomorrow - don't miss it!  Fixtures are below - good luck all!</p>
-      <p class="col-lg-5 col-sm-12"><img src="/static/lcs_matchups.png" alt="Week 30+" class="col-lg-12 col-sm-12"></p>
-      <p class="col-lg-12 col-sm-12">A lucky Sterling hat trick as captain saw me win Manager of the Week with a score of 77.</p>
-      <p class="col-lg-12 col-sm-12">Only 3 gameweeks left, which will all be played in the next 2 weeks - good luck all for the rest of the season!</p>
-      <p class="col-lg-12 col-sm-12"><a href="/static/FPL Update - GW35+.pdf" download>Week 35+ PDF Update Here</a></p>
-      <p class="col-lg-12 col-sm-12">Dave</p>
-
-    </div>
-
-    <div class="container">
-      <h2>Week 34+ Update</h2>
-      <h6>2020-07-10</h6>
-      <p class="col-lg-12 col-sm-12"></p>
-      <p class="col-lg-12 col-sm-12"></p>
-      <p class="col-lg-12 col-sm-12">The European Cup competitions come to a conclusion with wins for RC Aikens in the Champion's League and Ed Tierney in the Europa League - Congrats to both who take home $300 and $150 respectively.  Commiserations to Ryan and Ray who did exceptionally well to get this far and fought to the last match.</p>
-      <p class="col-lg-12 col-sm-12">Congrats to Chris Parkin for this week's Manager of the Week with a big score of 89, with Salah as his captain.</p>
-      <p class="col-lg-12 col-sm-12">The draw for LCS has now also been finalized and will kick off immediately in GW35+.  Fixtures below and full bracket in the attached - reminder LCS is just 1 leg per round, so no second chances.  $200 to the winner of Tier 1 and $150 to the winner of Tier 2.</p>
-      <p class="col-lg-12 col-sm-12">The next GW is again a very short turnaround with the deadline tomorrow, so don't miss it.</p>
-      <p class="col-lg-12 col-sm-12">Congrats again to the Cup winners, good luck to all in the LCS competition tomorrow!</p>
-
-      <p class="col-lg-12 col-sm-12"><a href="/static/FPL Update - GW34+.pdf" download>Week 34+ PDF Update Here</a></p>
-      <p class="col-lg-12 col-sm-12">DLC</p>
-
-    </div>
-
-    <div class="container">
-      <h2>Week 33+ Update</h2>
-
-      <p class="col-lg-12 col-sm-12">GW33+ is over, GW34+ is starting tomorrow, no rest with this crazy schedule!</p>
-      <p class="col-lg-12 col-sm-12">Congrats to Forrest for this week's Manager of the Week - a great score of 80 in a relatively low scoring week with triple captain Mane delivering.</p>
-      <p class="col-lg-12 col-sm-12">GW33+ also saw the conclusion of the European Cup semi finals, with Ryan and RC going through in the Champions League and Ed and Ray making the final in the Europa League.  RC and Andy had an extremely close semi final, with it having to be settled on the captain tiebreaker.  </p>
-      <p class="col-lg-12 col-sm-12">Good luck to Ryan, RC, Ray and Ed in the final - don't forget the final is only 1 leg and will be decided in GW34+.</p>
-      <p class="col-lg-12 col-sm-12">The conclusion of GW34+ will also give us our brackets for the Last Chance Saloon competition.</p>
-      <p class="col-lg-12 col-sm-12">The Tier 2 competition will be made up of those positioned in the league as at the end of GW34+ in 15th to 26th places, with 15th through 18th getting a bye into the Quarter Finals.</p>
-      <p class="col-lg-12 col-sm-12">Unless something drastic happens, the Tier 1 competition will likely be comprised of those positioned 4th through 14th in the league as at the conclusion of GW34+ (the exact criteria is anyone in 14th or above that is 75 points or more behind the league leader).  If that is the case, we will have 11 entrants which will mean that places 4th through 8th will get a bye into the Quarter Finals.</p>
-      <p class="col-lg-12 col-sm-12">Good luck everyone, don't forget the deadline tomorrow at 11am CST / 5pm BST!</p>
-      <p class="col-lg-12 col-sm-12"><a href="/static/FPL Update - GW33+.pdf" download>Week 33+ PDF Update Here</a></p>
-      <p class="col-lg-12 col-sm-12">Dave</p>
-    </div>
-
-    <div class="container">
-      <h2>Week 32+ Update</h2>
-
-      <p class="col-lg-12 col-sm-12">Attached is the latest update after the conclusion of GW32+</p>
-      <p class="col-lg-12 col-sm-12">Congratulations to Ryan for his 5th Manager of the Week this year after his captain, Aubameyang returned big with 2 goals and an assist.</p>
-      <p class="col-lg-12 col-sm-12">European cup semi final 1st leg results are below.  Good luck to all in the 2nd leg this coming week in GW33+</p>
-      <p class="col-lg-12 col-sm-12">Reminder that the Last Chance Saloon (LCS) knockout contest starts in GW35+:</p>
-      <p class="col-lg-12 col-sm-12">Your position in the league will determine qualification - only those 75 points or more behind the league leader will be eligible for the competition (so currently top 3 in the league would not be eligible).</p>
-      <ul>
-        <li>Those placed 14th or above in the league as at the end of GW34+ and also 75 points or more behind the league leader will qualify for the Tier 1 competition ($200 winner takes all).</li>
-        <li>Those placed 15th or below in the league as at the end of GW34+ will qualify for the Tier 2 competition ($150 winner takes all).  League positions 15th-18th will get a bye in round 1 of the Tier 2 contest.</li>
-      </ul>
-      <p class="col-lg-12 col-sm-12">Gameweek 33+ kicks off early (in the US) tomorrow so don't forget to set your teams and good luck all!</p>
-      <p class="col-lg-12 col-sm-12"><a href="/static/FPL Update - GW32+.pdf" download>Week 32+ PDF Update Here</a></p>
-      <p class="col-lg-12 col-sm-12">Dave</p>
-    </div>
-
-    <div class="container">
-
-      <h2>Week 31+ Update</h2>
-      <p class="col-lg-12 col-sm-12">Hi All,</p>
-      <p class="col-lg-12 col-sm-12">GW31+ is over and yet another quick turnaround before the GW32+ deadline at 5.30AM CST / 11.30AM BST on Saturday.</p>
-      <p class="col-lg-12 col-sm-12">Congrats to Forrest for this week's Manager of the Week - a huge score of 98, even after captaining Vardy.</p>
-      <p class="col-lg-12 col-sm-12">Congrats to the winners in the European cups - 8 teams are through to the semi finals of the CL and EL, results and fixtures below.</p>
-      <p class="col-lg-12 col-sm-12">Good luck in the semi finals to those taking part and good luck all next gameweek!</p>
-      <p class="col-lg-12 col-sm-12">Reminder that the Last Chance Saloon (LCS) competition kicks off on GW35+.  Details are in the attached, league position at the end of GW34+ will determine qualification to the two different tiers of the competition.</p>
-      <p class="col-lg-12 col-sm-12">Stay safe everyone and congrats to the Liverpool fans</p>
-      <p class="col-lg-12 col-sm-12">DLC</p>
-
-    </div>
-
-    <div class="container" >
-      <h2>Resources</h2>
-      <ul>
-        <li class="col-lg-12 col-sm-12"><a href="https://fantasy.premierleague.com/leagues/61855/standings/c">Our FPL Page</a></li>
-        <li class="col-lg-12 col-sm-12"><a href="https://docs.google.com/spreadsheets/d/1oHYwNAD3DprzYf_WpgyUWx1eyl27rIqfQ6XUrGP6BJg/edit?usp=sharing">Tom's (Work in Progress) Live Scoring</a></li>
-      </ul>
-
+      <div class="row">
+        <div class="col text-center">
+          <a href="https://fantasy.premierleague.com/leagues/6407/standings/c" class="btn btn-outline-dark btn-lg mx-4" role="button"  aria-disabled="true">Our FPL Page</a>
+          <a href="https://join.slack.com/t/noteveryonege-n9y8783/shared_invite/zt-ggwes1ky-yB8Ft3zo2mEG39xxD~65kw" class="btn btn-outline-dark btn-lg mx-4" role="button" aria-disabled="true">Join the Slack</a>
+          <br><br>
+        </div>
+      </div>
     </div>
 
   </body>
