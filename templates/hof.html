@@ -38,7 +38,7 @@
     <h2>NoTrophy HOF</h2>
 
         <p class="col-lg-5 col-sm-12">
-        <table class="table table-sm table-hover sortable" >
+        <table class="table table-sm text-xsmall table-hover sortable ;" >
           <thead>
             <td>Rank</td>
             <td>Name</td>
@@ -48,21 +48,20 @@
             <td>2020</td>
             <td>Total</td>
           </thead>
-          <tbody>
+          <tbody >
             {% for element in elements %}
-            <tr>
-              <td>{{element[0]}}</td>
-              <td>{{element[1]}}</td>
-              <td>{{element[2]}}</td>
-              <td>{{element[3]}}</td>
-              <td>{{element[4]}}</td>
-              <td>{{element[5]}}</td>
-              <td>{{element[6]}}</td>
-              <td>{{element[7]}}</td>
-            </tr>
+              <tr>
+                <td>{{element[0]}}</td>
+                <td>{{element[1]}}</td>
+                <td>{{element[2]}}</td>
+                <td>{{element[3]}}</td>
+                <td>{{element[4]}}</td>
+                <td>{{element[5]}}</td>
+                <td>{{element[6]}}</td>
+                <td>{{element[7]}}</td>
+              </tr>
             {% endfor %}
           </tbody>
-
         </table>
         </p>
 
@@ -77,6 +76,6 @@
         </div>
       </div>
     </div>
-    
+
   </body>
 </html>

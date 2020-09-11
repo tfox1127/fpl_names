@@ -20,3 +20,11 @@ nav {
   margin-right: 500px;
   padding: 500px;
 }
+
+table {
+  font-size: .8rem;
+}
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+  background-color: #08ff87;
+  text: #37003c;
+}
