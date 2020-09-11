@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <title>No Trophy Home</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/style2.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script src="/static/sorttable.js" type="text/javascript"></script>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="/">Not Everyone Gets A Trophy</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <a class="nav-item nav-link active" href="/">Home <span class="sr-only">(current)</span></a>
+          <a class="nav-item nav-link" href="/lms">Last Man Standing</a>
+          <a class="nav-item nav-link" href="/cups">Cup Competitions</a>
+          <a class="nav-item nav-link" href="/lcs">Last Chance Saloon</a>
+          <a class="nav-item nav-link" href="/live">Live Scores</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+
+    <h2>NoTrophy HOF</h2>
+
+        <p class="col-lg-5 col-sm-12">
+        <table class="table table-sm table-hover sortable" >
+          <thead>
+            <td>Rank</td>
+            <td>Name</td>
+            <td>M.O.W.</td>
+            <td>Trophies</td>
+            <td>2019</td>
+            <td>2020</td>
+            <td>Total</td>
+          </thead>
+          <tbody>
+            {% for element in elements %}
+            <tr>
+              <td>{{element[0]}}</td>
+              <td>{{element[1]}}</td>
+              <td>{{element[2]}}</td>
+              <td>{{element[3]}}</td>
+              <td>{{element[4]}}</td>
+              <td>{{element[5]}}</td>
+              <td>{{element[6]}}</td>
+              <td>{{element[7]}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+
+        </table>
+        </p>
+
+    </div>
+
+    <div class="container">
+      <div class="row">
+        <div class="col text-center">
+          <a href="https://fantasy.premierleague.com/leagues/6407/standings/c" class="btn btn-outline-dark btn-lg mx-1" role="button"  aria-disabled="true">Our FPL Page</a>
+          <a href="https://join.slack.com/t/noteveryonege-n9y8783/shared_invite/zt-ggwes1ky-yB8Ft3zo2mEG39xxD~65kw" class="btn btn-outline-dark btn-lg mx-1" role="button" aria-disabled="true">Join the Slack</a>
+          <br><br>
+        </div>
+      </div>
+    </div>
+    
+  </body>
+</html>

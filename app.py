@@ -26,6 +26,11 @@ def index():
     elements = db.execute("SELECT * FROM blog ORDER BY post_number DESC LIMIT 10").fetchall()
     return render_template('index.html', elements=elements)
 
+@app.route('/hof')
+def hof():
+    elements = db.execute('SELECT * FROM hof').fetchall()
+    return render_template('hof.html', elements=elements)
+
 @app.route('/lms')
 def lms():
     return render_template('lms.html')
