@@ -22,20 +22,38 @@
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
           <a class="nav-item nav-link" href="/">Home</a>
-          <a class="nav-item nav-link" href="/lms">Last Man Standing</a>
-          <a class="nav-item nav-link" href="/cups">Cup Competitions</a>
-          <a class="nav-item nav-link" href="/lcs">Last Chance Saloon</a>
           <a class="nav-item nav-link active" href="/live">Live Scores<span class="sr-only">(current)</span></a>
-          <a class="nav-item nav-link" href="/leaderboard">FPL Player Leaderboard</a>
         </div>
       </div>
     </nav>
     <div class="container" >
       <h2>Live Scores</h2>
-      <p class="col-lg-12 col-sm-12"><iframe src="https://docs.google.com/spreadsheets/d/1oHYwNAD3DprzYf_WpgyUWx1eyl27rIqfQ6XUrGP6BJg/htmlembed/sheet?gid=12984439&range=A1:D1" width=300px height="27px" frameborder="0" marginheight="0" marginwidth="0"> </iframe></p>
-      <p class="col-lg-12 col-sm-12"><iframe src="https://docs.google.com/spreadsheets/d/1oHYwNAD3DprzYf_WpgyUWx1eyl27rIqfQ6XUrGP6BJg/htmlembed/sheet?gid=477818593&range=A4:L14" width=1000px height="260px" frameborder="0" marginheight="0" marginwidth="0"> </iframe></p>
-      <p class="col-lg-12 col-sm-12"><iframe src="https://docs.google.com/spreadsheets/d/1oHYwNAD3DprzYf_WpgyUWx1eyl27rIqfQ6XUrGP6BJg/htmlembed/sheet?gid=1108459556&range=A1:Q26" width=1000px height="590px" frameborder="0" marginheight="0" marginwidth="0"> </iframe></p>
-      <p class="col-lg-12 col-sm-12"><iframe src="https://docs.google.com/spreadsheets/d/1oHYwNAD3DprzYf_WpgyUWx1eyl27rIqfQ6XUrGP6BJg/htmlembed/sheet?gid=1502409902&range=A1:Q26" width=1000px height="590px" frameborder="0" marginheight="0" marginwidth="0"> </iframe></p>
+      <div class="container">
+
+        <p class="col-lg-5 col-sm-12">
+        <table class="table table-sm text-xsmall table-hover sortable ;" >
+          <thead>
+            <td>Team</td>
+            <td>Event</td>
+            <td>Points</td>
+            <td>Captain</td>
+            <td>Vice Captain</td>
+          </thead>
+          <tbody >
+            {% for element in elements %}
+              <tr>
+                <td>{{element[1]}}</td>
+                <td>{{element[2]}}</td>
+                <td>{{element[3]}}</td>
+                <td>{{element[4]}}</td>
+                <td>{{element[5]}}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        </p>
+
+      </div>
     </div>
   </body>
 </html>
