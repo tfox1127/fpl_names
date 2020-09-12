@@ -11,7 +11,6 @@ ENV = 'dev'
 engine = create_engine('postgres://kbhpppsbtsabyk:6f9f47eb4721c77c17f1fccefeb2693a629e1f6e571bad88143561ba10e422be@ec2-52-20-248-222.compute-1.amazonaws.com:5432/d22l4qure274m')
 db = scoped_session(sessionmaker(bind=engine))
 SQLALCHEMY_POOL_RECYCLE = 60
-db.session.rollback()
 
 @app.route('/')
 def index():
