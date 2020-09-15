@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <title>No Trophy Home</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/style2.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script src="/static/sorttable.js" type="text/javascript"></script>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="/">Not Everyone Gets A Trophy</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <a class="nav-item nav-link active" href="/">Home <span class="sr-only">(current)</span></a>
+          <a class="nav-item nav-link" href="/live">Live Scores</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+
+      {% for pname in pname %}
+        <h2>{{pname[2]}} - {{pname[4]}}pts</h2>
+      {% endfor %}
+
+      <p class="col-lg-5 col-sm-12">
+      <table class="table table-sm text-xsmall table-hover sortable ;" >
+        <thead class="thead-light">
+          <td>POS #</td>
+          <td>POS</td>
+          <td>Player</td>
+          <td>Team</td>
+          <td>Mins</td>
+          <td>Score</td>
+        </thead>
+        <tbody >
+          {% for element in elements %}
+            <tr>
+              <td>{{element[2]}}</td>
+              <td>{{element[3]}}</td>
+              <td>{{element[4]}}</td>
+              <td>{{element[5]}}</td>
+              <td>{{element[6]}}</td>
+              <td>{{element[7]}}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      </p>
+
+    </div>
+
+    <div class="container">
+      <div class="row">
+        <div class="col text-center">
+          <a href="/live" class="btn btn-outline-dark btn-small mx-1" role="button"  aria-disabled="true">Back to Scores</a>
+          <br><br>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>

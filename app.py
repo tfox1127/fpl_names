@@ -34,6 +34,20 @@ def index():
     db.commit()
     return render_template('index.html', elements=elements)
 
+@app.route('/live')
+def live():
+    elements = db.execute("SELECT * FROM live")
+    db.commit()
+    return render_template('live.html', elements=elements)
+
+@app.route("/teams/<int:team_id>")
+def teams(team_id):
+  """List details about a single flight."""
+  pname    = db.execute("SELECT * FROM live WHERE entry = :team_id", {"team_id": team_id})
+  elements = db.execute("SELECT * FROM teams WHERE entry = :team_id", {"team_id": team_id})
+  db.commit()
+  return render_template("teams.html", elements=elements, pname=pname)
+
 @app.route('/lms')
 def lms():
     return render_template('lms.html')
@@ -45,13 +59,6 @@ def lcs():
 @app.route('/cups')
 def cups():
     return render_template('cups.html')
-
-@app.route('/live')
-def live():
-    elements = db.execute("SELECT * FROM live")
-    db.commit()
-    return render_template('live.html', elements=elements)
-
 
 @app.route('/leaderboard')
 def leaderboard():

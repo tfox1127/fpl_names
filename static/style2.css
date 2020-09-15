@@ -24,7 +24,13 @@ nav {
 table {
   font-size: .8rem;
 }
-.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover {
   background-color: #08ff87;
   text: #37003c;
+}
+
+.thead-light {
+  background: rgba(55, 0, 60, 0.9);
+  color: white;
 }

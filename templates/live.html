@@ -33,9 +33,8 @@
 
         <p class="col-lg-5 col-sm-12">
         <table class="table table-sm text-xsmall table-hover sortable ;" >
-          <thead>
+          <thead class="thead-light">
             <td>Team</td>
-            <td>Event</td>
             <td>Points</td>
             <td>Captain</td>
             <td>Vice Captain</td>
@@ -43,11 +42,11 @@
           <tbody >
             {% for element in elements %}
               <tr>
-                <td>{{element[1]}}</td>
-                <td>{{element[2]}}</td>
-                <td>{{element[3]}}</td>
+                <td><a href="/teams/{{element[1]}}" class="text-dark">{{element[2]}}</a></td>
                 <td>{{element[4]}}</td>
                 <td>{{element[5]}}</td>
+                <td>{{element[6]}}</td>
+                <td>{{element[7]}}</td>
               </tr>
             {% endfor %}
           </tbody>
