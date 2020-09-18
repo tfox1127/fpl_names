@@ -32,10 +32,12 @@
       <div class="container">
 
         <p class="col-lg-5 col-sm-12">
+        <div class="table-responsive">
         <table class="table table-sm text-xsmall table-hover sortable ;" >
           <thead class="thead-light">
             <td>Team</td>
-            <td>Points</td>
+            <td>Points (W)</td>
+            <td>Points (T)</td>
             <td>Captain</td>
             <td>Vice Captain</td>
           </thead>
@@ -43,16 +45,16 @@
             {% for element in elements %}
               <tr>
                 <td><a href="/teams/{{element[1]}}" class="text-dark">{{element[2]}}</a></td>
+                <td>{{element[8]}}</td>
                 <td>{{element[4]}}</td>
                 <td>{{element[5]}}</td>
                 <td>{{element[6]}}</td>
-                <td>{{element[7]}}</td>
               </tr>
             {% endfor %}
           </tbody>
         </table>
         </p>
-
+        </div>
       </div>
     </div>
   </body>
