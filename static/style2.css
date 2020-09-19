@@ -23,6 +23,7 @@ nav {
 
 table {
   font-size: .8rem;
+  vertical-align: middle;
 }
 
 .table-hover tbody tr:hover td, .table-hover tbody tr:hover {
@@ -33,4 +34,13 @@ table {
 .thead-light {
   background: rgba(55, 0, 60, 0.9);
   color: white;
+  vertical-align: middle;
+}
+
+.table > tbody > tr > td {
+     vertical-align: middle;
+}
+
+.table-responsive > tbody > tr > td {
+     vertical-align: middle;
 }

@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from send_mail import send_mail
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
+import datetime as datetime
 
 app = Flask(__name__)
 
@@ -36,9 +37,11 @@ def index():
 
 @app.route('/live')
 def live():
-    elements = db.execute("SELECT * FROM live")
+    times = db.execute("SELECT * FROM times WHERE type = 'live_update'").fetchone()
+    elements = db.execute("SELECT * FROM live ORDER BY score DESC LIMIT 50")
     db.commit()
-    return render_template('live.html', elements=elements)
+    time = times #.datetime.strftime("%m/%d/%Y, %H:%M:%S")
+    return render_template('live.html', elements=elements, time=time)
 
 @app.route("/teams/<int:team_id>")
 def teams(team_id):

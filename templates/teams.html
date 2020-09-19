@@ -24,8 +24,8 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
-          <a class="nav-item nav-link active" href="/">Home <span class="sr-only">(current)</span></a>
-          <a class="nav-item nav-link" href="/live">Live Scores</a>
+          <a class="nav-item nav-link" href="/">Home</a>
+          <a class="nav-item nav-link active" href="/live">Live Scores <span class="sr-only">(current)</span></a>
         </div>
       </div>
     </nav>
@@ -39,23 +39,23 @@
 
       <p class="col-lg-5 col-sm-12">
       <table class="table table-sm text-xsmall table-hover sortable ;" >
-        <thead class="thead-light">
-          <td>POS #</td>
-          <td>POS</td>
-          <td>Player</td>
-          <td>Team</td>
-          <td>Mins</td>
-          <td>Score</td>
+        <thead class="thead-light text-center">
+          <td class="align-middle">POS #</td>
+          <td class="align-middle">POS</td>
+          <td class="align-middle">Player</td>
+          <td class="align-middle">Team</td>
+          <td class="align-middle">Mins</td>
+          <td class="align-middle">Score</td>
         </thead>
-        <tbody >
+        <tbody class="text-center align-middle">
           {% for element in elements %}
             <tr>
-              <td>{{element[2]}}</td>
-              <td>{{element[3]}}</td>
-              <td>{{element[4]}}</td>
-              <td>{{element[5]}}</td>
-              <td>{{element[6]}}</td>
-              <td>{{element[7]}}</td>
+              <td class="align-middle">{{element[2]}}</td>
+              <td class="align-middle">{{element[3]}}</td>
+              <td class="align-middle">{{element[4]}}</td>
+              <td class="align-middle">{{element[5]}}</td>
+              <td class="align-middle">{{element[6]}}</td>
+              <td class="align-middle">{{element[7]}}</td>
             </tr>
           {% endfor %}
         </tbody>

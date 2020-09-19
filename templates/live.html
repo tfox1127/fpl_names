@@ -29,26 +29,26 @@
     </nav>
     <div class="container" >
       <h2>Live Scores</h2>
+      <h6>Updated {{time.dt}} </h6>
       <div class="container">
-
-        <p class="col-lg-5 col-sm-12">
+        <p class="col-lg-12 col-sm-12">
         <div class="table-responsive">
         <table class="table table-sm text-xsmall table-hover sortable ;" >
-          <thead class="thead-light">
-            <td>Team</td>
-            <td>Points (W)</td>
-            <td>Points (T)</td>
-            <td>Captain</td>
-            <td>Vice Captain</td>
+          <thead class="thead-light text-center align-middle">
+            <td class="align-middle">Team</td>
+            <td class="align-middle"><div data-toggle="tooltip" data-placement="top" title="This Week's Points">Pts (W)</div></td>
+            <td class="align-middle">Pts (T)</td>
+            <td class="align-middle">Captain</td>
+            <td class="align-middle">vCaptain</td>
           </thead>
-          <tbody >
+          <tbody class="text-center align-middle">
             {% for element in elements %}
               <tr>
-                <td><a href="/teams/{{element[1]}}" class="text-dark">{{element[2]}}</a></td>
-                <td>{{element[8]}}</td>
-                <td>{{element[4]}}</td>
-                <td>{{element[5]}}</td>
-                <td>{{element[6]}}</td>
+                <td class="align-middle"><a href="/teams/{{element[1]}}" class="text-dark">{{element[2]}}</a></td>
+                <td class="align-middle">{{element[8]}}</td>
+                <td class="align-middle">{{element[4]}}</td>
+                <td class="align-middle">{{element[5]}}</td>
+                <td class="align-middle">{{element[6]}}</td>
               </tr>
             {% endfor %}
           </tbody>
