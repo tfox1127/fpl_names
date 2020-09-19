@@ -34,7 +34,7 @@
 
       {% for pname in pname %}
         <h2>{{pname[2]}} - {{pname[4]}}pts</h2>
-        <h6>YTD Rank: {{pname[9]}} - GW Rank: {{pname[7]}}</h6>
+        <h6>YTD Rank: {{pname[11]}} - GW Rank: {{pname[10]}}</h6>
       {% endfor %}
 
       <p class="col-lg-5 col-sm-12">
@@ -50,12 +50,12 @@
         <tbody class="text-center align-middle">
           {% for element in elements %}
             <tr>
-              <td class="align-middle">{{element[2]}}</td>
               <td class="align-middle">{{element[3]}}</td>
               <td class="align-middle">{{element[4]}}</td>
               <td class="align-middle">{{element[5]}}</td>
               <td class="align-middle">{{element[6]}}</td>
               <td class="align-middle">{{element[7]}}</td>
+              <td class="align-middle">{{element[9]}}</td>
             </tr>
           {% endfor %}
         </tbody>

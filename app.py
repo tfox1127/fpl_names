@@ -38,7 +38,7 @@ def index():
 @app.route('/live')
 def live():
     times = db.execute("SELECT * FROM times WHERE type = 'live_update'").fetchone()
-    elements = db.execute("SELECT * FROM live ORDER BY score DESC LIMIT 50")
+    elements = db.execute("SELECT * FROM live2 ORDER BY points_lg DESC LIMIT 50")
     db.commit()
     time = times #.datetime.strftime("%m/%d/%Y, %H:%M:%S")
     return render_template('live.html', elements=elements, time=time)
@@ -46,8 +46,8 @@ def live():
 @app.route("/teams/<int:team_id>")
 def teams(team_id):
   """List details about a single flight."""
-  pname    = db.execute("SELECT * FROM live WHERE entry = :team_id", {"team_id": team_id})
-  elements = db.execute("SELECT * FROM teams WHERE entry = :team_id", {"team_id": team_id})
+  pname    = db.execute("SELECT * FROM live2 WHERE entry = :team_id", {"team_id": team_id})
+  elements = db.execute("SELECT * FROM teams2 WHERE entry = :team_id", {"team_id": team_id})
   db.commit()
   return render_template("teams.html", elements=elements, pname=pname)
 
