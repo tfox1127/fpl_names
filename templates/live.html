@@ -57,5 +57,37 @@
         </div>
       </div>
     </div>
+
+    <div class="container" >
+      <h2>LMS Tracker</h2>
+      <h6>Bottom two will be dropped</h6>
+      <div class="container">
+        <p class="col-lg-12 col-sm-12">
+        <div class="table-responsive">
+        <table class="table table-sm text-xsmall table-hover sortable ;" >
+          <thead class="thead-light text-center align-middle">
+            <td class="align-middle">Team</td>
+            <td class="align-middle"><div data-toggle="tooltip" data-placement="top" title="This Week's Points">Pts (W)</div></td>
+            <td class="align-middle">Pts (T)</td>
+            <td class="align-middle">Captain</td>
+            <td class="align-middle">vCaptain</td>
+          </thead>
+          <tbody class="text-center align-middle">
+            {% for bottom in bottoms %}
+              <tr>
+                <td class="align-middle"><a href="/teams/{{bottom[1]}}" class="text-dark">{{bottom[2]}}</a></td>
+                <td class="align-middle">{{bottom[4]}}</td>
+                <td class="align-middle">{{bottom[9]}}</td>
+                <td class="align-middle">{{bottom[5]}}</td>
+                <td class="align-middle">{{bottom[6]}}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        </p>
+        </div>
+      </div>
+    </div>
+
   </body>
 </html>

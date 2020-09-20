@@ -39,9 +39,10 @@ def index():
 def live():
     times = db.execute("SELECT * FROM times WHERE type = 'live_update'").fetchone()
     elements = db.execute("SELECT * FROM live2 ORDER BY points_lg DESC LIMIT 50")
+    bottoms =  db.execute("SELECT * FROM live2 ORDER BY score LIMIT 5")
     db.commit()
     time = times #.datetime.strftime("%m/%d/%Y, %H:%M:%S")
-    return render_template('live.html', elements=elements, time=time)
+    return render_template('live.html', elements=elements, time=time, bottoms=bottoms)
 
 @app.route("/teams/<int:team_id>")
 def teams(team_id):
