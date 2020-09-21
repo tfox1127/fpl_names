@@ -5,7 +5,7 @@
     <title>Live Scores</title>
     <meta charset="utf-8">
     <meta http-equiv="refresh" content="600">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="/static/style2.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -27,67 +27,65 @@
         </div>
       </div>
     </nav>
-    <div class="container" >
+    <div class="container mt-2" >
       <h2>Live Scores</h2>
       <h6>Updated {{time.dt}} </h6>
-      <div class="container">
         <p class="col-lg-12 col-sm-12">
-        <div class="table-responsive">
-        <table class="table table-sm text-xsmall table-hover sortable ;" >
-          <thead class="thead-light text-center align-middle">
-            <td class="align-middle">Team</td>
-            <td class="align-middle"><div data-toggle="tooltip" data-placement="top" title="This Week's Points">Pts (W)</div></td>
-            <td class="align-middle">Pts (T)</td>
-            <td class="align-middle">Captain</td>
-            <td class="align-middle">vCaptain</td>
-          </thead>
-          <tbody class="text-center align-middle">
-            {% for element in elements %}
-              <tr>
-                <td class="align-middle"><a href="/teams/{{element[1]}}" class="text-dark">{{element[2]}}</a></td>
-                <td class="align-middle">{{element[4]}}</td>
-                <td class="align-middle">{{element[9]}}</td>
-                <td class="align-middle">{{element[5]}}</td>
-                <td class="align-middle">{{element[6]}}</td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+          <div class="table-responsive text-nowrap">
+            <table class="table table-sm text-xsmall table-hover sortable ;" >
+              <thead class="thead-light text-center align-middle">
+                <td class="align-middle">Team</td>
+                <td class="align-middle"><div data-toggle="tooltip" data-placement="top" title="This Week's Points">Pts (W)</div></td>
+                <td class="align-middle">Pts (T)</td>
+                <td class="align-middle">Captain</td>
+                <td class="align-middle">Vice</td>
+                <td class="align-middle">Rk (Chg)</td>
+              </thead>
+              <tbody class="text-center align-middle">
+                {% for element in elements %}
+                  <tr>
+                    <td class="align-middle"><a href="/teams/{{element[1]}}" class="text-dark">{{element[2]}}</a></td>
+                    <td class="align-middle">{{element[4]}}</td>
+                    <td class="align-middle">{{element[9]}}</td>
+                    <td class="align-middle">{{element[5]}}</td>
+                    <td class="align-middle">{{element[6]}}</td>
+                    <td class="align-middle">{{element[11]}} ({{element[13]}})</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
         </p>
-        </div>
       </div>
     </div>
 
-    <div class="container" >
+    <div class="container mt-2" >
       <h2>LMS Tracker</h2>
       <h6>Bottom two will be dropped</h6>
-      <div class="container">
-        <p class="col-lg-12 col-sm-12">
-        <div class="table-responsive">
+      <div class="table-responsive">
         <table class="table table-sm text-xsmall table-hover sortable ;" >
           <thead class="thead-light text-center align-middle">
             <td class="align-middle">Team</td>
             <td class="align-middle"><div data-toggle="tooltip" data-placement="top" title="This Week's Points">Pts (W)</div></td>
             <td class="align-middle">Pts (T)</td>
             <td class="align-middle">Captain</td>
-            <td class="align-middle">vCaptain</td>
+            <td class="align-middle">Vice</td>
           </thead>
           <tbody class="text-center align-middle">
             {% for bottom in bottoms %}
-              <tr>
-                <td class="align-middle"><a href="/teams/{{bottom[1]}}" class="text-dark">{{bottom[2]}}</a></td>
-                <td class="align-middle">{{bottom[4]}}</td>
-                <td class="align-middle">{{bottom[9]}}</td>
-                <td class="align-middle">{{bottom[5]}}</td>
-                <td class="align-middle">{{bottom[6]}}</td>
-              </tr>
+            <tr>
+            <td class="align-middle"><a href="/teams/{{bottom[1]}}" class="text-dark">{{bottom[2]}}</a></td>
+            <td class="align-middle">{{bottom[4]}}</td>
+            <td class="align-middle">{{bottom[9]}}</td>
+            <td class="align-middle">{{bottom[5]}}</td>
+            <td class="align-middle">{{bottom[6]}}</td>
+            </tr>
             {% endfor %}
           </tbody>
         </table>
-        </p>
-        </div>
       </div>
     </div>
+
 
   </body>
 </html>

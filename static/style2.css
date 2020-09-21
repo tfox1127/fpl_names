@@ -44,3 +44,24 @@ table {
 .table-responsive > tbody > tr > td {
      vertical-align: middle;
 }
+
+/*======================================
+=            CUSTOM GUTTER CODE            =
+======================================*/
+
+@media(min-width:768px) {  /* Modify this based on column def */
+
+.custom-gutter > [class*='col-'] {
+    padding-right:4px;
+    padding-left:4px;
+}
+
+.custom-gutter > [class*="col-"]:first-child {
+  padding-left:15px;
+}
+
+.custom-gutter > [class*="col-"]:last-child {
+  padding-right:15px;
+}
+
+}

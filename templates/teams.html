@@ -30,38 +30,35 @@
       </div>
     </nav>
 
-    <div class="container">
-
+    <div class="container mt-2">
       {% for pname in pname %}
-        <h2>{{pname[2]}} - {{pname[4]}}pts</h2>
-        <h6>YTD Rank: {{pname[11]}} - GW Rank: {{pname[10]}}</h6>
+      <h2>{{pname[2]}} - {{pname[4]}}pts</h2>
+      <h6>YTD Rank: {{pname[11]}} ({{pname[13]}}) - GW Rank: {{pname[10]}}</h6>
       {% endfor %}
-
-      <p class="col-lg-5 col-sm-12">
-      <table class="table table-sm text-xsmall table-hover sortable ;" >
-        <thead class="thead-light text-center">
-          <td class="align-middle">POS #</td>
-          <td class="align-middle">POS</td>
-          <td class="align-middle">Player</td>
-          <td class="align-middle">Team</td>
-          <td class="align-middle">Mins</td>
-          <td class="align-middle">Score</td>
-        </thead>
-        <tbody class="text-center align-middle">
-          {% for element in elements %}
+      <div class="table-responsive text-nowrap">
+        <table class="table table-sm text-xsmall table-hover sortable ;" >
+          <thead class="thead-light text-center">
+            <td class="align-middle">POS #</td>
+            <td class="align-middle">POS</td>
+            <td class="align-middle">Player</td>
+            <td class="align-middle">Team</td>
+            <td class="align-middle">Mins</td>
+            <td class="align-middle">Score</td>
+          </thead>
+          <tbody class="text-center align-middle">
+            {% for element in elements %}
             <tr>
-              <td class="align-middle">{{element[3]}}</td>
-              <td class="align-middle">{{element[4]}}</td>
-              <td class="align-middle">{{element[5]}}</td>
-              <td class="align-middle">{{element[6]}}</td>
-              <td class="align-middle">{{element[7]}}</td>
-              <td class="align-middle">{{element[9]}}</td>
+            <td class="align-middle">{{element[3]}}</td>
+            <td class="align-middle">{{element[4]}}</td>
+            <td class="align-middle">{{element[5]}}</td>
+            <td class="align-middle">{{element[6]}}</td>
+            <td class="align-middle">{{element[7]}}</td>
+            <td class="align-middle">{{element[9]}}</td>
             </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      </p>
-
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <div class="container">
