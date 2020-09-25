@@ -70,8 +70,10 @@ def leaderboard():
 
 @app.route('/hof')
 def hof():
-    elements = db.execute('SELECT * FROM hof').fetchall()
-    return render_template('hof.html', elements=elements)
+    elements = db.execute('SELECT * FROM hof_rk ORDER BY "Overall" DESC LIMIT 50').fetchall()
+    champs   = db.execute('SELECT * FROM hof_ch').fetchall()
+    db.commit()
+    return render_template('hof.html', elements=elements, champs = champs)
 
 
 if __name__ == '__main__':
