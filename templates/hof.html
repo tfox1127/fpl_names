@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <!-- Required meta tags -->
-    <title>Live Scores</title>
+    <title>HOF</title>
     <meta charset="utf-8">
     <meta http-equiv="refresh" content="600">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -28,9 +28,28 @@
         </div>
       </div>
     </nav>
-
     <div class="container mt-2" >
-      <h2>HOF Standings</h2>
+      <h2>Current Champions</h2>
+      <div class="table-responsive">
+        <table class="table table-sm text-xsmall table-hover sortable ;" >
+          <thead class="thead-light text-center align-middle">
+            <td class="align-middle">Pos</td>
+            <td class="align-middle">Manager Name</td>
+          </thead>
+          <tbody class="text-center align-middle">
+            {% for champ in champs %}
+            <tr>
+              <td class="align-middle">{{champ[1]}}</td>
+              <td class="align-middle">{{champ[2]}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div class="container mt-2" >
+      <h2>All Time Rankings</h2>
       <div class="table-responsive">
         <table class="table table-sm text-xsmall table-hover sortable ;" >
           <thead class="thead-light text-center align-middle">
@@ -64,27 +83,6 @@
         </table>
       </div>
     </div>
-
-    <div class="container mt-2" >
-      <h2>Current Champions</h2>
-      <div class="table-responsive">
-        <table class="table table-sm text-xsmall table-hover sortable ;" >
-          <thead class="thead-light text-center align-middle">
-            <td class="align-middle">Pos</td>
-            <td class="align-middle">Manager Name</td>
-          </thead>
-          <tbody class="text-center align-middle">
-            {% for champ in champs %}
-            <tr>
-              <td class="align-middle">{{champ[1]}}</td>
-              <td class="align-middle">{{champ[2]}}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-
 
   </body>
 </html>
