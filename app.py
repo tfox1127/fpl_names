@@ -31,7 +31,7 @@ db = scoped_session(sessionmaker(bind=engine))    # create a 'scoped session' th
 
 @app.route('/')
 def index():
-    elements = db.execute('SELECT * FROM blog LIMIT 10')
+    elements = db.execute('SELECT * FROM blog ORDER BY post_number DESC LIMIT 10')
     db.commit()
     return render_template('index.html', elements=elements)
 
@@ -39,7 +39,8 @@ def index():
 def live():
     times = db.execute("SELECT * FROM times WHERE type = 'live_update'").fetchone()
     elements = db.execute("SELECT * FROM live2 ORDER BY points_lg DESC LIMIT 50")
-    bottoms =  db.execute("SELECT * FROM live2 ORDER BY score LIMIT 5")
+    bottoms =  db.execute("SELECT * FROM live2 where player_name not in (SELECT name FROM \"LMS\") ORDER BY score LIMIT 5")
+
     db.commit()
     time = times #.datetime.strftime("%m/%d/%Y, %H:%M:%S")
     return render_template('live.html', elements=elements, time=time, bottoms=bottoms)
@@ -54,7 +55,10 @@ def teams(team_id):
 
 @app.route('/lms')
 def lms():
-    return render_template('lms.html')
+    acti = db.execute("SELECT * FROM lms_ac")
+    elim = db.execute("SELECT * FROM lms_el")
+    db.commit()
+    return render_template('lms.html', acti=acti, elim=elim)
 
 @app.route('/lcs')
 def lcs():
