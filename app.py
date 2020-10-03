@@ -40,16 +40,19 @@ def live():
     times = db.execute("SELECT * FROM times WHERE type = 'live_update'").fetchone()
     elements = db.execute("SELECT * FROM live2 ORDER BY points_lg DESC LIMIT 50")
     bottoms =  db.execute("SELECT * FROM live2 where player_name not in (SELECT name FROM \"LMS\") ORDER BY score LIMIT 5")
+    epls =  db.execute("SELECT * FROM score_board")
+    sss =  db.execute("SELECT * FROM score_sheet")
 
     db.commit()
     time = times #.datetime.strftime("%m/%d/%Y, %H:%M:%S")
-    return render_template('live.html', elements=elements, time=time, bottoms=bottoms)
+    return render_template('live.html', elements=elements, time=time, bottoms=bottoms, epls=epls, sss=sss)
 
 @app.route("/teams/<int:team_id>")
 def teams(team_id):
   """List details about a single flight."""
   pname    = db.execute("SELECT * FROM live2 WHERE entry = :team_id", {"team_id": team_id})
-  elements = db.execute("SELECT * FROM teams2 WHERE entry = :team_id", {"team_id": team_id})
+  #elements = db.execute("SELECT * FROM teams2 WHERE entry = :team_id", {"team_id": team_id})
+  elements = db.execute("SELECT * FROM \":team_id\"", {"team_id": team_id})
   db.commit()
   return render_template("teams.html", elements=elements, pname=pname)
 

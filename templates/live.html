@@ -65,7 +65,7 @@
 
     <div class="container mt-2" >
       <h2>LMS Tracker</h2>
-      <h6>Bottom two will be dropped</h6>
+      <h6>Bottom two will be dropped. See more <a href="/lms">here</a></h6>
       <div class="table-responsive text-nowrap">
         <table class="table table-sm text-xsmall table-hover sortable ;" >
           <thead class="thead-light text-center align-middle">
@@ -92,6 +92,59 @@
       </div>
     </div>
 
+    <div class="container mt-2" >
+      <h2>EPL Scores</h2>
+      <div class="table-responsive text-nowrap">
+        <table class="table table-sm text-xsmall table-hover sortable ;" >
+          <thead class="thead-light text-center align-middle">
+            <td class="align-middle">Home</td>
+            <td class="align-middle">Home Score</td>
+            <td class="align-middle">Away Score</td>
+            <td class="align-middle">Away</td>
+            <td class="align-middle">Minutes</td>
+          </thead>
+          <tbody class="text-center align-middle">
+            {% for epl in epls %}
+            <tr>
+              <td class="align-middle">{{epl[7]}}</td>
+              <td class="align-middle">{{epl[8]}}</td>
+              <td class="align-middle">{{epl[6]}}</td>
+              <td class="align-middle">{{epl[5]}}</td>
+              <td class="align-middle">{{epl[10]}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="container mt-2" >
+      <h2>The Scoresheet</h2>
+      <div class="table-responsive">
+        <table class="table table-sm text-xsmall table-hover sortable ;" >
+          <thead class="thead-light text-center align-middle">
+            <td class="align-middle">Player</td>
+            <td class="align-middle">Team</td>
+            <td class="align-middle">Match</td>
+            <td class="align-middle">Goals</td>
+            <td class="align-middle">Assits</td>
+            <td class="align-middle">Owners</td>
+          </thead>
+          <tbody class="text-center align-middle">
+            {% for ss in sss %}
+            <tr>
+              <td class="align-middle">{{ss[1]}}</td>
+              <td class="align-middle">{{ss[3]}}</td>
+              <td class="align-middle">{{ss[2]}}</td>
+              <td class="align-middle">{{ss[4]}}</td>
+              <td class="align-middle">{{ss[5]}}</td>
+              <td class="align-middle">{{ss[6]}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
 
   </body>
 </html>
