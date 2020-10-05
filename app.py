@@ -37,7 +37,7 @@ def index():
 
 @app.route('/live')
 def live():
-    times = db.execute("SELECT * FROM times WHERE type = 'live_update'").fetchone()
+    times = db.execute("SELECT * FROM times WHERE type = 'live_update'")
     elements = db.execute("SELECT * FROM live2 ORDER BY points_lg DESC LIMIT 50")
     bottoms =  db.execute("SELECT * FROM live2 where player_name not in (SELECT name FROM \"LMS\") ORDER BY score LIMIT 5")
     epls =  db.execute("SELECT * FROM score_board")
