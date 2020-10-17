@@ -37,14 +37,14 @@ def index():
 
 @app.route('/live')
 def live():
-    times = db.execute("SELECT * FROM times WHERE type = 'live_update'")
+    time = db.execute("SELECT updated FROM live2;").fetchone()
     elements = db.execute("SELECT * FROM live2 ORDER BY points_lg DESC LIMIT 50")
     bottoms =  db.execute("SELECT * FROM live2 where player_name not in (SELECT name FROM \"LMS\") ORDER BY score LIMIT 5")
     epls =  db.execute("SELECT * FROM score_board")
     sss =  db.execute("SELECT * FROM score_sheet")
 
     db.commit()
-    time = times #.datetime.strftime("%m/%d/%Y, %H:%M:%S")
+    #time = times.item() #.datetime.strftime("%m/%d/%Y, %H:%M:%S")
     return render_template('live.html', elements=elements, time=time, bottoms=bottoms, epls=epls, sss=sss)
 
 @app.route("/teams/<int:team_id>")
