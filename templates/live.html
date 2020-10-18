@@ -36,24 +36,24 @@
           <div class="table-responsive text-nowrap">
             <table class="table table-sm text-xsmall table-hover sortable ;" >
               <thead class="thead-light text-center align-middle">
-                <td class="align-middle">Team</td>
+                <td class="align-middle">Rk (Chg)</td>
+                <td class="align-middle">Team (Chip)</td>
                 <td class="align-middle"><div data-toggle="tooltip" data-placement="top" title="This Week's Points">Pts (W)</div></td>
                 <td class="align-middle">Pts (T)</td>
                 <td class="align-middle">GP</td>
                 <td class="align-middle">Captain</td>
                 <td class="align-middle">Vice</td>
-                <td class="align-middle">Rk (Chg)</td>
               </thead>
               <tbody class="text-center align-middle">
                 {% for element in elements %}
                   <tr>
-                    <td class="align-middle"><a href="/teams/{{element[1]}}" class="text-dark">{{element[2]}}</a></td>
+                    <td class="align-middle">{{element[13]}} ({{element[18]}})</td>
+                    <td class="align-middle"><a href="/teams/{{element[1]}}" class="text-dark">{{element[17]}}</a></td>
                     <td class="align-middle">{{element[4]}}</td>
                     <td class="align-middle">{{element[11]}}</td>
                     <td class="align-middle">{{element[6]}}</td>
                     <td class="align-middle">{{element[7]}}</td>
                     <td class="align-middle">{{element[8]}}</td>
-                    <td class="align-middle">{{element[13]}} ({{element[15]}})</td>
                   </tr>
                 {% endfor %}
               </tbody>
