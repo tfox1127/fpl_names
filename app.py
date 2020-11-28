@@ -56,6 +56,15 @@ def teams(team_id):
   db.commit()
   return render_template("teams.html", elements=elements, pname=pname)
 
+@app.route("/teams2/<int:team_id>")
+def teams2(team_id):
+  """List details about a single flight."""
+  pname    = db.execute("SELECT * FROM live2 WHERE entry = :team_id", {"team_id": team_id})
+  #elements = db.execute("SELECT * FROM teams2 WHERE entry = :team_id", {"team_id": team_id})
+  elements = db.execute("SELECT * FROM df_teams20 WHERE entry = :team_id", {"team_id": team_id})
+  db.commit()
+  return render_template("teams2.html", elements=elements, pname=pname)
+
 @app.route('/lms')
 def lms():
     acti = db.execute("SELECT * FROM lms_ac")
