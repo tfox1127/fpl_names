@@ -48,6 +48,13 @@ def live():
     #time = time.item() #.datetime.strftime("%m/%d/%Y, %H:%M:%S")
     return render_template('live.html', elements=elements, time=time, bottoms=bottoms, epls=epls, sss=sss)
 
+@app.route('/elli')
+def elli():
+    ellis = db.execute("SELECT * FROM df_elli ORDER BY score DESC")
+    db.commit()
+    #time = time.item() #.datetime.strftime("%m/%d/%Y, %H:%M:%S")
+    return render_template('elli.html', ellis=ellis)
+
 @app.route("/teams/<int:team_id>")
 def teams(team_id):
   """List details about a single flight."""

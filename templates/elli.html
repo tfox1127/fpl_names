@@ -25,8 +25,8 @@
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
           <a class="nav-item nav-link" href="/">Home</a>
-          <a class="nav-item nav-link active" href="/live">Live Scores <span class="sr-only">(current)</span></a>
-          <a class="nav-item nav-link" href="/elli">EPL Leaderboard</a>
+          <a class="nav-item nav-link" href="/live">Live Scores</a>
+          <a class="nav-item nav-link active" href="/elli">EPL Leaderboard<span class="sr-only">(current)</span></a>
           <a class="nav-item nav-link" href="/hof">HOF</a>
           <a class="nav-item nav-link" href="/lms">LMS</a>
         </div>
@@ -34,20 +34,20 @@
     </nav>
 
     <div class="container mt-2">
+      <!--
       {% for pname in pname %}
       <h2>{{pname[5]}} - {{pname[2]}}pts</h2>
       <h6>YTD Rank: {{pname[12]}} ({{pname[14]}}) - GW Rank: {{pname[11]}}</h6>
-      {% endfor %}
+      {% endfor %}-->
+      <h2>EPL Leaderboard</h2>
       <div class="table-responsive text-nowrap">
         <table class="table table-sm text-xsmall table-hover sortable ;" >
           <thead class="thead-light text-center">
-            <td class="align-middle">POS #</td>
             <td class="align-middle">Player</td>
             <td class="align-middle">POS</td>
             <td class="align-middle">Team</td>
-            <td class="align-middle">Importance</td>
-            <td class="align-middle">Score</td>
             <td class="align-middle">Mins (pl/gm)</td>
+            <td class="align-middle">Points</td>
             <td class="align-middle">G</td>
             <td class="align-middle">A</td>
             <td class="align-middle">CS</td>
@@ -60,19 +60,24 @@
             <td class="align-middle">SV</td>
             <td class="align-middle">Bonus</td>
             <td class="align-middle">BPS</td>
-            <td class="align-middle">Points</td>
+            <td class="align-middle">Inf</td>
+            <td class="align-middle">Cre</td>
+            <td class="align-middle">Thr</td>
+            <td class="align-middle">ITC</td>
           </thead>
           <tbody class="text-center align-middle">
-            {% for element in elements %}
+            {% for element in ellis %}
             <tr>
               <td class="align-middle">{{element[2]}}</td>
               <!-- <td class="align-middle"><a href="/player/{{element[1]}}" class="text-dark">{{element[5]}}</a></td>-->
               <td class="align-middle">{{element[3]}}</td>
               <td class="align-middle">{{element[4]}}</td>
-              <td class="align-middle">{{element[5]}}</td>
+              <td class="align-middle">{{element[5]}}/{{element[24]}}</td>
+              <td class="align-middle">{{element[29]}}</td>
               <td class="align-middle">{{element[6]}}</td>
               <td class="align-middle">{{element[7]}}</td>
-              <td class="align-middle">{{element[8]}}/{{element[9]}}</td>
+              <td class="align-middle">{{element[8]}}</td>
+              <td class="align-middle">{{element[9]}}</td>
               <td class="align-middle">{{element[10]}}</td>
               <td class="align-middle">{{element[11]}}</td>
               <td class="align-middle">{{element[12]}}</td>
@@ -85,7 +90,7 @@
               <td class="align-middle">{{element[19]}}</td>
               <td class="align-middle">{{element[20]}}</td>
               <td class="align-middle">{{element[21]}}</td>
-              <td class="align-middle">{{element[22]}}</td>
+
             </tr>
             {% endfor %}
           </tbody>
