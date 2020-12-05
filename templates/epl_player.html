@@ -36,6 +36,26 @@
         <h6>Form: {{header[8]}} | ITC: {{header[5]}}</h6>
       {% endfor %}
 
+      <h4>Owned By</h4>
+      <div class="table-responsive text-nowrap">
+        <table class="table table-sm text-xsmall table-hover sortable ;" >
+          <thead class="thead-light text-center">
+            <td class="align-middle">Name</td>
+            <td class="align-middle">Points</td>
+            <td class="align-middle">Rank</td>
+          </thead>
+          <tbody class="text-center align-middle">
+            {% for owner in owners %}
+            <tr>
+              <td class="align-middle">{{owner[2]}}</td>
+              <td class="align-middle">{{owner[3]}}</td>
+              <td class="align-middle">{{owner[4]}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
       <h4>Previous Fixtures</h4>
       <div class="table-responsive text-nowrap">
         <table class="table table-sm text-xsmall table-hover sortable ;" >

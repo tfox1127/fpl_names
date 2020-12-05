@@ -69,9 +69,9 @@ def teams(team_id):
 def players(player_id):
   headers    = db.execute("SELECT * FROM eplayer_info WHERE id = :player_id", {"player_id": player_id})
   players    = db.execute("SELECT * FROM df_phistory WHERE element = :player_id", {"player_id": player_id})
-
+  owners     = db.execute("SELECT * FROM df_owner_info WHERE element = :player_id", {"player_id": player_id})
   db.commit()
-  return render_template("epl_player.html", headers=headers, players=players)
+  return render_template("epl_player.html", headers=headers, players=players, owners=owners)
 
 @app.route("/teams2/<int:team_id>")
 def teams2(team_id):
