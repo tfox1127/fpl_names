@@ -50,10 +50,11 @@ def live():
 
 @app.route('/elli')
 def elli():
-    ellis = db.execute("SELECT * FROM df_elli ORDER BY score DESC")
+    ellis = db.execute("SELECT * FROM df_elli WHERE ownership != '0.0%' ORDER BY score DESC")
+    nonellis = db.execute("SELECT * FROM df_elli WHERE ownership = '0.0%' ORDER BY score DESC LIMIT 15")
     db.commit()
     #time = time.item() #.datetime.strftime("%m/%d/%Y, %H:%M:%S")
-    return render_template('elli.html', ellis=ellis)
+    return render_template('elli.html', ellis=ellis, nonellis=nonellis)
 
 @app.route("/teams/<int:team_id>")
 def teams(team_id):
