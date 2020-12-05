@@ -41,21 +41,23 @@
       {% endfor %}
 
       <br>
-      
+
       <h4>Owned By</h4>
       <div class="table-responsive text-nowrap">
         <table class="table table-sm text-xsmall table-hover sortable ;" >
           <thead class="thead-light text-center">
+            <td class="align-middle">Lg Rank</td>
             <td class="align-middle">Name</td>
             <td class="align-middle">Points</td>
-            <td class="align-middle">Rank</td>
+            <td class="align-middle">Status</td>
           </thead>
           <tbody class="text-center align-middle">
             {% for owner in owners %}
             <tr>
-              <td class="align-middle">{{owner[2]}}</td>
-              <td class="align-middle">{{owner[3]}}</td>
               <td class="align-middle">{{owner[4]}}</td>
+              <td class="align-middle">{{owner[3]}}</td>
+              <td class="align-middle">{{owner[2]}}</td>
+              <td class="align-middle">{{owner[5]}}</td>
             </tr>
             {% endfor %}
           </tbody>
