@@ -24,30 +24,26 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
-          <a class="nav-item nav-link" href="/">Home</a>
-          <a class="nav-item nav-link active" href="/live">Live Scores <span class="sr-only">(current)</span></a>
-          <a class="nav-item nav-link" href="/elli">EPL Leaderboard</a>
-          <a class="nav-item nav-link" href="/hof">HOF</a>
-          <a class="nav-item nav-link" href="/lms">LMS</a>
+
         </div>
       </div>
     </nav>
 
     <div class="container mt-2">
-      {% for pname in pname %}
-      <h2>{{pname[5]}} - {{pname[2]}}pts</h2>
-      <h6>YTD Rank: {{pname[12]}} ({{pname[14]}}) - GW Rank: {{pname[11]}}</h6>
+      {% for header in headers %}
+        <h2>{{header[2]}} {{header[3]}} ({{header[4]}})</h2>
+        <h6>YTD Points: {{header[6]}} | Current Price: {{header[7]}} | Form: {{header[8]}} | ITC: {{header[5]}}</h6>
       {% endfor %}
+
+      <h4>Previous Fixtures</h4>
       <div class="table-responsive text-nowrap">
         <table class="table table-sm text-xsmall table-hover sortable ;" >
           <thead class="thead-light text-center">
-            <td class="align-middle">POS #</td>
-            <td class="align-middle">Player</td>
-            <td class="align-middle">POS</td>
-            <td class="align-middle">Team</td>
-            <td class="align-middle">Importance</td>
+            <td class="align-middle">Round</td>
             <td class="align-middle">Score</td>
-            <td class="align-middle">Mins (pl/gm)</td>
+            <td class="align-middle">Date</td>
+            <td class="align-middle">Opp</td>
+            <td class="align-middle">Mins</td>
             <td class="align-middle">G</td>
             <td class="align-middle">A</td>
             <td class="align-middle">CS</td>
@@ -60,45 +56,45 @@
             <td class="align-middle">SV</td>
             <td class="align-middle">Bonus</td>
             <td class="align-middle">BPS</td>
-            <td class="align-middle">Points</td>
+            <td class="align-middle">Value</td>
+            <td class="align-middle">Transfer (Net)</td>
+            <td class="align-middle">Selected By</td>
           </thead>
           <tbody class="text-center align-middle">
-            {% for element in elements %}
+            {% for player in players %}
             <tr>
-              <td class="align-middle">{{element[2]}}</td>
-              <!-- <td class="align-middle"><a href="/player/{{element[1]}}" class="text-dark">{{element[5]}}</a></td>-->
-              <td class="align-middle"><a href="/player/{{element[24]}}" class="text-dark">{{element[3]}}</a></td>
-              <td class="align-middle">{{element[4]}}</td>
-              <td class="align-middle">{{element[5]}}</td>
-              <td class="align-middle">{{element[6]}}</td>
-              <td class="align-middle">{{element[7]}}</td>
-              <td class="align-middle">{{element[8]}}/{{element[9]}}</td>
-              <td class="align-middle">{{element[10]}}</td>
-              <td class="align-middle">{{element[11]}}</td>
-              <td class="align-middle">{{element[12]}}</td>
-              <td class="align-middle">{{element[13]}}</td>
-              <td class="align-middle">{{element[14]}}</td>
-              <td class="align-middle">{{element[15]}}</td>
-              <td class="align-middle">{{element[16]}}</td>
-              <td class="align-middle">{{element[17]}}</td>
-              <td class="align-middle">{{element[18]}}</td>
-              <td class="align-middle">{{element[19]}}</td>
-              <td class="align-middle">{{element[20]}}</td>
-              <td class="align-middle">{{element[21]}}</td>
-              <td class="align-middle">{{element[22]}}</td>
+              <td class="align-middle">{{player[2]}}</td>
+              <td class="align-middle">{{player[3]}}</td>
+              <td class="align-middle">{{player[4]}}</td>
+              <td class="align-middle">{{player[5]}} ({{player[6]}}) {{player[7]}}-{{player[8]}}</td>
+              <td class="align-middle">{{player[9]}}</td>
+              <td class="align-middle">{{player[10]}}</td>
+              <td class="align-middle">{{player[11]}}</td>
+              <td class="align-middle">{{player[12]}}</td>
+              <td class="align-middle">{{player[13]}}</td>
+              <td class="align-middle">{{player[14]}}</td>
+              <td class="align-middle">{{player[15]}}</td>
+              <td class="align-middle">{{player[16]}}</td>
+              <td class="align-middle">{{player[17]}}</td>
+              <td class="align-middle">{{player[18]}}</td>
+              <td class="align-middle">{{player[19]}}</td>
+              <td class="align-middle">{{player[20]}}</td>
+              <td class="align-middle">{{player[21]}}</td>
+              <td class="align-middle">{{player[22]}}</td>
+              <td class="align-middle">{{player[23]}}</td>
+              <td class="align-middle">{{player[24]}}</td>
             </tr>
             {% endfor %}
           </tbody>
         </table>
       </div>
-      <p><i>*<b>Points</b> striaght FPL points for each player, <b>Score</b> accounts for lineup adjustments like captains, benches, and subs<br>
-         **<b>Importance</b> compares your ownership level (0% bench, 100% in lineup, 200% captian...) to the league average </i></p>
     </div>
 
     <div class="container">
       <div class="row">
         <div class="col text-center">
-          <a href="/live" class="btn btn-outline-dark btn-small mx-1" role="button"  aria-disabled="true">Back to Scores</a>
+          <a href="/live" class="btn btn-outline-dark btn-small mx-1" role="button"  aria-disabled="true">Live Scores</a>
+          <a href="/elli" class="btn btn-outline-dark btn-small mx-1" role="button"  aria-disabled="true">Leaderboard</a>
           <br><br>
         </div>
       </div>

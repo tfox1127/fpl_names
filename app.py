@@ -65,6 +65,14 @@ def teams(team_id):
   db.commit()
   return render_template("teams.html", elements=elements, pname=pname)
 
+@app.route("/player/<int:player_id>")
+def players(player_id):
+  headers    = db.execute("SELECT * FROM eplayer_info WHERE id = :player_id", {"player_id": player_id})
+  players    = db.execute("SELECT * FROM df_phistory WHERE element = :player_id", {"player_id": player_id})
+
+  db.commit()
+  return render_template("epl_player.html", headers=headers, players=players)
+
 @app.route("/teams2/<int:team_id>")
 def teams2(team_id):
   """List details about a single flight."""
