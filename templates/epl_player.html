@@ -31,8 +31,9 @@
 
     <div class="container mt-2">
       {% for header in headers %}
-        <h2>{{header[2]}} {{header[3]}} ({{header[4]}})</h2>
-        <h6>YTD Points: {{header[6]}} | Current Price: {{header[7]}} | Form: {{header[8]}} | ITC: {{header[5]}}</h6>
+        <h3>{{header[2]}} {{header[3]}} ({{header[4]}})</h3>
+        <h6>YTD Points: {{header[6]}} | Current Price: {{header[7]}}</h6>
+        <h6>Form: {{header[8]}} | ITC: {{header[5]}}</h6>
       {% endfor %}
 
       <h4>Previous Fixtures</h4>
