@@ -13,7 +13,7 @@ ENV = 'dev'
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
-engine = create_engine('postgres://kbhpppsbtsabyk:6f9f47eb4721c77c17f1fccefeb2693a629e1f6e571bad88143561ba10e422be@ec2-52-20-248-222.compute-1.amazonaws.com:5432/d22l4qure274m')
+engine = create_engine('postgres://kbhpppsbtsabyk:6f9f47eb4721c77c17f1fccefeb2693a629e1f6e571bad88143561ba10e422be@ec2-52-20-248-222.compute-1.amazonaws.com:5432/d22l4qure274m', isolation_level="AUTOCOMMIT")
                                                   # DATABASE_URL is an environment variable that indicates where the database lives
 db = scoped_session(sessionmaker(bind=engine))    # create a 'scoped session' that ensures different users' interactions with the
                                                   # database are kept separate
@@ -43,6 +43,12 @@ def live():
     bottoms =  db.execute("SELECT * FROM live2 where player_name not in (SELECT name FROM \"LMS\") ORDER BY rank_lv DESC LIMIT 5")
     epls =  db.execute("SELECT * FROM score_board")
     sss =  db.execute("SELECT * FROM score_sheet")
+
+    try:
+      db.commit()
+    except exc.SQLAlchemyError:
+      time.sleep(2)
+      pass # do something intelligent here
 
     db.commit()
     #time = time.item() #.datetime.strftime("%m/%d/%Y, %H:%M:%S")
