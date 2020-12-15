@@ -38,10 +38,10 @@ def index():
 @app.route('/live')
 def live():
     time = db.execute("SELECT * FROM live2 WHERE entry = 142805")
-    elements = db.execute("SELECT * FROM live3 ORDER BY points_lg DESC LIMIT 50")
+    elements = db.execute("SELECT * FROM live2 ORDER BY points_lg DESC LIMIT 50")
     #bottoms =  db.execute("SELECT * FROM live2 where player_name not in (SELECT name FROM \"LMS\") ORDER BY live2.tPoints LIMIT 5")
     #bottoms =  db.execute("SELECT * FROM live2 where player_name not in (SELECT name FROM \"LMS\") ORDER BY rank_lv DESC LIMIT 5")
-    bottoms =  db.execute("SELECT * FROM live3 where entry not in (SELECT \"Team ID\" FROM \"lms_el\" WHERE \"Team ID\" IS NOT NULL) ORDER BY rank_lv DESC LIMIT 5")
+    bottoms =  db.execute("SELECT * FROM live2 where entry not in (SELECT \"Team ID\" FROM \"lms_el\" WHERE \"Team ID\" IS NOT NULL) ORDER BY rank_lv DESC LIMIT 5")
     epls =  db.execute("SELECT * FROM score_board")
     sss =  db.execute("SELECT * FROM score_sheet")
 
