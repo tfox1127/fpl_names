@@ -33,7 +33,7 @@
     <div class="container mt-2" >
       <h2>Live Scores</h2>
       {% for updated in time %}
-        <h6>Updated {{updated[16]}} </h6>
+        <h6>Updated {{updated[18]}} </h6>
       {% endfor %}
         <p class="col-lg-12 col-sm-12">
           <div class="table-responsive text-nowrap">
@@ -55,8 +55,8 @@
                     <td class="align-middle">{{element[2]}}</td>
                     <td class="align-middle">{{element[10]}}</td>
                     <td class="align-middle">{{element[3]}}</td>
-                    <td class="align-middle">{{element[7]}}</td>
-                    <td class="align-middle">{{element[8]}}</td>
+                    <td class="align-middle"><a href="/player/{{element[16]}}" class="text-dark">{{element[7]}}</a></td>
+                    <td class="align-middle"><a href="/player/{{element[17]}}" class="text-dark">{{element[8]}}</a></td>
                   </tr>
                 {% endfor %}
               </tbody>
@@ -82,12 +82,12 @@
           <tbody class="text-center align-middle">
             {% for bottom in bottoms %}
             <tr>
-            <td class="align-middle"><a href="/teams2/{{bottom[1]}}" class="text-dark">{{bottom[5]}}</a></td>
-            <td class="align-middle">{{bottom[2]}}</td>
-            <td class="align-middle">{{bottom[10]}}</td>
-            <td class="align-middle">{{bottom[3]}}</td>
-            <td class="align-middle">{{bottom[7]}}</td>
-            <td class="align-middle">{{bottom[8]}}</td>
+              <td class="align-middle"><a href="/teams2/{{bottom[1]}}" class="text-dark">{{bottom[5]}}</a></td>
+              <td class="align-middle">{{bottom[2]}}</td>
+              <td class="align-middle">{{bottom[10]}}</td>
+              <td class="align-middle">{{bottom[3]}}</td>
+              <td class="align-middle"><a href="/player/{{bottom[16]}}" class="text-dark">{{bottom[7]}}</a></td>
+              <td class="align-middle"><a href="/player/{{bottom[17]}}" class="text-dark">{{bottom[8]}}</a></td>
             </tr>
             {% endfor %}
           </tbody>
@@ -135,7 +135,7 @@
           <tbody class="text-center align-middle">
             {% for ss in sss %}
             <tr>
-              <td class="align-middle">{{ss[1]}}</td>
+              <td class="align-middle"><a href="/player/{{ss[7]}}" class="text-dark">{{ss[1]}}</a></td>
               <td class="align-middle">{{ss[3]}}</td>
               <td class="align-middle">{{ss[4]}}</td>
               <td class="align-middle">{{ss[5]}}</td>
