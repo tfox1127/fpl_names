@@ -115,6 +115,28 @@ def hof():
     db.commit()
     return render_template('hof.html', elements=elements, champs = champs)
 
+@app.route('/submit', methods=['POST'])
+def submit():
+    if request.method == 'POST':
+        x = request.form['rating']
+        y = request.form['name']
+        db.execute("INSERT INTO name_log (\"rating\") VALUES (:x)", {"x": y})
+        elements = db.execute('SELECT * FROM blog ORDER BY post_number DESC LIMIT 10')
+        db.commit()
+
+        return render_template('index.html', elements = elements)
+
+@app.route("/m/name/<int:name_id>")
+def m_name(name_id):
+  """List details about a single flight."""
+  name    = db.execute("SELECT \"Name\" FROM name_list_g WHERE \"2020 Rank\" = :name_id", {"name_id": name_id})
+
+  #elements = db.execute("SELECT * FROM teams2 WHERE entry = :team_id", {"team_id": team_id})
+  #elements = db.execute("SELECT * FROM \":team_id\"", {"team_id": team_id})
+  db.commit()
+  return render_template("name.html", name=name, test="Michelle")
+
+
 
 if __name__ == '__main__':
     app.run()
