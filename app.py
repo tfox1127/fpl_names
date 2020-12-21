@@ -167,7 +167,7 @@ def submit():
         return redirect(request.referrer)
 
 @app.route("/t/name/random")
-def m_name_rand():
+def t_name_rand():
     unrated = None
     while unrated == None:
         picked = random.choice(range(1000))
