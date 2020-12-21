@@ -118,23 +118,22 @@ def hof():
 
 @app.route("/m/name/random")
 def m_name_rand():
-    unrated = None
-    while unrated == None:
+    unrated = "FIND ONE"
+    while unrated != None:
         picked = random.choice(range(1000))
-        unrated = db.execute("SELECT \"Michelle\" FROM \"name_list_g\" WHERE \"2020 Rank\" = :picked", {"picked": picked})
-
-    name = db.execute("SELECT * FROM name_list_g WHERE \"2020 Rank\" = :picked", {"picked": picked})
-    d, a = {}, []
-    for rowproxy in name:
-        for column, value in rowproxy.items():
-            d = {**d, **{column: value}}
-        a.append(d)
-    name = a[0]['Name']
-    rank = a[0]['2020 Rank']
+        name = db.execute("SELECT * FROM name_list_g WHERE \"2020 Rank\" = :picked", {"picked": picked})
+        d, a = {}, []
+        for rowproxy in name:
+            for column, value in rowproxy.items():
+                d = {**d, **{column: value}}
+            a.append(d)
+        name = a[0]['Name']
+        rank = a[0]['2020 Rank']
+        unrated = a[0]['Michelle']
 
     db.commit()
 
-    return render_template("name.html", unrated=unrated, name = name, rank=rank)
+    return render_template("name_m.html", unrated=unrated, name = name, rank=rank)
 
 @app.route('/submit', methods=['POST'])
 def submit():
@@ -150,19 +149,18 @@ def submit():
 
 @app.route("/t/name/random")
 def t_name_rand():
-    unrated = None
-    while unrated == None:
+    unrated = "FIND ONE"
+    while unrated != None:
         picked = random.choice(range(1000))
-        unrated = db.execute("SELECT \"Tommy\" FROM \"name_list_g\" WHERE \"2020 Rank\" = :picked", {"picked": picked})
-
-    name = db.execute("SELECT * FROM name_list_g WHERE \"2020 Rank\" = :picked", {"picked": picked})
-    d, a = {}, []
-    for rowproxy in name:
-        for column, value in rowproxy.items():
-            d = {**d, **{column: value}}
-        a.append(d)
-    name = a[0]['Name']
-    rank = a[0]['2020 Rank']
+        name = db.execute("SELECT * FROM name_list_g WHERE \"2020 Rank\" = :picked", {"picked": picked})
+        d, a = {}, []
+        for rowproxy in name:
+            for column, value in rowproxy.items():
+                d = {**d, **{column: value}}
+            a.append(d)
+        name = a[0]['Name']
+        rank = a[0]['2020 Rank']
+        unrated = a[0]['Tommy']
 
     db.commit()
 
