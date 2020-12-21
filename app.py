@@ -184,10 +184,10 @@ def t_name_rand():
 
     db.commit()
 
-    return render_template("name.html", unrated=unrated, name = name, rank=rank)
+    return render_template("name_t.html", unrated=unrated, name = name, rank=rank)
 
 @app.route('/submit_t', methods=['POST'])
-def submit():
+def submit_t():
     if request.method == 'POST':
         x = request.form['rating']
         y = request.form['name']
