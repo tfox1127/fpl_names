@@ -5,6 +5,13 @@
   font-family: gill sans, sans-sans-serif;
 }
 
+.containers {
+  margin-top: 25px;
+  margin-left: auto;
+  margin-right: auto;
+  font-family: gill sans, sans-sans-serif;
+}
+
 body {
   background-color: #fcfcfc;
 }

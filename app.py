@@ -116,26 +116,6 @@ def hof():
     db.commit()
     return render_template('hof.html', elements=elements, champs = champs)
 
-@app.route("/m/name/summary")
-def m_summary():
-    unrated = None
-    while unrated == None:
-        picked = random.choice(range(1000))
-        unrated = db.execute("SELECT \"Michelle\" FROM \"name_list_g\" WHERE \"2020 Rank\" = :picked", {"picked": picked})
-
-    name = db.execute("SELECT * FROM name_list_g WHERE \"2020 Rank\" = :picked", {"picked": picked})
-    d, a = {}, []
-    for rowproxy in name:
-        for column, value in rowproxy.items():
-            d = {**d, **{column: value}}
-        a.append(d)
-    name = a[0]['Name']
-    rank = a[0]['2020 Rank']
-
-    db.commit()
-
-    return render_template("name_summary.html", unrated=unrated, name = name, rank=rank)
-
 @app.route("/m/name/random")
 def m_name_rand():
     unrated = None
@@ -161,6 +141,8 @@ def submit():
     if request.method == 'POST':
         x = request.form['rating']
         y = request.form['name']
+        z = request.form['user']
+
         db.execute("INSERT INTO name_log (\"rating\") VALUES (:x)", {"x": y})
         db.execute("UPDATE name_list_g SET \"Michelle\" = (:x) WHERE \"Name\" = (:y)", {"x": x, "y":y})
         db.commit()
