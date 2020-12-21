@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request, session, redirect
 from flask_sqlalchemy import SQLAlchemy
 #from flask_session import Session
 from send_mail import send_mail
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 import datetime as datetime
+import random
 
 app = Flask(__name__)
 
@@ -115,28 +116,85 @@ def hof():
     db.commit()
     return render_template('hof.html', elements=elements, champs = champs)
 
+@app.route("/m/name/summary")
+def m_summary():
+    unrated = None
+    while unrated == None:
+        picked = random.choice(range(1000))
+        unrated = db.execute("SELECT \"Michelle\" FROM \"name_list_g\" WHERE \"2020 Rank\" = :picked", {"picked": picked})
+
+    name = db.execute("SELECT * FROM name_list_g WHERE \"2020 Rank\" = :picked", {"picked": picked})
+    d, a = {}, []
+    for rowproxy in name:
+        for column, value in rowproxy.items():
+            d = {**d, **{column: value}}
+        a.append(d)
+    name = a[0]['Name']
+    rank = a[0]['2020 Rank']
+
+    db.commit()
+
+    return render_template("name_summary.html", unrated=unrated, name = name, rank=rank)
+
+@app.route("/m/name/random")
+def m_name_rand():
+    unrated = None
+    while unrated == None:
+        picked = random.choice(range(1000))
+        unrated = db.execute("SELECT \"Michelle\" FROM \"name_list_g\" WHERE \"2020 Rank\" = :picked", {"picked": picked})
+
+    name = db.execute("SELECT * FROM name_list_g WHERE \"2020 Rank\" = :picked", {"picked": picked})
+    d, a = {}, []
+    for rowproxy in name:
+        for column, value in rowproxy.items():
+            d = {**d, **{column: value}}
+        a.append(d)
+    name = a[0]['Name']
+    rank = a[0]['2020 Rank']
+
+    db.commit()
+
+    return render_template("name.html", unrated=unrated, name = name, rank=rank)
+
 @app.route('/submit', methods=['POST'])
 def submit():
     if request.method == 'POST':
         x = request.form['rating']
         y = request.form['name']
         db.execute("INSERT INTO name_log (\"rating\") VALUES (:x)", {"x": y})
-        elements = db.execute('SELECT * FROM blog ORDER BY post_number DESC LIMIT 10')
+        db.execute("UPDATE name_list_g SET \"Michelle\" = (:x) WHERE \"Name\" = (:y)", {"x": x, "y":y})
         db.commit()
+        return redirect(request.referrer)
 
-        return render_template('index.html', elements = elements)
+@app.route("/t/name/random")
+def m_name_rand():
+    unrated = None
+    while unrated == None:
+        picked = random.choice(range(1000))
+        unrated = db.execute("SELECT \"Tommy\" FROM \"name_list_g\" WHERE \"2020 Rank\" = :picked", {"picked": picked})
 
-@app.route("/m/name/<int:name_id>")
-def m_name(name_id):
-  """List details about a single flight."""
-  name    = db.execute("SELECT \"Name\" FROM name_list_g WHERE \"2020 Rank\" = :name_id", {"name_id": name_id})
+    name = db.execute("SELECT * FROM name_list_g WHERE \"2020 Rank\" = :picked", {"picked": picked})
+    d, a = {}, []
+    for rowproxy in name:
+        for column, value in rowproxy.items():
+            d = {**d, **{column: value}}
+        a.append(d)
+    name = a[0]['Name']
+    rank = a[0]['2020 Rank']
 
-  #elements = db.execute("SELECT * FROM teams2 WHERE entry = :team_id", {"team_id": team_id})
-  #elements = db.execute("SELECT * FROM \":team_id\"", {"team_id": team_id})
-  db.commit()
-  return render_template("name.html", name=name, test="Michelle")
+    db.commit()
 
+    return render_template("name.html", unrated=unrated, name = name, rank=rank)
 
+@app.route('/submit_t', methods=['POST'])
+def submit():
+    if request.method == 'POST':
+        x = request.form['rating']
+        y = request.form['name']
+        db.execute("INSERT INTO name_log (\"rating\") VALUES (:x)", {"x": y})
+        db.execute("UPDATE name_list_g SET \"Tommy\" = (:x) WHERE \"Name\" = (:y)", {"x": x, "y":y})
+        db.commit()
+        return redirect(request.referrer)
 
 if __name__ == '__main__':
     app.run()
