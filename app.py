@@ -133,7 +133,7 @@ def m_name_rand():
 
     db.commit()
 
-    return render_template("name_m.html", unrated=unrated, name = name, rank=rank)
+    return render_template("name.html", unrated=unrated, name = name, rank=rank)
 
 @app.route('/submit', methods=['POST'])
 def submit():
