@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, redirect
+from flask import Flask, render_template, request, session, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 #from flask_session import Session
 from send_mail import send_mail
@@ -19,6 +19,7 @@ engine = create_engine('postgres://oqivztlextiryy:f910e63e9de02a848ecddc6941e46d
 db = scoped_session(sessionmaker(bind=engine))    # create a 'scoped session' that ensures different users' interactions with the
                                                   # database are kept separate
 
+app.secret_key = 'pizza'
 
 #engine = create_engine('postgres://kbhpppsbtsabyk:6f9f47eb4721c77c17f1fccefeb2693a629e1f6e571bad88143561ba10e422be@ec2-52-20-248-222.compute-1.amazonaws.com:5432/d22l4qure274m')
 #app.config["SESSION_PERMANENT"] = False
@@ -175,6 +176,28 @@ def submit_t():
         db.execute("UPDATE name_list_g SET \"Tommy\" = (:x) WHERE \"Name\" = (:y)", {"x": x, "y":y})
         db.commit()
         return redirect(request.referrer)
+
+
+@app.route("/name/random")
+def random():
+    if "user" in session:
+        user = session["user"]
+        return render_template("random.html", user=user)
+    else:
+        return redirect(url_for("login"))
+
+
+@app.route("/login", methods = ["POST", "GET"])
+def login():
+    if request.method == "POST":
+        user = request.form["name"]
+        session['user'] = user
+        return redirect(url_for("random"))
+
+
+    #"SELECT src_name_list."2020 Rank" FROM src_name_list LEFT JOIN ratings ON src_name_list."2020 Rank" = ratings."2020 Rank" WHERE ratings."User" != 'Tommy' OR ratings."User" is NULL"
+    else:
+        return render_template("login.html")
 
 if __name__ == '__main__':
     app.run()
