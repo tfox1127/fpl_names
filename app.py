@@ -21,16 +21,6 @@ db = scoped_session(sessionmaker(bind=engine))    # create a 'scoped session' th
 
 app.secret_key = 'pizza'
 
-#engine = create_engine('postgres://kbhpppsbtsabyk:6f9f47eb4721c77c17f1fccefeb2693a629e1f6e571bad88143561ba10e422be@ec2-52-20-248-222.compute-1.amazonaws.com:5432/d22l4qure274m')
-#app.config["SESSION_PERMANENT"] = False
-#app.config["SESSION_TYPE"] = "filesystem"
-#Session(app)
-#db = scoped_session(sessionmaker(bind=engine))
-#ter system set idle_in_transaction_session_timeout='1min';
-#SET SESSION idle_in_transaction_session_timeout = '1min';
-#SQLALCHEMY_POOL_RECYCLE = 60
-#alter database dbnamehere set statement_timeout = 600;
-
 @app.route('/')
 def index():
     elements = db.execute('SELECT * FROM blog ORDER BY post_number DESC LIMIT 10')
@@ -117,76 +107,6 @@ def hof():
     db.commit()
     return render_template('hof.html', elements=elements, champs = champs)
 
-@app.route("/m/name/random")
-def m_name_rand():
-    unrated = "FIND ONE"
-    while unrated != None:
-        picked = random.choice(range(1000))
-        name = db.execute("SELECT * FROM name_list_g WHERE \"2020 Rank\" = :picked", {"picked": picked})
-        d, a = {}, []
-        for rowproxy in name:
-            for column, value in rowproxy.items():
-                d = {**d, **{column: value}}
-            a.append(d)
-        name = a[0]['Name']
-        rank = a[0]['2020 Rank']
-        unrated = a[0]['Michelle']
-
-    db.commit()
-
-    return render_template("name.html", unrated=unrated, name = name, rank=rank)
-
-@app.route('/submit', methods=['POST'])
-def submit():
-    if request.method == 'POST':
-        x = request.form['rating']
-        y = request.form['name']
-        z = request.form['user']
-
-        db.execute("INSERT INTO name_log (\"rating\") VALUES (:x)", {"x": y})
-        db.execute("UPDATE name_list_g SET \"Michelle\" = (:x) WHERE \"Name\" = (:y)", {"x": x, "y":y})
-        db.commit()
-        return redirect(request.referrer)
-
-@app.route("/t/name/random")
-def t_name_rand():
-    unrated = "FIND ONE"
-    while unrated != None:
-        picked = random.choice(range(1000))
-        name = db.execute("SELECT * FROM name_list_g WHERE \"2020 Rank\" = :picked", {"picked": picked})
-        d, a = {}, []
-        for rowproxy in name:
-            for column, value in rowproxy.items():
-                d = {**d, **{column: value}}
-            a.append(d)
-        name = a[0]['Name']
-        rank = a[0]['2020 Rank']
-        unrated = a[0]['Tommy']
-
-    db.commit()
-
-    return render_template("name_t.html", unrated=unrated, name = name, rank=rank)
-
-@app.route('/submit_t', methods=['POST'])
-def submit_t():
-    if request.method == 'POST':
-        x = request.form['rating']
-        y = request.form['name']
-        db.execute("INSERT INTO name_log (\"rating\") VALUES (:x)", {"x": y})
-        db.execute("UPDATE name_list_g SET \"Tommy\" = (:x) WHERE \"Name\" = (:y)", {"x": x, "y":y})
-        db.commit()
-        return redirect(request.referrer)
-
-
-@app.route("/name/random")
-def random():
-    if "user" in session:
-        user = session["user"]
-        return render_template("random.html", user=user)
-    else:
-        return redirect(url_for("login"))
-
-
 @app.route("/login", methods = ["POST", "GET"])
 def login():
     if request.method == "POST":
@@ -194,10 +114,101 @@ def login():
         session['user'] = user
         return redirect(url_for("random"))
 
-
-    #"SELECT src_name_list."2020 Rank" FROM src_name_list LEFT JOIN ratings ON src_name_list."2020 Rank" = ratings."2020 Rank" WHERE ratings."User" != 'Tommy' OR ratings."User" is NULL"
     else:
         return render_template("login.html")
+
+
+def format_results(result):
+    d, a = {}, []
+    for rowproxy in result:
+        for column, value in rowproxy.items():
+            d = {**d, **{column: value}}
+        a.append(d)
+    return a
+
+@app.route("/name/random_name")
+def random_name():
+    if "user" in session:
+        #get list of unrated names
+        user = session["user"]
+        q = "SELECT src_name_list.\"2020 Rank\" FROM src_name_list LEFT JOIN ratings ON src_name_list.\"2020 Rank\" = ratings.\"2020 Rank\" WHERE ratings.\"User\" != :user OR ratings.\"User\" is NULL"
+        full = db.execute(q, {"user": user})
+        f_full = format_results(full)
+
+        #pick random formatted result
+        this_many = len(f_full)
+        pick = random.choice(range(this_many))
+
+        #run query to get that picks info
+        q = "SELECT * FROM src_name_list WHERE \"2020 Rank\" = :pick"
+        names = db.execute(q, {"pick": pick})
+        f_names = format_results(names)
+        f_name = f_names[0]['Name']
+        f_rank = f_names[0]['2020 Rank']
+
+        return render_template("random_name.html", user=user, name=f_name, rank=f_rank)
+    else:
+        return redirect(url_for("login"))
+
+@app.route('/submit', methods=['POST'])
+def submit():
+    if request.method == 'POST':
+        x = request.form['rank']
+        y = request.form['user']
+        z = request.form['rating']
+
+        db.execute("INSERT INTO ratings (\"2020 Rank\", \"User\", \"Rating\") VALUES (:x, :y, :z)", {"x": x, "y": y, "z": z})
+        #db.execute("UPDATE name_list_g SET \"Michelle\" = (:x) WHERE \"Name\" = (:y)", {"x": x, "y":y})
+        db.commit()
+        return redirect(request.referrer)
+
+# @app.route("/m/name/random")
+# def m_name_rand():
+#     unrated = "FIND ONE"
+#     while unrated != None:
+#         picked = random.choice(range(1000))
+#         name = db.execute("SELECT * FROM name_list_g WHERE \"2020 Rank\" = :picked", {"picked": picked})
+#         d, a = {}, []
+#         for rowproxy in name:
+#             for column, value in rowproxy.items():
+#                 d = {**d, **{column: value}}
+#             a.append(d)
+#         name = a[0]['Name']
+#         rank = a[0]['2020 Rank']
+#         unrated = a[0]['Michelle']
+#
+#     db.commit()
+#
+#     return render_template("name.html", unrated=unrated, name = name, rank=rank)
+#
+# @app.route("/t/name/random")
+# def t_name_rand():
+#     unrated = "FIND ONE"
+#     while unrated != None:
+#         picked = random.choice(range(1000))
+#         name = db.execute("SELECT * FROM name_list_g WHERE \"2020 Rank\" = :picked", {"picked": picked})
+#         d, a = {}, []
+#         for rowproxy in name:
+#             for column, value in rowproxy.items():
+#                 d = {**d, **{column: value}}
+#             a.append(d)
+#         name = a[0]['Name']
+#         rank = a[0]['2020 Rank']
+#         unrated = a[0]['Tommy']
+#
+#     db.commit()
+#
+#     return render_template("name_t.html", unrated=unrated, name = name, rank=rank)
+#
+# @app.route('/submit_t', methods=['POST'])
+# def submit_t():
+#     if request.method == 'POST':
+#         x = request.form['rating']
+#         y = request.form['name']
+#         db.execute("INSERT INTO name_log (\"rating\") VALUES (:x)", {"x": y})
+#         db.execute("UPDATE name_list_g SET \"Tommy\" = (:x) WHERE \"Name\" = (:y)", {"x": x, "y":y})
+#         db.commit()
+#         return redirect(request.referrer)
 
 if __name__ == '__main__':
     app.run()
