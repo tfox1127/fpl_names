@@ -131,13 +131,15 @@ def random_name():
     if "user" in session:
         #get list of unrated names
         user = session["user"]
-        q = "SELECT src_name_list.\"2020 Rank\" FROM src_name_list LEFT JOIN ratings ON src_name_list.\"2020 Rank\" = ratings.\"2020 Rank\" WHERE ratings.\"User\" != :user OR ratings.\"User\" is NULL"
+        q = ("SELECT src_name_list.\"2020 Rank\" FROM src_name_list LEFT JOIN ratings ON "
+         "src_name_list.\"2020 Rank\" = ratings.\"2020 Rank\" WHERE ratings.\"User\" != :user OR ratings.\"User\" is NULL")
         full = db.execute(q, {"user": user})
         f_full = format_results(full)
 
         #pick random formatted result
         this_many = len(f_full)
         pick = random.choice(range(this_many))
+        pick = f_full[pick]['2020 Rank']
 
         #run query to get that picks info
         q = "SELECT * FROM src_name_list WHERE \"2020 Rank\" = :pick"
