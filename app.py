@@ -112,7 +112,7 @@ def login():
     if request.method == "POST":
         user = request.form["name"]
         session['user'] = user
-        return redirect(url_for("random"))
+        return redirect(url_for("random_name"))
 
     else:
         return render_template("login.html")
