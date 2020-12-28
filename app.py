@@ -31,8 +31,6 @@ def index():
 def live():
     time = db.execute("SELECT * FROM live2 WHERE entry = 142805")
     elements = db.execute("SELECT * FROM live2 ORDER BY points_lg DESC LIMIT 50")
-    #bottoms =  db.execute("SELECT * FROM live2 where player_name not in (SELECT name FROM \"LMS\") ORDER BY live2.tPoints LIMIT 5")
-    #bottoms =  db.execute("SELECT * FROM live2 where player_name not in (SELECT name FROM \"LMS\") ORDER BY rank_lv DESC LIMIT 5")
     bottoms =  db.execute("SELECT * FROM live2 where entry not in (SELECT \"Team ID\" FROM \"lms_el\" WHERE \"Team ID\" IS NOT NULL) ORDER BY rank_lv DESC LIMIT 5")
     epls =  db.execute("SELECT * FROM score_board")
     sss =  db.execute("SELECT * FROM score_sheet")
@@ -54,6 +52,27 @@ def elli():
     db.commit()
     #time = time.item() #.datetime.strftime("%m/%d/%Y, %H:%M:%S")
     return render_template('elli.html', ellis=ellis, nonellis=nonellis)
+
+@app.route('/run_search', methods= ['POST'])
+def run_search():
+    if request.method == 'POST':
+        search_for = request.form['search_for']
+        search_for_like = "%" + search_for + "%"
+        search_results_data = db.execute("SELECT * FROM \"df_elli\" WHERE UPPER(\"df_elli\".\"web_name\") LIKE UPPER(:search_for_like) OR UPPER(\"df_elli\".\"team\") LIKE UPPER(:search_for_like)", {"search_for_like":search_for_like})
+        #q = ("SELECT * FROM \"df_elli\" WHERE UPPER(\"df_elli\".\"web_name\") LIKE UPPER(:search_for)")
+            #"src_name_list.\"2020 Rank\" = ratings.\"2020 Rank\" WHERE ratings.\"User\" != :user OR ratings.\"User\" is NULL")
+
+        #search_results_data = db.execute(q, {"search_for" : search_for})
+        db.commit()
+        #return redirect(request.referrer, search_results_data=search_results_data)
+        #return full
+        return render_template('search_results.html', search_results_data=search_results_data, search_for=search_for)
+
+#@app.route('/search_results')
+#def search_results(search_results_data):
+
+#     time = time.item() #.datetime.strftime("%m/%d/%Y, %H:%M:%S")
+#    return render_template('search_results.html', ellis=ellis, nonellis=nonellis)
 
 @app.route("/teams/<int:team_id>")
 def teams(team_id):
@@ -107,6 +126,14 @@ def hof():
     db.commit()
     return render_template('hof.html', elements=elements, champs = champs)
 
+def format_results(result):
+    d, a = {}, []
+    for rowproxy in result:
+        for column, value in rowproxy.items():
+            d = {**d, **{column: value}}
+        a.append(d)
+    return a
+
 @app.route("/login", methods = ["POST", "GET"])
 def login():
     if request.method == "POST":
@@ -115,16 +142,7 @@ def login():
         return redirect(url_for("random_name"))
 
     else:
-        return render_template("login.html")
-
-
-def format_results(result):
-    d, a = {}, []
-    for rowproxy in result:
-        for column, value in rowproxy.items():
-            d = {**d, **{column: value}}
-        a.append(d)
-    return a
+        return render_template("z2_login.html")
 
 @app.route("/name/random_name")
 def random_name():
@@ -148,7 +166,7 @@ def random_name():
         f_name = f_names[0]['Name']
         f_rank = f_names[0]['2020 Rank']
 
-        return render_template("random_name.html", user=user, name=f_name, rank=f_rank)
+        return render_template("z2_random_name.html", user=user, name=f_name, rank=f_rank)
     else:
         return redirect(url_for("login"))
 
@@ -164,53 +182,10 @@ def submit():
         db.commit()
         return redirect(request.referrer)
 
-# @app.route("/m/name/random")
-# def m_name_rand():
-#     unrated = "FIND ONE"
-#     while unrated != None:
-#         picked = random.choice(range(1000))
-#         name = db.execute("SELECT * FROM name_list_g WHERE \"2020 Rank\" = :picked", {"picked": picked})
-#         d, a = {}, []
-#         for rowproxy in name:
-#             for column, value in rowproxy.items():
-#                 d = {**d, **{column: value}}
-#             a.append(d)
-#         name = a[0]['Name']
-#         rank = a[0]['2020 Rank']
-#         unrated = a[0]['Michelle']
-#
-#     db.commit()
-#
-#     return render_template("name.html", unrated=unrated, name = name, rank=rank)
-#
-# @app.route("/t/name/random")
-# def t_name_rand():
-#     unrated = "FIND ONE"
-#     while unrated != None:
-#         picked = random.choice(range(1000))
-#         name = db.execute("SELECT * FROM name_list_g WHERE \"2020 Rank\" = :picked", {"picked": picked})
-#         d, a = {}, []
-#         for rowproxy in name:
-#             for column, value in rowproxy.items():
-#                 d = {**d, **{column: value}}
-#             a.append(d)
-#         name = a[0]['Name']
-#         rank = a[0]['2020 Rank']
-#         unrated = a[0]['Tommy']
-#
-#     db.commit()
-#
-#     return render_template("name_t.html", unrated=unrated, name = name, rank=rank)
-#
-# @app.route('/submit_t', methods=['POST'])
-# def submit_t():
-#     if request.method == 'POST':
-#         x = request.form['rating']
-#         y = request.form['name']
-#         db.execute("INSERT INTO name_log (\"rating\") VALUES (:x)", {"x": y})
-#         db.execute("UPDATE name_list_g SET \"Tommy\" = (:x) WHERE \"Name\" = (:y)", {"x": x, "y":y})
-#         db.commit()
-#         return redirect(request.referrer)
+@app.route("/search", methods = ["POST", "GET"])
+def search():
+    return render_template("z2_search.html")
+
 
 if __name__ == '__main__':
     app.run()
