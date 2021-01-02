@@ -139,10 +139,14 @@ def login():
     if request.method == "POST":
         user = request.form["name"]
         session['user'] = user
-        return redirect(url_for("random_name"))
+        return redirect(url_for("profile", user=user))
 
     else:
         return render_template("z2_login.html")
+
+@app.route("/profile/<string:user>")
+def profile(user):
+  return render_template("z2_profile.html", user=user)
 
 @app.route("/name/random_name")
 def random_name():
@@ -166,9 +170,19 @@ def random_name():
         f_name = f_names[0]['Name']
         f_rank = f_names[0]['2020 Rank']
 
-        return render_template("z2_random_name.html", user=user, name=f_name, rank=f_rank)
+        session['name'] = f_name
+        session['rank'] = f_rank
+
+        return redirect(url_for("name_page", name=session['name']))
     else:
         return redirect(url_for("login"))
+
+@app.route('/name/<string:name>')
+def name_page(name):
+    user = session['user']
+    name = session['name']
+    rank = session['rank']
+    return render_template('z2_name.html', user=user, name=name, rank=rank)
 
 @app.route('/submit', methods=['POST'])
 def submit():
@@ -180,11 +194,22 @@ def submit():
         db.execute("INSERT INTO ratings (\"2020 Rank\", \"User\", \"Rating\") VALUES (:x, :y, :z)", {"x": x, "y": y, "z": z})
         #db.execute("UPDATE name_list_g SET \"Michelle\" = (:x) WHERE \"Name\" = (:y)", {"x": x, "y":y})
         db.commit()
-        return redirect(request.referrer)
+        #return redirect(request.referrer)
+        return redirect(url_for("random_name"))
 
-@app.route("/search", methods = ["POST", "GET"])
-def search():
-    return render_template("z2_search.html")
+@app.route('/search_name')
+def search_name():
+    return render_template('z2_search.html')
+
+@app.route("/search_name_results", methods = ["POST", "GET"])
+def search_name_results():
+    if request.method == 'POST':
+        search_for_name = request.form['search_for_name']
+        search_for_name_like = "%" + search_for_name + "%"
+        search_results_data = db.execute("SELECT * FROM \"df_elli\" WHERE UPPER(\"df_elli\".\"web_name\") LIKE UPPER(:search_for_name_like)", {"search_for_name_like":search_for_name_like})
+
+        db.commit()
+        return render_template("z2_search_name_results.html", search_results_data=search_results_data, search_for_name=search_for_name)
 
 
 if __name__ == '__main__':
