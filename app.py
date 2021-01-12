@@ -31,7 +31,15 @@ def index():
 def live():
     time = db.execute("SELECT * FROM live2 WHERE entry = 142805")
     elements = db.execute("SELECT * FROM live2 ORDER BY points_lg DESC LIMIT 50")
-    bottoms =  db.execute("SELECT * FROM live2 where entry not in (SELECT \"Team ID\" FROM \"lms_el\" WHERE \"Team ID\" IS NOT NULL) ORDER BY rank_lv DESC LIMIT 5")
+    #bottoms =  db.execute("SELECT * FROM live2 where entry not in (SELECT \"Team ID\" FROM \"lms_el\" WHERE \"Team ID\" IS NOT NULL) ORDER BY rank_lv DESC LIMIT 5")
+
+    cups = db.execute(f"""SELECT "Group", "Match", "l21"."tPoints" as "Team 1 Score", "l22"."tPoints" as "Team 2 Score", "Match ID" FROM "Cup"
+        LEFT JOIN "live2" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
+        LEFT JOIN "live2" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
+        WHERE "GW" = {18}
+        ORDER BY "Group"
+        """)
+
     epls =  db.execute("SELECT * FROM score_board")
     sss =  db.execute("SELECT * FROM score_sheet")
 
@@ -43,7 +51,28 @@ def live():
 
     db.commit()
     #time = time.item() #.datetime.strftime("%m/%d/%Y, %H:%M:%S")
-    return render_template('live.html', elements=elements, time=time, bottoms=bottoms, epls=epls, sss=sss)
+    return render_template('live.html', elements=elements, time=time, cups=cups, epls=epls, sss=sss)
+
+@app.route('/cup_matchup/<int:cup_matchup_id>')
+def cup_matchup(cup_matchup_id):
+    cups = db.execute(f"""SELECT "Group", "Match", "l21"."tPoints" as "Team 1 Score", "l22"."tPoints" as "Team 2 Score", "Match ID" FROM "Cup"
+        LEFT JOIN "live2" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
+        LEFT JOIN "live2" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
+        WHERE "GW" = {18}
+        ORDER BY "Group"
+        """)
+
+    elements = db.execute(f"""SELECT * FROM "df_teams20" WHERE "entry" in
+        (SELECT "Team 1 ID" as "entry"
+        FROM "Cup"
+        WHERE "Match ID" = {cup_matchup_id} AND "GW" = {18}
+        UNION
+        SELECT "Team 2 ID" as "entry"
+        FROM "Cup"
+        WHERE "Match ID" = {cup_matchup_id} AND "GW" = {18})
+        """)
+    db.commit()
+    return render_template('cup_matchup.html', cups=cups, elements=elements, cup_matchup_id=cup_matchup_id)
 
 @app.route('/elli')
 def elli():

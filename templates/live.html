@@ -79,27 +79,22 @@
     </div>
 
     <div class="container mt-2" >
-      <h2>LMS Tracker</h2>
-      <h6>Bottom one will be dropped. See more <a href="/lms">here</a></h6>
+      <h2>League Cup</h2>
       <div class="table-responsive text-nowrap">
         <table class="table table-sm text-xsmall table-hover sortable ;" >
           <thead class="thead-light text-center align-middle">
-            <td class="align-middle">Team</td>
-            <td class="align-middle"><div data-toggle="tooltip" data-placement="top" title="This Week's Points">Pts (W)</div></td>
-            <td class="align-middle">Pts (T)</td>
-            <td class="align-middle">GP</td>
-            <td class="align-middle">Captain</td>
-            <td class="align-middle">Vice</td>
+            <td class="align-middle">Group</td>
+            <td class="align-middle">Match</td>
+            <td class="align-middle">Team 1 Score</td>
+            <td class="align-middle">Team 2 Score</td>
           </thead>
           <tbody class="text-center align-middle">
-            {% for bottom in bottoms %}
+            {% for cup in cups %}
             <tr>
-              <td class="align-middle"><a href="/teams2/{{bottom[1]}}" class="text-dark">{{bottom[5]}}</a></td>
-              <td class="align-middle">{{bottom[2]}}</td>
-              <td class="align-middle">{{bottom[10]}}</td>
-              <td class="align-middle">{{bottom[3]}}</td>
-              <td class="align-middle"><a href="/player/{{bottom[16]}}" class="text-dark">{{bottom[7]}}</a></td>
-              <td class="align-middle"><a href="/player/{{bottom[17]}}" class="text-dark">{{bottom[8]}}</a></td>
+              <td class="align-middle">{{cup[0]}}</td>
+              <td class="align-middle"><a href="/cup_matchup/{{cup[4]}}" class="text-dark">{{cup[1]}}</a></td>
+              <td class="align-middle">{{cup[2]}}</td>
+              <td class="align-middle">{{cup[3]}}</td>
             </tr>
             {% endfor %}
           </tbody>
