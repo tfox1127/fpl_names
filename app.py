@@ -61,6 +61,12 @@ def cup_matchup(cup_matchup_id):
         WHERE "GW" = {18}
         ORDER BY "Group"
         """)
+    cups2 = db.execute(f"""SELECT "Group", "Match", "l21"."tPoints" as "Team 1 Score", "l22"."tPoints" as "Team 2 Score", "Match ID" FROM "Cup"
+        LEFT JOIN "live2" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
+        LEFT JOIN "live2" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
+        WHERE "GW" = {18}
+        ORDER BY "Group"
+        """)
 
     elements = db.execute(f"""SELECT * FROM "df_teams20" WHERE "entry" in
         (SELECT "Team 1 ID" as "entry"
@@ -72,7 +78,7 @@ def cup_matchup(cup_matchup_id):
         WHERE "Match ID" = {cup_matchup_id} AND "GW" = {18})
         """)
     db.commit()
-    return render_template('cup_matchup.html', cups=cups, elements=elements, cup_matchup_id=cup_matchup_id)
+    return render_template('cup_matchup.html', cups=cups, cups2=cups2, elements=elements, cup_matchup_id=cup_matchup_id)
 
 @app.route('/elli')
 def elli():
