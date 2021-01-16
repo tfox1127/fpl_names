@@ -40,8 +40,8 @@ def live():
         ORDER BY "Group"
         """)
 
-    epls =  db.execute("SELECT * FROM score_board")
-    sss =  db.execute("SELECT * FROM score_sheet")
+    epls =  db.execute("SELECT DISTINCT * FROM score_board")
+    sss =  db.execute("SELECT DISTINCT * FROM score_sheet")
 
     try:
       db.commit()
