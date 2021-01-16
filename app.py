@@ -29,11 +29,11 @@ def index():
 
 @app.route('/live')
 def live():
-    time = db.execute("SELECT * FROM live2 WHERE entry = 142805")
-    elements = db.execute("SELECT * FROM live2 ORDER BY points_lg DESC LIMIT 50")
+    time = db.execute("SELECT DISTINCT * FROM live2 WHERE entry = 142805")
+    elements = db.execute("SELECT DISTINCT * FROM live2 ORDER BY points_lg DESC LIMIT 50")
     #bottoms =  db.execute("SELECT * FROM live2 where entry not in (SELECT \"Team ID\" FROM \"lms_el\" WHERE \"Team ID\" IS NOT NULL) ORDER BY rank_lv DESC LIMIT 5")
 
-    cups = db.execute(f"""SELECT "Group", "Match", "l21"."tPoints" as "Team 1 Score", "l22"."tPoints" as "Team 2 Score", "Match ID" FROM "Cup"
+    cups = db.execute(f"""SELECT DISTINCT "Group", "Match", "l21"."tPoints" as "Team 1 Score", "l22"."tPoints" as "Team 2 Score", "Match ID" FROM "Cup"
         LEFT JOIN "live2" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
         LEFT JOIN "live2" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
         WHERE "GW" = {19}
