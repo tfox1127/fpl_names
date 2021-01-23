@@ -35,9 +35,8 @@
 
       <div class="row">
         <div class="col text-center">
-          <p>Live Scores might be right today... I didn't plan for double games weeks when I put this together and some things
-            were getting duped. I think caught everything but shoot me a note in the slack if you see anything that looks wrong.
-            For now, autosubs and bonus point projections are turned off, I'll see if I can get those back up for tomorrow. <br> Thanks - Tom</p>
+          <p>Sorry it took so long but live scores should be right and your team pages are in a cleaner format for
+            the double game week. Bonuses are working but subs aren't yet.<br> Thanks - Tom</p>
           <br>
         </div>
       </div>
@@ -66,7 +65,7 @@
                 {% for element in elements %}
                   <tr>
                     <td class="align-middle">{{element[12]}} ({{element[14]}})</td>
-                    <td class="align-middle"><a href="/teams2/{{element[1]}}" class="text-dark">{{element[5]}}</a></td>
+                    <td class="align-middle"><a href="/teams30/{{element[1]}}" class="text-dark">{{element[5]}}</a></td>
                     <td class="align-middle">{{element[2]}}</td>
                     <td class="align-middle">{{element[10]}}</td>
                     <td class="align-middle">{{element[3]}}</td>
@@ -93,6 +92,7 @@
 
     <div class="container mt-2" >
       <h2>League Cup</h2>
+      <h6><i>Note - scores are pending subs</i></h6>
       <div class="table-responsive text-nowrap">
         <table class="table table-sm text-xsmall table-hover sortable ;" >
           <thead class="thead-light text-center align-middle">

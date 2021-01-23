@@ -68,7 +68,7 @@ def cup_matchup(cup_matchup_id):
         ORDER BY "Group"
         """)
 
-    elements = db.execute(f"""SELECT * FROM "df_teams20" WHERE "entry" in
+    elements = db.execute(f"""SELECT * FROM "teams30" WHERE \"entry\" in
         (SELECT "Team 1 ID" as "entry"
         FROM "Cup"
         WHERE "Match ID" = {cup_matchup_id} AND "GW" = {19}
@@ -134,6 +134,14 @@ def teams2(team_id):
   elements = db.execute("SELECT * FROM df_teams20 WHERE entry = :team_id", {"team_id": team_id})
   db.commit()
   return render_template("teams2.html", elements=elements, pname=pname)
+
+@app.route("/teams30/<int:team_id>")
+def teams30(team_id):
+  """List details about a single flight."""
+  pname    = db.execute("SELECT * FROM live2 WHERE entry = :team_id", {"team_id": team_id})
+  elements = db.execute("SELECT * FROM teams30 WHERE \"entry\" = :entry", {"entry": team_id})
+  db.commit()
+  return render_template("team30.html", elements=elements, pname=pname)
 
 @app.route('/lms')
 def lms():

@@ -22,64 +22,62 @@
 
 </div>
 
-<div class="container mt-2">
-  <div class="table-responsive text-nowrap">
-    <table class="table table-sm text-xsmall table-hover sortable ;" >
-      <thead class="thead-light text-center">
-        <td class="align-middle">Team</td>
-        <td class="align-middle">POS #</td>
-        <td class="align-middle">Player</td>
-        <td class="align-middle">POS</td>
-        <td class="align-middle">Team</td>
-        <td class="align-middle">Importance</td>
-        <td class="align-middle">Score</td>
-        <td class="align-middle">Mins (pl/gm)</td>
-        <td class="align-middle">G</td>
-        <td class="align-middle">A</td>
-        <td class="align-middle">CS</td>
-        <td class="align-middle">GC</td>
-        <td class="align-middle">OG</td>
-        <td class="align-middle">PS</td>
-        <td class="align-middle">PM</td>
-        <td class="align-middle">YC</td>
-        <td class="align-middle">RC</td>
-        <td class="align-middle">SV</td>
-        <td class="align-middle">Bonus</td>
-        <td class="align-middle">BPS</td>
-        <td class="align-middle">Points</td>
-      </thead>
-      <tbody class="text-center align-middle">
-        {% for element in elements %}
-        <tr>
-          <td class="align-middle">{{element[28]}}</td>
-          <td class="align-middle">{{element[2]}}</td>
-          <!-- <td class="align-middle"><a href="/player/{{element[1]}}" class="text-dark">{{element[5]}}</a></td>-->
-          <td class="align-middle"><a href="/player/{{element[24]}}" class="text-dark">{{element[3]}}</a></td>
-          <td class="align-middle">{{element[4]}}</td>
-          <td class="align-middle">{{element[5]}}</td>
-          <td class="align-middle">{{element[6]}}</td>
-          <td class="align-middle">{{element[7]}}</td>
-          <td class="align-middle">{{element[8]}}/{{element[9]}}</td>
-          <td class="align-middle">{{element[10]}}</td>
-          <td class="align-middle">{{element[11]}}</td>
-          <td class="align-middle">{{element[12]}}</td>
-          <td class="align-middle">{{element[13]}}</td>
-          <td class="align-middle">{{element[14]}}</td>
-          <td class="align-middle">{{element[15]}}</td>
-          <td class="align-middle">{{element[16]}}</td>
-          <td class="align-middle">{{element[17]}}</td>
-          <td class="align-middle">{{element[18]}}</td>
-          <td class="align-middle">{{element[19]}}</td>
-          <td class="align-middle">{{element[20]}}</td>
-          <td class="align-middle">{{element[21]}}</td>
-          <td class="align-middle">{{element[22]}}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  <p><i>*<b>Points</b> striaght FPL points for each player, <b>Score</b> accounts for lineup adjustments like captains, benches, and subs<br>
-     **<b>Importance</b> compares your ownership level (0% bench, 100% in lineup, 200% captian...) to the league average </i></p>
+<div class="table-responsive text-nowrap">
+  <table class="table table-sm text-xsmall table-hover sortable ;" >
+    <thead class="thead-light text-center">
+      <td class="align-middle">POS #</td>
+      <td class="align-middle">Player</td>
+      <td class="align-middle">POS</td>
+      <td class="align-middle">Team</td>
+      <td class="align-middle">Match</td>
+      <td class="align-middle">Importance</td>
+      <td class="align-middle">Score</td>
+      <td class="align-middle">Mins (pl/gm)</td>
+      <td class="align-middle">G</td>
+      <td class="align-middle">A</td>
+      <td class="align-middle">CS</td>
+      <td class="align-middle">GC</td>
+      <td class="align-middle">OG</td>
+      <td class="align-middle">PS</td>
+      <td class="align-middle">PM</td>
+      <td class="align-middle">YC</td>
+      <td class="align-middle">RC</td>
+      <td class="align-middle">SV</td>
+      <td class="align-middle">Bonus</td>
+      <td class="align-middle">BPS</td>
+      <td class="align-middle">Points</td>
+    </thead>
+    <tbody class="text-center align-middle">
+      {% for element in elements %}
+      <tr>
+        <td class="align-middle">{{element[2]}}</td>
+        <td class="align-middle"><a href="/player/{{element[31]}}" class="text-dark">{{element[3]}}</a></td>
+        <td class="align-middle">{{element[4]}}</td>
+        <td class="align-middle">{{element[5]}}</td>
+        <td class="align-middle"><a href="/player/{{element[7]}}" class="text-dark">{{element[8]}}|{{element[9]}}</a></td>
+        <td class="align-middle">-</td>
+        <td class="align-middle">{{element[10]}}</td>
+        <td class="align-middle">{{element[13]}}/{{element[14]}}</td>
+        <td class="align-middle">{{element[15]}}</td>
+        <td class="align-middle">{{element[16]}}</td>
+        <td class="align-middle">{{element[17]}}</td>
+        <td class="align-middle">{{element[18]}}</td>
+        <td class="align-middle">{{element[19]}}</td>
+        <td class="align-middle">{{element[20]}}</td>
+        <td class="align-middle">{{element[21]}}</td>
+        <td class="align-middle">{{element[22]}}</td>
+        <td class="align-middle">{{element[23]}}</td>
+        <td class="align-middle">{{element[24]}}</td>
+        <td class="align-middle">{{element[25]}}</td>
+        <td class="align-middle">{{element[26]}}</td>
+        <td class="align-middle">{{element[12]}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<p><i>*<b>Points</b> striaght FPL points for each player, <b>Score</b> accounts for lineup adjustments like captains, benches, and subs<br>
+   **<b>Importance</b> compares your ownership level (0% bench, 100% in lineup, 200% captian...) to the league average </i></p>
 </div>
 
 <div class="container mt-2" >
