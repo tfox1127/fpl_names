@@ -31,7 +31,7 @@ def live():
     cups = db.execute(f"""SELECT DISTINCT "Group", "Match", "l21"."tPoints" as "Team 1 Score", "l22"."tPoints" as "Team 2 Score", "Match ID" FROM "Cup"
         LEFT JOIN "live2" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
         LEFT JOIN "live2" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
-        WHERE "GW" = {19}
+        WHERE "GW" = {20}
         ORDER BY "Group"
         """)
 
