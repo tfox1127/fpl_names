@@ -35,7 +35,7 @@ def live():
         ORDER BY "Group"
         """)
 
-    epls =  db.execute("SELECT DISTINCT * FROM score_board")
+    epls =  db.execute("SELECT DISTINCT * FROM scoreboard2")
     sss =  db.execute("SELECT DISTINCT * FROM score_sheet")
 
     try:
@@ -97,6 +97,13 @@ def teams30(team_id):
   elements = db.execute("SELECT * FROM teams30 WHERE \"entry\" = :entry", {"entry": team_id})
   db.commit()
   return render_template("team30.html", elements=elements, pname=pname)
+
+@app.route("/epl_fixture/<int:fixture_id>")
+def epl_fixture(fixture_id):
+  #pname    = db.execute("SELECT * FROM live2 WHERE entry = :team_id", {"team_id": team_id})
+  elements = db.execute("SELECT * FROM elli2 WHERE \"fixture\" = :fixture_id", {"fixture_id": fixture_id})
+  db.commit()
+  return render_template("epl_fixture.html", elements=elements)
 
 @app.route('/lms')
 def lms():
