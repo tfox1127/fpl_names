@@ -8,17 +8,12 @@ import datetime as datetime
 import random
 
 app = Flask(__name__)
-
 ENV = 'dev'
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
-
 engine = create_engine('postgres://oqivztlextiryy:f910e63e9de02a848ecddc6941e46d9cc16b3f4cc65fd8a24475f8affea90c93@ec2-3-215-207-12.compute-1.amazonaws.com:5432/davc1l7co2fgm', isolation_level="AUTOCOMMIT")
-                                                  # DATABASE_URL is an environment variable that indicates where the database lives
-db = scoped_session(sessionmaker(bind=engine))    # create a 'scoped session' that ensures different users' interactions with the
-                                                  # database are kept separate
-
+db = scoped_session(sessionmaker(bind=engine))
 app.secret_key = 'pizza'
 
 @app.route('/')
@@ -88,36 +83,6 @@ def elli():
     #time = time.item() #.datetime.strftime("%m/%d/%Y, %H:%M:%S")
     return render_template('elli.html', ellis=ellis, nonellis=nonellis)
 
-@app.route('/run_search', methods= ['POST'])
-def run_search():
-    if request.method == 'POST':
-        search_for = request.form['search_for']
-        search_for_like = "%" + search_for + "%"
-        search_results_data = db.execute("SELECT * FROM \"df_elli\" WHERE UPPER(\"df_elli\".\"web_name\") LIKE UPPER(:search_for_like) OR UPPER(\"df_elli\".\"team\") LIKE UPPER(:search_for_like)", {"search_for_like":search_for_like})
-        #q = ("SELECT * FROM \"df_elli\" WHERE UPPER(\"df_elli\".\"web_name\") LIKE UPPER(:search_for)")
-            #"src_name_list.\"2020 Rank\" = ratings.\"2020 Rank\" WHERE ratings.\"User\" != :user OR ratings.\"User\" is NULL")
-
-        #search_results_data = db.execute(q, {"search_for" : search_for})
-        db.commit()
-        #return redirect(request.referrer, search_results_data=search_results_data)
-        #return full
-        return render_template('search_results.html', search_results_data=search_results_data, search_for=search_for)
-
-#@app.route('/search_results')
-#def search_results(search_results_data):
-
-#     time = time.item() #.datetime.strftime("%m/%d/%Y, %H:%M:%S")
-#    return render_template('search_results.html', ellis=ellis, nonellis=nonellis)
-
-@app.route("/teams/<int:team_id>")
-def teams(team_id):
-  """List details about a single flight."""
-  pname    = db.execute("SELECT * FROM live2 WHERE entry = :team_id", {"team_id": team_id})
-  #elements = db.execute("SELECT * FROM teams2 WHERE entry = :team_id", {"team_id": team_id})
-  elements = db.execute("SELECT * FROM \":team_id\"", {"team_id": team_id})
-  db.commit()
-  return render_template("teams.html", elements=elements, pname=pname)
-
 @app.route("/player/<int:player_id>")
 def players(player_id):
   headers    = db.execute("SELECT * FROM eplayer_info WHERE id = :player_id", {"player_id": player_id})
@@ -126,18 +91,8 @@ def players(player_id):
   db.commit()
   return render_template("epl_player.html", headers=headers, players=players, owners=owners)
 
-@app.route("/teams2/<int:team_id>")
-def teams2(team_id):
-  """List details about a single flight."""
-  pname    = db.execute("SELECT * FROM live2 WHERE entry = :team_id", {"team_id": team_id})
-  #elements = db.execute("SELECT * FROM teams2 WHERE entry = :team_id", {"team_id": team_id})
-  elements = db.execute("SELECT * FROM df_teams20 WHERE entry = :team_id", {"team_id": team_id})
-  db.commit()
-  return render_template("teams2.html", elements=elements, pname=pname)
-
 @app.route("/teams30/<int:team_id>")
 def teams30(team_id):
-  """List details about a single flight."""
   pname    = db.execute("SELECT * FROM live2 WHERE entry = :team_id", {"team_id": team_id})
   elements = db.execute("SELECT * FROM teams30 WHERE \"entry\" = :entry", {"entry": team_id})
   db.commit()
@@ -158,16 +113,45 @@ def lcs():
 def cups():
     return render_template('cups.html')
 
-@app.route('/leaderboard')
-def leaderboard():
-    return render_template('fpl_list.html')
-
 @app.route('/hof')
 def hof():
     elements = db.execute('SELECT * FROM hof_rk ORDER BY "Overall" DESC LIMIT 50').fetchall()
     champs   = db.execute('SELECT * FROM hof_ch').fetchall()
     db.commit()
     return render_template('hof.html', elements=elements, champs = champs)
+
+@app.route('/run_search', methods= ['POST'])
+def run_search():
+    if request.method == 'POST':
+        search_for = request.form['search_for']
+        search_for_like = "%" + search_for + "%"
+        search_results_data = db.execute("SELECT * FROM \"df_elli\" WHERE UPPER(\"df_elli\".\"web_name\") LIKE UPPER(:search_for_like) OR UPPER(\"df_elli\".\"team\") LIKE UPPER(:search_for_like)", {"search_for_like":search_for_like})
+        #q = ("SELECT * FROM \"df_elli\" WHERE UPPER(\"df_elli\".\"web_name\") LIKE UPPER(:search_for)")
+            #"src_name_list.\"2020 Rank\" = ratings.\"2020 Rank\" WHERE ratings.\"User\" != :user OR ratings.\"User\" is NULL")
+
+        #search_results_data = db.execute(q, {"search_for" : search_for})
+        db.commit()
+        #return redirect(request.referrer, search_results_data=search_results_data)
+        #return full
+        return render_template('search_results.html', search_results_data=search_results_data, search_for=search_for)
+
+"""
+@app.route("/teams/<int:team_id>")
+def teams(team_id):
+  pname    = db.execute("SELECT * FROM live2 WHERE entry = :team_id", {"team_id": team_id})
+  #elements = db.execute("SELECT * FROM teams2 WHERE entry = :team_id", {"team_id": team_id})
+  elements = db.execute("SELECT * FROM \":team_id\"", {"team_id": team_id})
+  db.commit()
+  return render_template("teams.html", elements=elements, pname=pname)
+
+@app.route("/teams2/<int:team_id>")
+def teams2(team_id):
+  pname    = db.execute("SELECT * FROM live2 WHERE entry = :team_id", {"team_id": team_id})
+  #elements = db.execute("SELECT * FROM teams2 WHERE entry = :team_id", {"team_id": team_id})
+  elements = db.execute("SELECT * FROM df_teams20 WHERE entry = :team_id", {"team_id": team_id})
+  db.commit()
+  return render_template("teams2.html", elements=elements, pname=pname)
+"""
 
 def format_results(result):
     d, a = {}, []
