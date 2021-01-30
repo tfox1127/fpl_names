@@ -31,7 +31,7 @@ def live():
     cups = db.execute(f"""SELECT DISTINCT "Group", "Match", "l21"."tPoints" as "Team 1 Score", "l22"."tPoints" as "Team 2 Score", "Match ID" FROM "Cup"
         LEFT JOIN "live2" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
         LEFT JOIN "live2" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
-        WHERE "GW" = {20}
+        WHERE "GW" = {21}
         ORDER BY "Group"
         """)
 
@@ -53,24 +53,24 @@ def cup_matchup(cup_matchup_id):
     cups = db.execute(f"""SELECT "Group", "Match", "l21"."tPoints" as "Team 1 Score", "l22"."tPoints" as "Team 2 Score", "Match ID" FROM "Cup"
         LEFT JOIN "live2" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
         LEFT JOIN "live2" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
-        WHERE "GW" = {20}
+        WHERE "GW" = {21}
         ORDER BY "Group"
         """)
     cups2 = db.execute(f"""SELECT "Group", "Match", "l21"."tPoints" as "Team 1 Score", "l22"."tPoints" as "Team 2 Score", "Match ID" FROM "Cup"
         LEFT JOIN "live2" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
         LEFT JOIN "live2" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
-        WHERE "GW" = {20}
+        WHERE "GW" = {21}
         ORDER BY "Group"
         """)
 
     elements = db.execute(f"""SELECT * FROM "teams30" WHERE \"entry\" in
         (SELECT "Team 1 ID" as "entry"
         FROM "Cup"
-        WHERE "Match ID" = {cup_matchup_id} AND "GW" = {20}
+        WHERE "Match ID" = {cup_matchup_id} AND "GW" = {21}
         UNION
         SELECT "Team 2 ID" as "entry"
         FROM "Cup"
-        WHERE "Match ID" = {cup_matchup_id} AND "GW" = {20})
+        WHERE "Match ID" = {cup_matchup_id} AND "GW" = {21})
         """)
     db.commit()
     return render_template('cup_matchup.html', cups=cups, cups2=cups2, elements=elements, cup_matchup_id=cup_matchup_id)
