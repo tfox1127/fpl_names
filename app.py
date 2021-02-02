@@ -31,7 +31,7 @@ def live():
     cups = db.execute(f"""SELECT DISTINCT "Group", "Match", "l21"."tPoints" as "Team 1 Score", "l22"."tPoints" as "Team 2 Score", "Match ID" FROM "Cup"
         LEFT JOIN "live2" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
         LEFT JOIN "live2" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
-        WHERE "GW" = {21}
+        WHERE "GW" = {22}
         ORDER BY "Group"
         """)
 
@@ -53,24 +53,24 @@ def cup_matchup(cup_matchup_id):
     cups = db.execute(f"""SELECT "Group", "Match", "l21"."tPoints" as "Team 1 Score", "l22"."tPoints" as "Team 2 Score", "Match ID" FROM "Cup"
         LEFT JOIN "live2" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
         LEFT JOIN "live2" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
-        WHERE "GW" = {21}
+        WHERE "GW" = {22}
         ORDER BY "Group"
         """)
     cups2 = db.execute(f"""SELECT "Group", "Match", "l21"."tPoints" as "Team 1 Score", "l22"."tPoints" as "Team 2 Score", "Match ID" FROM "Cup"
         LEFT JOIN "live2" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
         LEFT JOIN "live2" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
-        WHERE "GW" = {21}
+        WHERE "GW" = {22}
         ORDER BY "Group"
         """)
 
     elements = db.execute(f"""SELECT * FROM "teams30" WHERE \"entry\" in
         (SELECT "Team 1 ID" as "entry"
         FROM "Cup"
-        WHERE "Match ID" = {cup_matchup_id} AND "GW" = {21}
+        WHERE "Match ID" = {cup_matchup_id} AND "GW" = {22}
         UNION
         SELECT "Team 2 ID" as "entry"
         FROM "Cup"
-        WHERE "Match ID" = {cup_matchup_id} AND "GW" = {21})
+        WHERE "Match ID" = {cup_matchup_id} AND "GW" = {22})
         """)
     db.commit()
     return render_template('cup_matchup.html', cups=cups, cups2=cups2, elements=elements, cup_matchup_id=cup_matchup_id)
@@ -173,14 +173,14 @@ def login():
     if request.method == "POST":
         user = request.form["name"]
         session['user'] = user
-        return redirect(url_for("profile", user=user))
+        return redirect(url_for("names/profile", user=user))
 
     else:
         return render_template("z2_login.html")
 
 @app.route("/profile/<string:user>")
 def profile(user):
-  return render_template("z2_profile.html", user=user)
+  return render_template("names/z2_profile.html", user=user)
 
 @app.route("/name/random_name")
 def random_name():
@@ -216,7 +216,7 @@ def name_page(name):
     user = session['user']
     name = session['name']
     rank = session['rank']
-    return render_template('z2_name.html', user=user, name=name, rank=rank)
+    return render_template('names/z2_name.html', user=user, name=name, rank=rank)
 
 @app.route('/submit', methods=['POST'])
 def submit():
@@ -233,7 +233,7 @@ def submit():
 
 @app.route('/search_name')
 def search_name():
-    return render_template('z2_search.html')
+    return render_template('names/z2_search.html')
 
 @app.route("/search_name_results", methods = ["POST", "GET"])
 def search_name_results():
@@ -243,7 +243,7 @@ def search_name_results():
         search_results_data = db.execute("SELECT * FROM \"df_elli\" WHERE UPPER(\"df_elli\".\"web_name\") LIKE UPPER(:search_for_name_like)", {"search_for_name_like":search_for_name_like})
 
         db.commit()
-        return render_template("z2_search_name_results.html", search_results_data=search_results_data, search_for_name=search_for_name)
+        return render_template("names/z2_search_name_results.html", search_results_data=search_results_data, search_for_name=search_for_name)
 
 
 if __name__ == '__main__':
