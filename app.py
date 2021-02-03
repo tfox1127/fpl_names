@@ -95,10 +95,10 @@ def teams30(team_id):
 
 @app.route("/epl_fixture/<int:fixture_id>")
 def epl_fixture(fixture_id):
-  #pname    = db.execute("SELECT * FROM live2 WHERE entry = :team_id", {"team_id": team_id})
-  elements = db.execute("SELECT * FROM elli2 WHERE \"fixture\" = :fixture_id", {"fixture_id": fixture_id})
-  db.commit()
-  return render_template("epl_fixture.html", elements=elements)
+    #pname    = db.execute("SELECT * FROM live2 WHERE entry = :team_id", {"team_id": team_id})
+    elements = db.execute("SELECT * FROM elli2 WHERE \"fixture\" = :fixture_id ORDER BY BPS DESC", {"fixture_id": fixture_id})
+    db.commit()
+    return render_template("epl_fixture.html", elements=elements)
 
 @app.route('/lms')
 def lms():
