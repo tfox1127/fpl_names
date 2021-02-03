@@ -1,17 +1,12 @@
-from flask import Flask, render_template, request, session, redirect, url_for
-from flask_sqlalchemy import SQLAlchemy
-#from flask_session import Session
-from send_mail import send_mail
-from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
-import datetime as datetime
 import random
+from flask import Flask, render_template, request, session, redirect, url_for
+from sqlalchemy import create_engine
+from sqlalchemy import exc
+from sqlalchemy.orm import scoped_session, sessionmaker
 
 app = Flask(__name__)
 ENV = 'dev'
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
 engine = create_engine('postgres://oqivztlextiryy:f910e63e9de02a848ecddc6941e46d9cc16b3f4cc65fd8a24475f8affea90c93@ec2-3-215-207-12.compute-1.amazonaws.com:5432/davc1l7co2fgm', isolation_level="AUTOCOMMIT")
 db = scoped_session(sessionmaker(bind=engine))
 app.secret_key = 'pizza'
@@ -35,8 +30,8 @@ def live():
         ORDER BY "Group"
         """)
 
-    epls =  db.execute("SELECT DISTINCT * FROM scoreboard2")
-    sss =  db.execute("SELECT DISTINCT * FROM score_sheet")
+    epls =  db.execute("SELECT * FROM \"scoreboard2\" ORDER BY \"minutes_game\" DESC, \"id\" LIMIT 50")
+    sss =  db.execute("SELECT DISTINCT * FROM score_sheet ORDER BY \"Team\"")
 
     try:
       db.commit()
@@ -142,24 +137,8 @@ def run_search():
         #return full
         return render_template('search_results.html', search_results_data=search_results_data, search_for=search_for)
 
-"""
-@app.route("/teams/<int:team_id>")
-def teams(team_id):
-  pname    = db.execute("SELECT * FROM live2 WHERE entry = :team_id", {"team_id": team_id})
-  #elements = db.execute("SELECT * FROM teams2 WHERE entry = :team_id", {"team_id": team_id})
-  elements = db.execute("SELECT * FROM \":team_id\"", {"team_id": team_id})
-  db.commit()
-  return render_template("teams.html", elements=elements, pname=pname)
-
-@app.route("/teams2/<int:team_id>")
-def teams2(team_id):
-  pname    = db.execute("SELECT * FROM live2 WHERE entry = :team_id", {"team_id": team_id})
-  #elements = db.execute("SELECT * FROM teams2 WHERE entry = :team_id", {"team_id": team_id})
-  elements = db.execute("SELECT * FROM df_teams20 WHERE entry = :team_id", {"team_id": team_id})
-  db.commit()
-  return render_template("teams2.html", elements=elements, pname=pname)
-"""
-
+#NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES 
+#NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES 
 def format_results(result):
     d, a = {}, []
     for rowproxy in result:
@@ -173,7 +152,7 @@ def login():
     if request.method == "POST":
         user = request.form["name"]
         session['user'] = user
-        return redirect(url_for("names/profile", user=user))
+        return redirect(url_for("profile", user=user))
 
     else:
         return render_template("z2_login.html")
