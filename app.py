@@ -117,20 +117,18 @@ def cups():
 
 @app.route('/cup_summary')
 def cup_summary():
-    #table = db.execute("SELECT * FROM tbl_cup_table")
+
     table_a = db.execute("SELECT * FROM tbl_cup_table WHERE \"Group\" = 'A'")
     table_b = db.execute("SELECT * FROM tbl_cup_table WHERE \"Group\" = 'B'")
     table_c = db.execute("SELECT * FROM tbl_cup_table WHERE \"Group\" = 'C'")
     table_d = db.execute("SELECT * FROM tbl_cup_table WHERE \"Group\" = 'D'")
     table_e = db.execute("SELECT * FROM tbl_cup_table WHERE \"Group\" = 'E'")
 
-    tables = [table_a, table_b, table_c, table_d, table_e]
-
     seeds = db.execute("SELECT * FROM tbl_cup_seeds")
 
     db.commit()
     
-    return render_template('cup_summary.html', tables=tables, seeds=seeds, )
+    return render_template('cup_summary.html', table_a=table_a, table_b=table_b, table_c=table_c, table_d=table_d, table_e=table_e, seeds=seeds)
 
 @app.route('/hof')
 def hof():

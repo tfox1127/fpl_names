@@ -4,40 +4,168 @@
 
 {% block content %}
 <div class="container mt-2">
+    <h3>Group A</h3>
+    <div class="table-responsive text-nowrap">
+        <table class="table table-sm text-xsmall table-hover sortable ;" >
+            
+            <thead class="thead-light text-center">
+                <td class="align-middle">Rank</td>
+                <td class="align-middle">Team</td>
+                <td class="align-middle">Played</td>
+                <td class="align-middle">W-L-D</td>
+                <td class="align-middle">For</td>
+                <td class="align-middle">Against</td>
+                <td class="align-middle">FPL +/-</td>
+                <td class="align-middle">Pts</td>
+            </thead>
+            <tbody class="text-center align-middle">
+                {% for t in table_a %}
+                    <tr>
+                        <td class="align-middle">{{t[1]}}</td>
+                        <td class="align-middle"><a href="/player/{{t[31]}}" class="text-dark">{{t[3]}}</a></td>
+                        <td class="align-middle">{{t[4]}}</td>
+                        <td class="align-middle">{{t[5]}}</td>
+                        <td class="align-middle"><a href="/epl_fixture/{{t[7]}}" class="text-dark">{{t[6]}}</a></td>
+                        <td class="align-middle">{{t[7]}}</td>
+                        <td class="align-middle">{{t[8]}}</td>
+                        <td class="align-middle">{{t[9]}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 
-    {% for i in tables %}
-        <h3>{{ i[2] }}</h3>
-        <div class="table-responsive text-nowrap">
-            <table class="table table-sm text-xsmall table-hover sortable ;" >
-                
-                    <thead class="thead-light text-center">
-                        <td class="align-middle">Rank</td>
-                        <td class="align-middle">Team</td>
-                        <td class="align-middle">Played</td>
-                        <td class="align-middle">W-L-D</td>
-                        <td class="align-middle">For</td>
-                        <td class="align-middle">Against</td>
-                        <td class="align-middle">FPL +/-</td>
-                        <td class="align-middle">Pts</td>
-                    </thead>
-                    <tbody class="text-center align-middle">
-                        {% for t in i %}
-                            <tr>
-                                <td class="align-middle">{{t[1]}}</td>
-                                <td class="align-middle"><a href="/player/{{t[31]}}" class="text-dark">{{t[3]}}</a></td>
-                                <td class="align-middle">{{t[4]}}</td>
-                                <td class="align-middle">{{t[5]}}</td>
-                                <td class="align-middle"><a href="/epl_fixture/{{t[7]}}" class="text-dark">{{t[6]}}</a></td>
-                                <td class="align-middle">{{t[7]}}</td>
-                                <td class="align-middle">{{t[8]}}</td>
-                                <td class="align-middle">{{t[9]}}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                
-            </table>
-        </div>
-    {% endfor %}
+<div class="container mt-2">
+    <h3>Group B</h3>
+    <div class="table-responsive text-nowrap">
+        <table class="table table-sm text-xsmall table-hover sortable ;" >
+            
+            <thead class="thead-light text-center">
+                <td class="align-middle">Rank</td>
+                <td class="align-middle">Team</td>
+                <td class="align-middle">Played</td>
+                <td class="align-middle">W-L-D</td>
+                <td class="align-middle">For</td>
+                <td class="align-middle">Against</td>
+                <td class="align-middle">FPL +/-</td>
+                <td class="align-middle">Pts</td>
+            </thead>
+            <tbody class="text-center align-middle">
+                {% for t in table_b %}
+                    <tr>
+                        <td class="align-middle">{{t[1]}}</td>
+                        <td class="align-middle"><a href="/player/{{t[31]}}" class="text-dark">{{t[3]}}</a></td>
+                        <td class="align-middle">{{t[4]}}</td>
+                        <td class="align-middle">{{t[5]}}</td>
+                        <td class="align-middle"><a href="/epl_fixture/{{t[7]}}" class="text-dark">{{t[6]}}</a></td>
+                        <td class="align-middle">{{t[7]}}</td>
+                        <td class="align-middle">{{t[8]}}</td>
+                        <td class="align-middle">{{t[9]}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="container mt-2">
+    <h3>Group C</h3>
+    <div class="table-responsive text-nowrap">
+        <table class="table table-sm text-xsmall table-hover sortable ;" >
+            
+            <thead class="thead-light text-center">
+                <td class="align-middle">Rank</td>
+                <td class="align-middle">Team</td>
+                <td class="align-middle">Played</td>
+                <td class="align-middle">W-L-D</td>
+                <td class="align-middle">For</td>
+                <td class="align-middle">Against</td>
+                <td class="align-middle">FPL +/-</td>
+                <td class="align-middle">Pts</td>
+            </thead>
+            <tbody class="text-center align-middle">
+                {% for t in table_c %}
+                    <tr>
+                        <td class="align-middle">{{t[1]}}</td>
+                        <td class="align-middle"><a href="/player/{{t[31]}}" class="text-dark">{{t[3]}}</a></td>
+                        <td class="align-middle">{{t[4]}}</td>
+                        <td class="align-middle">{{t[5]}}</td>
+                        <td class="align-middle"><a href="/epl_fixture/{{t[7]}}" class="text-dark">{{t[6]}}</a></td>
+                        <td class="align-middle">{{t[7]}}</td>
+                        <td class="align-middle">{{t[8]}}</td>
+                        <td class="align-middle">{{t[9]}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="container mt-2">
+    <h3>Group D</h3>
+    <div class="table-responsive text-nowrap">
+        <table class="table table-sm text-xsmall table-hover sortable ;" >
+            
+            <thead class="thead-light text-center">
+                <td class="align-middle">Rank</td>
+                <td class="align-middle">Team</td>
+                <td class="align-middle">Played</td>
+                <td class="align-middle">W-L-D</td>
+                <td class="align-middle">For</td>
+                <td class="align-middle">Against</td>
+                <td class="align-middle">FPL +/-</td>
+                <td class="align-middle">Pts</td>
+            </thead>
+            <tbody class="text-center align-middle">
+                {% for t in table_d %}
+                    <tr>
+                        <td class="align-middle">{{t[1]}}</td>
+                        <td class="align-middle"><a href="/player/{{t[31]}}" class="text-dark">{{t[3]}}</a></td>
+                        <td class="align-middle">{{t[4]}}</td>
+                        <td class="align-middle">{{t[5]}}</td>
+                        <td class="align-middle"><a href="/epl_fixture/{{t[7]}}" class="text-dark">{{t[6]}}</a></td>
+                        <td class="align-middle">{{t[7]}}</td>
+                        <td class="align-middle">{{t[8]}}</td>
+                        <td class="align-middle">{{t[9]}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="container mt-2">
+    <h3>Group E</h3>
+    <div class="table-responsive text-nowrap">
+        <table class="table table-sm text-xsmall table-hover sortable ;" >
+            
+            <thead class="thead-light text-center">
+                <td class="align-middle">Rank</td>
+                <td class="align-middle">Team</td>
+                <td class="align-middle">Played</td>
+                <td class="align-middle">W-L-D</td>
+                <td class="align-middle">For</td>
+                <td class="align-middle">Against</td>
+                <td class="align-middle">FPL +/-</td>
+                <td class="align-middle">Pts</td>
+            </thead>
+            <tbody class="text-center align-middle">
+                {% for t in table_e %}
+                    <tr>
+                        <td class="align-middle">{{t[1]}}</td>
+                        <td class="align-middle"><a href="/player/{{t[31]}}" class="text-dark">{{t[3]}}</a></td>
+                        <td class="align-middle">{{t[4]}}</td>
+                        <td class="align-middle">{{t[5]}}</td>
+                        <td class="align-middle"><a href="/epl_fixture/{{t[7]}}" class="text-dark">{{t[6]}}</a></td>
+                        <td class="align-middle">{{t[7]}}</td>
+                        <td class="align-middle">{{t[8]}}</td>
+                        <td class="align-middle">{{t[9]}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 
 {% endblock %}
