@@ -4,7 +4,11 @@
 
 {% block content %}
 <div class="container mt-2">
-    <h3>Group A</h3>
+    <div class="row"><h2>Group Stage</h2></div>    
+</div>
+
+<div class="container mt-2">
+    <h5>Group A</h5>
     <div class="table-responsive text-nowrap">
         <table class="table table-sm text-xsmall table-hover sortable ;" >
             
@@ -22,10 +26,10 @@
                 {% for t in table_a %}
                     <tr>
                         <td class="align-middle">{{t[1]}}</td>
-                        <td class="align-middle"><a href="/player/{{t[31]}}" class="text-dark">{{t[3]}}</a></td>
+                        <td class="align-middle">{{t[3]}}</td>
                         <td class="align-middle">{{t[4]}}</td>
                         <td class="align-middle">{{t[5]}}</td>
-                        <td class="align-middle"><a href="/epl_fixture/{{t[7]}}" class="text-dark">{{t[6]}}</a></td>
+                        <td class="align-middle">{{t[6]}}</td>
                         <td class="align-middle">{{t[7]}}</td>
                         <td class="align-middle">{{t[8]}}</td>
                         <td class="align-middle">{{t[9]}}</td>
@@ -37,7 +41,7 @@
 </div>
 
 <div class="container mt-2">
-    <h3>Group B</h3>
+    <h5>Group B</h5>
     <div class="table-responsive text-nowrap">
         <table class="table table-sm text-xsmall table-hover sortable ;" >
             
@@ -55,10 +59,10 @@
                 {% for t in table_b %}
                     <tr>
                         <td class="align-middle">{{t[1]}}</td>
-                        <td class="align-middle"><a href="/player/{{t[31]}}" class="text-dark">{{t[3]}}</a></td>
+                        <td class="align-middle">{{t[3]}}</td>
                         <td class="align-middle">{{t[4]}}</td>
                         <td class="align-middle">{{t[5]}}</td>
-                        <td class="align-middle"><a href="/epl_fixture/{{t[7]}}" class="text-dark">{{t[6]}}</a></td>
+                        <td class="align-middle">{{t[6]}}</td>
                         <td class="align-middle">{{t[7]}}</td>
                         <td class="align-middle">{{t[8]}}</td>
                         <td class="align-middle">{{t[9]}}</td>
@@ -70,7 +74,7 @@
 </div>
 
 <div class="container mt-2">
-    <h3>Group C</h3>
+    <h5>Group C</h5>
     <div class="table-responsive text-nowrap">
         <table class="table table-sm text-xsmall table-hover sortable ;" >
             
@@ -88,10 +92,10 @@
                 {% for t in table_c %}
                     <tr>
                         <td class="align-middle">{{t[1]}}</td>
-                        <td class="align-middle"><a href="/player/{{t[31]}}" class="text-dark">{{t[3]}}</a></td>
+                        <td class="align-middle">{{t[3]}}</td>
                         <td class="align-middle">{{t[4]}}</td>
                         <td class="align-middle">{{t[5]}}</td>
-                        <td class="align-middle"><a href="/epl_fixture/{{t[7]}}" class="text-dark">{{t[6]}}</a></td>
+                        <td class="align-middle">{{t[6]}}</td>
                         <td class="align-middle">{{t[7]}}</td>
                         <td class="align-middle">{{t[8]}}</td>
                         <td class="align-middle">{{t[9]}}</td>
@@ -103,7 +107,7 @@
 </div>
 
 <div class="container mt-2">
-    <h3>Group D</h3>
+    <h5>Group D</h5>
     <div class="table-responsive text-nowrap">
         <table class="table table-sm text-xsmall table-hover sortable ;" >
             
@@ -121,10 +125,10 @@
                 {% for t in table_d %}
                     <tr>
                         <td class="align-middle">{{t[1]}}</td>
-                        <td class="align-middle"><a href="/player/{{t[31]}}" class="text-dark">{{t[3]}}</a></td>
+                        <td class="align-middle">{{t[3]}}</td>
                         <td class="align-middle">{{t[4]}}</td>
                         <td class="align-middle">{{t[5]}}</td>
-                        <td class="align-middle"><a href="/epl_fixture/{{t[7]}}" class="text-dark">{{t[6]}}</a></td>
+                        <td class="align-middle">{{t[6]}}</td>
                         <td class="align-middle">{{t[7]}}</td>
                         <td class="align-middle">{{t[8]}}</td>
                         <td class="align-middle">{{t[9]}}</td>
@@ -136,7 +140,7 @@
 </div>
 
 <div class="container mt-2">
-    <h3>Group E</h3>
+    <h5>Group E</h5>
     <div class="table-responsive text-nowrap">
         <table class="table table-sm text-xsmall table-hover sortable ;" >
             
@@ -154,10 +158,10 @@
                 {% for t in table_e %}
                     <tr>
                         <td class="align-middle">{{t[1]}}</td>
-                        <td class="align-middle"><a href="/player/{{t[31]}}" class="text-dark">{{t[3]}}</a></td>
+                        <td class="align-middle">{{t[3]}}</td>
                         <td class="align-middle">{{t[4]}}</td>
                         <td class="align-middle">{{t[5]}}</td>
-                        <td class="align-middle"><a href="/epl_fixture/{{t[7]}}" class="text-dark">{{t[6]}}</a></td>
+                        <td class="align-middle">{{t[6]}}</td>
                         <td class="align-middle">{{t[7]}}</td>
                         <td class="align-middle">{{t[8]}}</td>
                         <td class="align-middle">{{t[9]}}</td>
@@ -168,4 +172,37 @@
     </div>
 </div>
 
+<div class="container mt-2">
+    <div class="row"><h2>Knockout Seeding</h2></div>    
+</div>
+
+<div class="container mt-2">
+    <div class="table-responsive text-nowrap">
+        <table class="table table-sm text-xsmall table-hover sortable ;" >
+            
+            <thead class="thead-light text-center">
+                <td class="align-middle">Seed</td>
+                <td class="align-middle">Group</td>
+                <td class="align-middle">Name</td>
+                <td class="align-middle">Group Pos</td>
+                <td class="align-middle">Win Pct</td>
+                <td class="align-middle">League Pos</td>
+                <td class="align-middle">Leauge</td>
+            </thead>
+            <tbody class="text-center align-middle">
+                {% for seed in seeds %}
+                    <tr>
+                        <td class="align-middle">{{seed[1]}}</td>
+                        <td class="align-middle">{{seed[2]}}</td>
+                        <td class="align-middle">{{seed[3]}}</td>
+                        <td class="align-middle">{{seed[4]}}</td>
+                        <td class="align-middle">{{seed[5]}}</td>
+                        <td class="align-middle">{{seed[6]}}</td>
+                        <td class="align-middle">{{seed[7]}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}
