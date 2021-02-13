@@ -31,7 +31,7 @@ def live():
     cups = db.execute(f"""SELECT DISTINCT "Group", "Match", "l21"."tPoints" as "Team 1 Score", "l22"."tPoints" as "Team 2 Score", "Match ID" FROM "Cup"
         LEFT JOIN "live2" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
         LEFT JOIN "live2" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
-        WHERE "GW" = {23}
+        WHERE "GW" = {24}
         ORDER BY "Group"
         """)
 
@@ -53,24 +53,24 @@ def cup_matchup(cup_matchup_id):
     cups = db.execute(f"""SELECT "Group", "Match", "l21"."tPoints" as "Team 1 Score", "l22"."tPoints" as "Team 2 Score", "Match ID" FROM "Cup"
         LEFT JOIN "live2" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
         LEFT JOIN "live2" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
-        WHERE "GW" = {23}
+        WHERE "GW" = {24}
         ORDER BY "Group"
         """)
     cups2 = db.execute(f"""SELECT "Group", "Match", "l21"."tPoints" as "Team 1 Score", "l22"."tPoints" as "Team 2 Score", "Match ID" FROM "Cup"
         LEFT JOIN "live2" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
         LEFT JOIN "live2" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
-        WHERE "GW" = {23}
+        WHERE "GW" = {24}
         ORDER BY "Group"
         """)
 
     elements = db.execute(f"""SELECT * FROM "teams30" WHERE \"entry\" in
         (SELECT "Team 1 ID" as "entry"
         FROM "Cup"
-        WHERE "Match ID" = {cup_matchup_id} AND "GW" = {23}
+        WHERE "Match ID" = {cup_matchup_id} AND "GW" = {24}
         UNION
         SELECT "Team 2 ID" as "entry"
         FROM "Cup"
-        WHERE "Match ID" = {cup_matchup_id} AND "GW" = {23})
+        WHERE "Match ID" = {cup_matchup_id} AND "GW" = {24})
         """)
     db.commit()
     return render_template('cup_matchup.html', cups=cups, cups2=cups2, elements=elements, cup_matchup_id=cup_matchup_id)
@@ -80,7 +80,7 @@ def elli():
     ellis = db.execute("SELECT * FROM df_elli WHERE ownership != '0.0%' ORDER BY score DESC")
     nonellis = db.execute("SELECT * FROM df_elli WHERE ownership = '0.0%' ORDER BY score DESC LIMIT 15")
     db.commit()
-    #time = time.item() #.datetime.strftime("%m/%d/%Y, %H:%M:%S")
+
     return render_template('elli.html', ellis=ellis, nonellis=nonellis)
 
 @app.route("/player/<int:player_id>")
@@ -100,7 +100,6 @@ def teams30(team_id):
 
 @app.route("/epl_fixture/<int:fixture_id>")
 def epl_fixture(fixture_id):
-    #pname    = db.execute("SELECT * FROM live2 WHERE entry = :team_id", {"team_id": team_id})
     elements = db.execute("SELECT * FROM elli2 WHERE \"fixture\" = :fixture_id ORDER BY BPS DESC", {"fixture_id": fixture_id})
     db.commit()
     return render_template("epl_fixture.html", elements=elements)
@@ -148,13 +147,7 @@ def run_search():
         search_for = request.form['search_for']
         search_for_like = "%" + search_for + "%"
         search_results_data = db.execute("SELECT * FROM \"df_elli\" WHERE UPPER(\"df_elli\".\"web_name\") LIKE UPPER(:search_for_like) OR UPPER(\"df_elli\".\"team\") LIKE UPPER(:search_for_like)", {"search_for_like":search_for_like})
-        #q = ("SELECT * FROM \"df_elli\" WHERE UPPER(\"df_elli\".\"web_name\") LIKE UPPER(:search_for)")
-            #"src_name_list.\"2020 Rank\" = ratings.\"2020 Rank\" WHERE ratings.\"User\" != :user OR ratings.\"User\" is NULL")
-
-        #search_results_data = db.execute(q, {"search_for" : search_for})
         db.commit()
-        #return redirect(request.referrer, search_results_data=search_results_data)
-        #return full
         return render_template('search_results.html', search_results_data=search_results_data, search_for=search_for)
 
 #NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES 
