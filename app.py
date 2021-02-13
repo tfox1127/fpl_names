@@ -75,7 +75,7 @@ def elli():
     ellis = db.execute("SELECT * FROM df_elli WHERE ownership != '0.0%' ORDER BY score DESC")
     nonellis = db.execute("SELECT * FROM df_elli WHERE ownership = '0.0%' ORDER BY score DESC LIMIT 15")
     db.commit()
-    #time = time.item() #.datetime.strftime("%m/%d/%Y, %H:%M:%S")
+
     return render_template('elli.html', ellis=ellis, nonellis=nonellis)
 
 @app.route("/player/<int:player_id>")
@@ -95,7 +95,6 @@ def teams30(team_id):
 
 @app.route("/epl_fixture/<int:fixture_id>")
 def epl_fixture(fixture_id):
-    #pname    = db.execute("SELECT * FROM live2 WHERE entry = :team_id", {"team_id": team_id})
     elements = db.execute("SELECT * FROM elli2 WHERE \"fixture\" = :fixture_id ORDER BY BPS DESC", {"fixture_id": fixture_id})
     db.commit()
     return render_template("epl_fixture.html", elements=elements)
@@ -143,13 +142,7 @@ def run_search():
         search_for = request.form['search_for']
         search_for_like = "%" + search_for + "%"
         search_results_data = db.execute("SELECT * FROM \"df_elli\" WHERE UPPER(\"df_elli\".\"web_name\") LIKE UPPER(:search_for_like) OR UPPER(\"df_elli\".\"team\") LIKE UPPER(:search_for_like)", {"search_for_like":search_for_like})
-        #q = ("SELECT * FROM \"df_elli\" WHERE UPPER(\"df_elli\".\"web_name\") LIKE UPPER(:search_for)")
-            #"src_name_list.\"2020 Rank\" = ratings.\"2020 Rank\" WHERE ratings.\"User\" != :user OR ratings.\"User\" is NULL")
-
-        #search_results_data = db.execute(q, {"search_for" : search_for})
         db.commit()
-        #return redirect(request.referrer, search_results_data=search_results_data)
-        #return full
         return render_template('search_results.html', search_results_data=search_results_data, search_for=search_for)
 
 #NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES 
