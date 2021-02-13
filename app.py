@@ -21,6 +21,11 @@ def index():
 def live():
     time = db.execute("SELECT DISTINCT * FROM live2 WHERE entry = 142805")
     elements = db.execute("SELECT DISTINCT * FROM live2 ORDER BY points_lg DESC LIMIT 50")
+    elements = db.execute(f"""SELECT DISTINCT *, score_fix + sogw as new_live
+            FROM live2 
+            LEFT JOIN (SELECT entry, sum(score) as "score_fix" FROM "teams30" GROUP BY entry) as scores2
+            ON live2.entry = scores2.entry
+            ORDER BY new_live DESC""" )
     #bottoms =  db.execute("SELECT * FROM live2 where entry not in (SELECT \"Team ID\" FROM \"lms_el\" WHERE \"Team ID\" IS NOT NULL) ORDER BY rank_lv DESC LIMIT 5")
 
     cups = db.execute(f"""SELECT DISTINCT "Group", "Match", "l21"."tPoints" as "Team 1 Score", "l22"."tPoints" as "Team 2 Score", "Match ID" FROM "Cup"
