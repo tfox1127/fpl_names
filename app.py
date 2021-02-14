@@ -19,31 +19,34 @@ def index():
 
 @app.route('/live')
 def live():
-    time = db.execute("SELECT DISTINCT * FROM live2 WHERE entry = 142805")
-    elements = db.execute("SELECT DISTINCT * FROM live2 ORDER BY points_lg DESC LIMIT 50")
-    elements = db.execute(f"""SELECT DISTINCT *, score_fix + sogw as new_live
-            FROM live2 
-            LEFT JOIN (SELECT entry, sum(score) as "score_fix" FROM "teams30" GROUP BY entry) as scores2
-            ON live2.entry = scores2.entry
-            ORDER BY new_live DESC""" )
+    time = db.execute("SELECT DISTINCT * FROM ftbl_live_notro WHERE entry = 142805")
+    #elements = db.execute("SELECT DISTINCT * FROM live2 ORDER BY points_lg DESC LIMIT 50")
+    #elements = db.execute(f"""SELECT DISTINCT *, score_fix + sogw as new_live
+    #        FROM live2 
+    #        LEFT JOIN (SELECT entry, sum(score) as "score_fix" FROM "teams30" GROUP BY entry) as scores2
+    #        ON live2.entry = scores2.entry
+    #        ORDER BY new_live DESC""" )
+
+    elements = db.execute("SELECT * FROM ftbl_live_notro ORDER BY rank_live ")
     #bottoms =  db.execute("SELECT * FROM live2 where entry not in (SELECT \"Team ID\" FROM \"lms_el\" WHERE \"Team ID\" IS NOT NULL) ORDER BY rank_lv DESC LIMIT 5")
 
-    cups = db.execute(f"""SELECT DISTINCT "Group", "Match", "l21"."tPoints" as "Team 1 Score", "l22"."tPoints" as "Team 2 Score", "Match ID" FROM "Cup"
-        LEFT JOIN "live2" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
-        LEFT JOIN "live2" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
+    cups = db.execute(f"""SELECT DISTINCT "Group", "Match", "l21"."score" as "Team 1 Score", "l22"."score" as "Team 2 Score", "Match ID" FROM "Cup"
+        LEFT JOIN "ftbl_live_notro" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
+        LEFT JOIN "ftbl_live_notro" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
         WHERE "GW" = {24}
         ORDER BY "Group"
         """)
 
-    epls =  db.execute("SELECT * FROM \"scoreboard2\" ORDER BY \"minutes_game\" DESC, \"id\" LIMIT 50")
-    sss =  db.execute("SELECT DISTINCT * FROM score_sheet ORDER BY \"Team\"")
-
-    try:
-      db.commit()
-    except exc.SQLAlchemyError:
-      time.sleep(2)
-      pass # do something intelligent here
-
+    epls =  db.execute("SELECT * FROM \"ftbl_scoreboard2\" ORDER BY \"minutes_game\" DESC, \"id\" LIMIT 50")
+    #sss =  db.execute("SELECT DISTINCT * FROM score_sheet ORDER BY \"Team\"")
+    sss = db.execute("""
+        SELECT "a"."element_id", "a"."web_name", "a"."team_name", "a"."goals_scored", "a"."assists", "b"."team_h_name", "b"."team_a_name", "c"."owner"
+        FROM "ftbl_elli2" as "a"
+        LEFT JOIN "ftbl_scoreboard2" as "b" on "a"."fixture" = "b"."id" 
+        LEFT JOIN "df_owners" as "c" on "a"."element_id" = "c"."element_id"
+        WHERE "goals_scored" > 0 OR "assists" > 0
+        ORDER BY "a"."fixture"
+    """)
     db.commit()
     #time = time.item() #.datetime.strftime("%m/%d/%Y, %H:%M:%S")
     return render_template('live.html', elements=elements, time=time, cups=cups, epls=epls, sss=sss)
@@ -93,14 +96,14 @@ def players(player_id):
 
 @app.route("/teams30/<int:team_id>")
 def teams30(team_id):
-  pname    = db.execute("SELECT * FROM live2 WHERE entry = :team_id", {"team_id": team_id})
+  pname    = db.execute("SELECT * FROM ftbl_live_notro WHERE entry = :team_id", {"team_id": team_id})
   elements = db.execute("SELECT * FROM teams30 WHERE \"entry\" = :entry", {"entry": team_id})
   db.commit()
   return render_template("team30.html", elements=elements, pname=pname)
 
 @app.route("/epl_fixture/<int:fixture_id>")
 def epl_fixture(fixture_id):
-    elements = db.execute("SELECT * FROM elli2 WHERE \"fixture\" = :fixture_id ORDER BY BPS DESC", {"fixture_id": fixture_id})
+    elements = db.execute("SELECT * FROM ftbl_elli2 WHERE \"fixture\" = :fixture_id AND \"minutes\" > 0 ORDER BY BPS DESC ", {"fixture_id": fixture_id})
     db.commit()
     return render_template("epl_fixture.html", elements=elements)
 

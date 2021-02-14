@@ -62,14 +62,14 @@
               <tbody class="text-center align-middle">
                 {% for element in elements %}
                   <tr>
-                    <td class="align-middle">{{element[12]}} ({{element[14]}})</td>
-                    <td class="align-middle"><a href="/teams30/{{element[1]}}" class="text-dark">{{element[5]}}</a></td>
-                    <td class="align-middle">{{element[21]}}</td>
-                    <td class="align-middle">{{element[22]}}</td>
+                    <td class="align-middle">{{element[14]}} ({{element[16]}})</td>
+                    <td class="align-middle"><a href="/teams30/{{element[1]}}" class="text-dark">{{element[2]}}</a></td>
                     <td class="align-middle">{{element[3]}}</td>
-                    <td class="align-middle">{{element[19]}}</td>
-                    <td class="align-middle"><a href="/player/{{element[16]}}" class="text-dark">{{element[7]}}</a></td>
-                    <td class="align-middle"><a href="/player/{{element[17]}}" class="text-dark">{{element[8]}}</a></td>
+                    <td class="align-middle">{{element[12]}}</td>
+                    <td class="align-middle">{{element[4]}}/{{element[5]}}</td>
+                    <td class="align-middle">{{element[6]}}</td>
+                    <td class="align-middle"><a href="/player/{{element[7]}}" class="text-dark">{{element[8]}}</a></td>
+                    <td class="align-middle"><a href="/player/{{element[9]}}" class="text-dark">{{element[10]}}</a></td>
                   </tr>
                 {% endfor %}
               </tbody>
@@ -149,6 +149,7 @@
           <thead class="thead-light text-center align-middle">
             <td class="align-middle">Player</td>
             <td class="align-middle">Team</td>
+            <td class="align-middle">Fixture</td>
             <td class="align-middle">Goals</td>
             <td class="align-middle">Assits</td>
             <td class="align-middle">Owners</td>
@@ -156,11 +157,12 @@
           <tbody class="text-center align-middle">
             {% for ss in sss %}
             <tr>
-              <td class="align-middle"><a href="/player/{{ss[7]}}" class="text-dark">{{ss[1]}}</a></td>
+              <td class="align-middle"><a href="/player/{{ss[0]}}" class="text-dark">{{ss[1]}}</a></td>
+              <td class="align-middle">{{ss[2]}}</td>
+              <td class="align-middle">{{ss[5]}}|{{ss[6]}}</td>
               <td class="align-middle">{{ss[3]}}</td>
               <td class="align-middle">{{ss[4]}}</td>
-              <td class="align-middle">{{ss[5]}}</td>
-              <td class="align-middle">{{ss[6]}}</td>
+              <td class="align-middle">{{ss[7]}}</td>
             </tr>
             {% endfor %}
           </tbody>
