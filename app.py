@@ -53,20 +53,20 @@ def live():
 
 @app.route('/cup_matchup/<int:cup_matchup_id>')
 def cup_matchup(cup_matchup_id):
-    cups = db.execute(f"""SELECT "Group", "Match", "l21"."tPoints" as "Team 1 Score", "l22"."tPoints" as "Team 2 Score", "Match ID" FROM "Cup"
-        LEFT JOIN "live2" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
-        LEFT JOIN "live2" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
+    cups = db.execute(f"""SELECT "Group", "Match", "l21"."score" as "Team 1 Score", "l22"."score" as "Team 2 Score", "Match ID" FROM "Cup"
+        LEFT JOIN "ftbl_live_notro" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
+        LEFT JOIN "ftbl_live_notro" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
         WHERE "GW" = {24}
         ORDER BY "Group"
         """)
-    cups2 = db.execute(f"""SELECT "Group", "Match", "l21"."tPoints" as "Team 1 Score", "l22"."tPoints" as "Team 2 Score", "Match ID" FROM "Cup"
-        LEFT JOIN "live2" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
-        LEFT JOIN "live2" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
+    cups2 = db.execute(f"""SELECT "Group", "Match", "l21"."score" as "Team 1 Score", "l22"."score" as "Team 2 Score", "Match ID" FROM "Cup"
+        LEFT JOIN "ftbl_live_notro" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
+        LEFT JOIN "ftbl_live_notro" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
         WHERE "GW" = {24}
         ORDER BY "Group"
         """)
 
-    elements = db.execute(f"""SELECT * FROM "teams30" WHERE \"entry\" in
+    elements = db.execute(f"""SELECT * FROM "ftbl_teams30" WHERE \"entry\" in
         (SELECT "Team 1 ID" as "entry"
         FROM "Cup"
         WHERE "Match ID" = {cup_matchup_id} AND "GW" = {24}
@@ -97,7 +97,7 @@ def players(player_id):
 @app.route("/teams30/<int:team_id>")
 def teams30(team_id):
   pname    = db.execute("SELECT * FROM ftbl_live_notro WHERE entry = :team_id", {"team_id": team_id})
-  elements = db.execute("SELECT * FROM teams30 WHERE \"entry\" = :entry", {"entry": team_id})
+  elements = db.execute("SELECT * FROM ftbl_teams30 WHERE \"entry\" = :entry", {"entry": team_id})
   db.commit()
   return render_template("team30.html", elements=elements, pname=pname)
 
