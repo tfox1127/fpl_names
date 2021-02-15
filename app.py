@@ -149,9 +149,9 @@ def run_search():
     if request.method == 'POST':
         search_for = request.form['search_for']
         search_for_like = "%" + search_for + "%"
-        search_results_data = db.execute("SELECT * FROM \"df_elli\" WHERE UPPER(\"df_elli\".\"web_name\") LIKE UPPER(:search_for_like) OR UPPER(\"df_elli\".\"team\") LIKE UPPER(:search_for_like)", {"search_for_like":search_for_like})
+        elements = db.execute("SELECT * FROM ftbl_elli2 WHERE UPPER(ftbl_elli2.\"web_name\") LIKE UPPER(:search_for_like) OR UPPER(\"ftbl_elli2\".\"team_name\") LIKE UPPER(:search_for_like)", {"search_for_like":search_for_like})
         db.commit()
-        return render_template('search_results.html', search_results_data=search_results_data, search_for=search_for)
+        return render_template('search_results.html', elements=elements, search_for=search_for)
 
 #NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES 
 #NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES 
