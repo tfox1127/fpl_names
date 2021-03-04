@@ -38,6 +38,9 @@ def live():
         """)
 
     epls =  db.execute("SELECT * FROM \"ftbl_scoreboard2\" ORDER BY \"minutes_game\" DESC, \"id\" LIMIT 50")
+    
+    actives = db.execute("SELECT * FROM ftbl_elli2 WHERE minutes_game < 90 AND ((minutes > 0 AND minutes_game < 60 AND points > 1) or (minutes > 60 AND points > 2) or t_bonus > 0)  ORDER BY BPS DESC ")
+    
     #sss =  db.execute("SELECT DISTINCT * FROM score_sheet ORDER BY \"Team\"")
     sss = db.execute("""
         SELECT "a"."element_id", "a"."web_name", "a"."team_name", "a"."goals_scored", "a"."assists", "b"."team_h_name", "b"."team_a_name", "c"."owner"
@@ -49,7 +52,7 @@ def live():
     """)
     db.commit()
     #time = time.item() #.datetime.strftime("%m/%d/%Y, %H:%M:%S")
-    return render_template('live.html', elements=elements, time=time, cups=cups, epls=epls, sss=sss)
+    return render_template('live.html', elements=elements, time=time, cups=cups, epls=epls, actives=actives, sss=sss)
 
 @app.route('/cup_matchup/<int:cup_matchup_id>')
 def cup_matchup(cup_matchup_id):
@@ -80,7 +83,7 @@ def cup_matchup(cup_matchup_id):
 
 @app.route('/active_matches')
 def active_matches():
-    elements = db.execute("SELECT * FROM ftbl_elli2 WHERE minutes_game < 90 AND ((minutes > 0 AND points > 1) or (minutes > 60 AND points > 2) or t_bonus > 0)  ORDER BY BPS DESC ")
+    elements = db.execute("SELECT * FROM ftbl_elli2 WHERE minutes_game < 90 AND ((minutes > 0 AND minutes_game < 60 AND points > 1) or (minutes > 60 AND points > 2) or t_bonus > 0)  ORDER BY BPS DESC ")
 
     db.commit()
     return render_template('active_matches.html', elements=elements)
