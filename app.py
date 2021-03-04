@@ -78,6 +78,13 @@ def cup_matchup(cup_matchup_id):
     db.commit()
     return render_template('cup_matchup.html', cups=cups, cups2=cups2, elements=elements, cup_matchup_id=cup_matchup_id)
 
+@app.route('/active_matches')
+def active_matches():
+    elements = db.execute("SELECT * FROM ftbl_elli2 WHERE minutes_game < 90 AND ((minutes > 0 AND points > 1) or (minutes > 60 AND points > 2) or t_bonus > 0)  ORDER BY BPS DESC ")
+
+    db.commit()
+    return render_template('active_matches.html', elements=elements)
+
 @app.route('/elli')
 def elli():
     #ellis = db.execute("SELECT * FROM ftbl_elli2 WHERE ownership != '0.0%' ORDER BY score DESC")
