@@ -80,8 +80,20 @@ def cup_matchup(cup_matchup_id):
 
 @app.route('/elli')
 def elli():
-    ellis = db.execute("SELECT * FROM df_elli WHERE ownership != '0.0%' ORDER BY score DESC")
-    nonellis = db.execute("SELECT * FROM df_elli WHERE ownership = '0.0%' ORDER BY score DESC LIMIT 15")
+    #ellis = db.execute("SELECT * FROM ftbl_elli2 WHERE ownership != '0.0%' ORDER BY score DESC")
+    ellis = db.execute("""
+    SELECT * FROM ftbl_elli2
+    LEFT JOIN owners_pct ON ftbl_elli2.element_id = owners_pct.element
+    WHERE ownership != '0.0%' 
+    ORDER BY points DESC""")
+    
+    #nonellis = db.execute("SELECT * FROM ftbl_elli2 WHERE ownership = '0.0%' ORDER BY score DESC LIMIT 15")
+    nonellis = db.execute("""
+        SELECT * FROM ftbl_elli2
+        LEFT JOIN owners_pct ON ftbl_elli2.element_id = owners_pct.element
+        WHERE ownership is NULL
+        ORDER BY points DESC
+        LIMIT 15""")
     db.commit()
 
     return render_template('elli.html', ellis=ellis, nonellis=nonellis)

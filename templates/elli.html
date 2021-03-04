@@ -44,9 +44,8 @@
             <td class="align-middle">Player</td>
             <td class="align-middle">POS</td>
             <td class="align-middle">Team</td>
-            <td class="align-middle">Own %</td>
+            <td class="align-middle">Score</td>
             <td class="align-middle">Mins (pl/gm)</td>
-            <td class="align-middle">Points</td>
             <td class="align-middle">G</td>
             <td class="align-middle">A</td>
             <td class="align-middle">CS</td>
@@ -57,39 +56,34 @@
             <td class="align-middle">YC</td>
             <td class="align-middle">RC</td>
             <td class="align-middle">SV</td>
-            <td class="align-middle">Bonus</td>
+            <td class="align-middle">Bonus (Conf)</td>
+            <td class="align-middle">Bonus (Proj)</td>
             <td class="align-middle">BPS</td>
-            <td class="align-middle">Inf</td>
-            <td class="align-middle">Cre</td>
-            <td class="align-middle">Thr</td>
-            <td class="align-middle">ITC</td>
+            <td class="align-middle">Current Cost</td>
           </thead>
           <tbody class="text-center align-middle">
-            {% for non in nonellis %}
+            {% for nonelli in nonellis %}
             <tr>
-              <td class="align-middle"><a href="/player/{{non[1]}}" class="text-dark">{{non[2]}}</a></td>
-              <td class="align-middle">{{non[3]}}</td>
-              <td class="align-middle">{{non[4]}}</td>
-              <td class="align-middle">{{non[30]}}</td>
-              <td class="align-middle">{{non[5]}}/{{non[24]}}</td>
-              <td class="align-middle">{{non[29]}}</td>
-              <td class="align-middle">{{non[6]}}</td>
-              <td class="align-middle">{{non[7]}}</td>
-              <td class="align-middle">{{non[8]}}</td>
-              <td class="align-middle">{{non[9]}}</td>
-              <td class="align-middle">{{non[10]}}</td>
-              <td class="align-middle">{{non[11]}}</td>
-              <td class="align-middle">{{non[12]}}</td>
-              <td class="align-middle">{{non[13]}}</td>
-              <td class="align-middle">{{non[14]}}</td>
-              <td class="align-middle">{{non[15]}}</td>
-              <td class="align-middle">{{non[16]}}</td>
-              <td class="align-middle">{{non[17]}}</td>
-              <td class="align-middle">{{non[18]}}</td>
-              <td class="align-middle">{{non[19]}}</td>
-              <td class="align-middle">{{non[20]}}</td>
-              <td class="align-middle">{{non[21]}}</td>
-
+              <td class="align-middle"><a href="/player/{{nonelli[1]}}" class="text-dark">{{nonelli[2]}}</a></td>
+              <td class="align-middle">{{nonelli[3]}}</td>
+              <td class="align-middle">{{nonelli[6]}}</td>
+              <td class="align-middle">{{nonelli[8]}}</td>
+              <td class="align-middle">{{nonelli[9]}}/{{nonelli[21]}}</td>
+              <td class="align-middle">{{nonelli[10]}}</td>
+              <td class="align-middle">{{nonelli[11]}}</td>
+              <td class="align-middle">{{nonelli[12]}}</td>
+              <td class="align-middle">{{nonelli[13]}}</td>
+              <td class="align-middle">{{nonelli[14]}}</td>
+              <td class="align-middle">{{nonelli[15]}}</td>
+              <td class="align-middle">{{nonelli[16]}}</td>
+              <td class="align-middle">{{nonelli[17]}}</td>
+              <td class="align-middle">{{nonelli[18]}}</td>
+              <td class="align-middle">{{nonelli[19]}}</td>
+              <td class="align-middle">{{nonelli[20]}}</td>
+              <td class="align-middle">{{nonelli[23]}}</td>
+              <td class="align-middle">{{nonelli[22]}}</td>
+              <td class="align-middle">{{nonelli[5]}}</td>
+    
             </tr>
             {% endfor %}
           </tbody>
@@ -110,9 +104,8 @@
             <td class="align-middle">Player</td>
             <td class="align-middle">POS</td>
             <td class="align-middle">Team</td>
-            <td class="align-middle">Own %</td>
+            <td class="align-middle">Score</td>
             <td class="align-middle">Mins (pl/gm)</td>
-            <td class="align-middle">Points</td>
             <td class="align-middle">G</td>
             <td class="align-middle">A</td>
             <td class="align-middle">CS</td>
@@ -123,40 +116,34 @@
             <td class="align-middle">YC</td>
             <td class="align-middle">RC</td>
             <td class="align-middle">SV</td>
-            <td class="align-middle">Bonus</td>
+            <td class="align-middle">Bonus (Conf)</td>
+            <td class="align-middle">Bonus (Proj)</td>
             <td class="align-middle">BPS</td>
-            <td class="align-middle">Inf</td>
-            <td class="align-middle">Cre</td>
-            <td class="align-middle">Thr</td>
-            <td class="align-middle">ITC</td>
+            <td class="align-middle">Current Cost</td>
           </thead>
           <tbody class="text-center align-middle">
-            {% for element in ellis %}
+            {% for elli in ellis %}
             <tr>
-              <td class="align-middle"><a href="/player/{{element[1]}}" class="text-dark">{{element[2]}}</a></td>
-              <!-- <td class="align-middle"><a href="/player/{{element[1]}}" class="text-dark">{{element[5]}}</a></td>-->
-              <td class="align-middle">{{element[3]}}</td>
-              <td class="align-middle">{{element[4]}}</td>
-              <td class="align-middle">{{element[30]}}</td>
-              <td class="align-middle">{{element[5]}}/{{element[24]}}</td>
-              <td class="align-middle">{{element[29]}}</td>
-              <td class="align-middle">{{element[6]}}</td>
-              <td class="align-middle">{{element[7]}}</td>
-              <td class="align-middle">{{element[8]}}</td>
-              <td class="align-middle">{{element[9]}}</td>
-              <td class="align-middle">{{element[10]}}</td>
-              <td class="align-middle">{{element[11]}}</td>
-              <td class="align-middle">{{element[12]}}</td>
-              <td class="align-middle">{{element[13]}}</td>
-              <td class="align-middle">{{element[14]}}</td>
-              <td class="align-middle">{{element[15]}}</td>
-              <td class="align-middle">{{element[16]}}</td>
-              <td class="align-middle">{{element[17]}}</td>
-              <td class="align-middle">{{element[18]}}</td>
-              <td class="align-middle">{{element[19]}}</td>
-              <td class="align-middle">{{element[20]}}</td>
-              <td class="align-middle">{{element[21]}}</td>
-
+              <td class="align-middle"><a href="/player/{{elli[1]}}" class="text-dark">{{elli[2]}}</a></td>
+              <td class="align-middle">{{elli[3]}}</td>
+              <td class="align-middle">{{elli[6]}}</td>
+              <td class="align-middle">{{elli[8]}}</td>
+              <td class="align-middle">{{elli[9]}}/{{elli[21]}}</td>
+              <td class="align-middle">{{elli[10]}}</td>
+              <td class="align-middle">{{elli[11]}}</td>
+              <td class="align-middle">{{elli[12]}}</td>
+              <td class="align-middle">{{elli[13]}}</td>
+              <td class="align-middle">{{elli[14]}}</td>
+              <td class="align-middle">{{elli[15]}}</td>
+              <td class="align-middle">{{elli[16]}}</td>
+              <td class="align-middle">{{elli[17]}}</td>
+              <td class="align-middle">{{elli[18]}}</td>
+              <td class="align-middle">{{elli[19]}}</td>
+              <td class="align-middle">{{elli[20]}}</td>
+              <td class="align-middle">{{elli[23]}}</td>
+              <td class="align-middle">{{elli[22]}}</td>
+              <td class="align-middle">{{elli[5]}}</td>
+    
             </tr>
             {% endfor %}
           </tbody>
