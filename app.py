@@ -272,10 +272,23 @@ def fbb_team(team_id):
     "fbb_espn"."lineupSlotId" NOT IN (13, 16, 17)
     ORDER BY "fbb_espn"."lineupSlotId"
     """, {"team_id": team_id})
-    
-  pitchers = db.execute("SELECT * FROM fbb_espn WHERE team_id = :team_id", {"team_id": team_id})
+
+  pitchers = db.execute("""SELECT * FROM fbb_espn 
+    WHERE team_id = :team_id AND 
+    "fbb_espn"."scoringPeriodId" = (SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) AND 
+    "fbb_espn"."lineupSlotId" IN (13)
+    ORDER BY "fbb_espn"."lineupSlotId"
+    """, {"team_id": team_id})
+
+  bench = db.execute("""SELECT * FROM fbb_espn 
+    WHERE team_id = :team_id AND 
+    "fbb_espn"."scoringPeriodId" = (SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) AND 
+    "fbb_espn"."lineupSlotId" IN (16, 17)
+    ORDER BY "fbb_espn"."lineupSlotId"
+    """, {"team_id": team_id})
+
   db.commit()
-  return render_template("z3_team.html", hitters=hitters, pitchers=pitchers)
+  return render_template("z3_team.html", hitters=hitters, pitchers=pitchers, bench=bench)
 
 if __name__ == '__main__':
     app.run()
