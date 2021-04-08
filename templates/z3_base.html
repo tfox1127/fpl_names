@@ -9,17 +9,36 @@
   <title>{% block title %}Header{% endblock %}</title>
 </head>
 <body>
+  
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="/fbb/team/1">Lemont FBB</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+    <a class="navbar-brand" href="#">Lemont FBB</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div class="navbar-nav">
-        <a class="nav-item nav-link" href="/fbb/team/1">Teams</a>
-      </div>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Teams
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+            <a class="dropdown-item" href="/fbb/team/11">Anne</a>
+            <a class="dropdown-item" href="/fbb/team/5">Brian</a>
+            <a class="dropdown-item" href="/fbb/team/3">Dan</a>
+            <a class="dropdown-item" href="/fbb/team/10">Dave</a>
+            <a class="dropdown-item" href="/fbb/team/14">Matt</a>
+            <a class="dropdown-item" href="/fbb/team/6">Mike</a>
+            <a class="dropdown-item" href="/fbb/team/12">Steve</a>
+            <a class="dropdown-item" href="/fbb/team/13">Tim</a>
+            <a class="dropdown-item" href="/fbb/team/15">Tom</a>
+            <a class="dropdown-item" href="/fbb/team/1">Tommy</a>
+          </div>
+        </li>
+      </ul>
     </div>
   </nav>
+
+
   {% block content %}
   {% endblock %}
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

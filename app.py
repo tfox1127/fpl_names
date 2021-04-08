@@ -262,7 +262,6 @@ def search_name_results():
         db.commit()
         return render_template("names/z2_search_name_results.html", search_results_data=search_results_data, search_for_name=search_for_name)
 
-
 @app.route("/fbb/team/<int:team_id>")
 def fbb_team(team_id):
   #hitters  = db.execute("""SELECT * FROM fbb_espn WHERE team_id = :team_id AND "fbb_espn.scoringPeriodId" = 7""", {"team_id": team_id})
@@ -287,8 +286,17 @@ def fbb_team(team_id):
     ORDER BY "fbb_espn"."lineupSlotId"
     """, {"team_id": team_id})
 
+  owner = db.execute("""
+    SELECT * FROM "fbb_teams" WHERE team_id = :team_id  
+  """, {"team_id": team_id})
+  
+  #owner = db.execute(owner, {"team_id": team_id})
+  #owner_f = format_results(owner)
+  
+  #owner_name = owner_f[0]['owner']
   db.commit()
-  return render_template("z3_team.html", hitters=hitters, pitchers=pitchers, bench=bench)
+
+  return render_template("z3_team.html", hitters=hitters, pitchers=pitchers, bench=bench, owner=owner) #, owner_name=owner_name)
 
 if __name__ == '__main__':
     app.run()
