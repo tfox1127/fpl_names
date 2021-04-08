@@ -1,0 +1,15 @@
+{% extends "z2_base.html" %}
+
+{% block title %}Pickle - Login{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="d-flex justify-content-center text-center">
+      <form  action="/search_name_results" method="post">
+        <p>Look for:</p>
+        <p><input type='text' name='search_for_name' /></p>
+        <p><input type='submit' value='Submit' /></p>
+      </form>
+    </div>
+  </div>
+{% endblock %}

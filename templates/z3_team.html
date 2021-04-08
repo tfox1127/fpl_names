@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}TEAM NAME HERE{% endblock %}
+
+{% block content %}
+<div class="container mt-2">
+    <div class="row"><h2>TEAM NAME HERE</h2></div>    
+</div>
+
+<div class="container mt-2">
+    <h5>Hitters</h5>
+    <div class="table-responsive text-nowrap">
+        <table class="table table-sm text-xsmall table-hover sortable ;" >
+            
+            <thead class="thead-light text-center">
+                <td class="align-middle">Position</td>
+                <td class="align-middle">Player</td>
+                <td class="align-middle">Team</td>
+                <td class="align-middle">POS</td>
+                <td class="align-middle">PA</td>
+                <td class="align-middle">AB</td>
+                <td class="align-middle">H</td>
+                <td class="align-middle">1B</td>
+                <td class="align-middle">2B</td>
+                <td class="align-middle">3B</td>
+                <td class="align-middle">HR</td>
+                <td class="align-middle">TB</td>
+                <td class="align-middle">K</td>
+                <td class="align-middle">BB</td>
+                <td class="align-middle">IBB</td>
+                <td class="align-middle">HBP</td>
+                <td class="align-middle">R</td>
+                <td class="align-middle">RBI</td>
+                <td class="align-middle">SB</td>
+                <td class="align-middle">CS</td>
+                <td class="align-middle">AVG</td>
+                <td class="align-middle">OBP</td>
+                <td class="align-middle">SLG</td>
+                <td class="align-middle">OPS</td>
+            </thead>
+            <tbody class="text-center align-middle">
+                {% for hit in hitters %}
+                    <tr>
+                        <td class="align-middle">{{hit[5]}}</td>
+                        <td class="align-middle">{{hit[6]}}</td>
+                        <td class="align-middle">{{hit[52]}}</td>
+                        <td class="align-middle">{{hit[7]}}</td>
+                        <td class="align-middle">{{hit[21]}}</td>
+                        <td class="align-middle">{{hit[8]}}</td>
+                        <td class="align-middle">{{hit[9]}}</td>
+                        <td class="align-middle">{{hit[15]}}</td>
+                        <td class="align-middle">{{hit[11]}}</td>
+                        <td class="align-middle">{{hit[12]}}</td>
+                        <td class="align-middle">{{hit[13]}}</td>
+                        <td class="align-middle">{{hit[16]}}</td>
+                        <td class="align-middle">{{hit[28]}}</td>
+                        <td class="align-middle">{{hit[18]}}</td>
+                        <td class="align-middle">{{hit[19]}}</td>
+                        <td class="align-middle">{{hit[20]}}</td>
+                        <td class="align-middle">{{hit[24]}}</td>
+                        <td class="align-middle">{{hit[25]}}</td>
+                        <td class="align-middle">{{hit[26]}}</td>
+                        <td class="align-middle">{{hit[27]}}</td>
+                        <td class="align-middle">{{hit[10]}}</td>
+                        <td class="align-middle">{{hit[22]}}</td>
+                        <td class="align-middle">{{hit[17]}}</td>
+                        <td class="align-middle">{{hit[23]}}</td>
+
+
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+
+
+{% endblock %}
