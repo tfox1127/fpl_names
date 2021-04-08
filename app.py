@@ -263,5 +263,19 @@ def search_name_results():
         return render_template("names/z2_search_name_results.html", search_results_data=search_results_data, search_for_name=search_for_name)
 
 
+@app.route("/fbb/team/<int:team_id>")
+def fbb_team(team_id):
+  #hitters  = db.execute("""SELECT * FROM fbb_espn WHERE team_id = :team_id AND "fbb_espn.scoringPeriodId" = 7""", {"team_id": team_id})
+  hitters = db.execute("""SELECT * FROM fbb_espn 
+    WHERE team_id = :team_id AND 
+    "fbb_espn"."scoringPeriodId" = (SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) AND 
+    "fbb_espn"."lineupSlotId" NOT IN (13, 16, 17)
+    ORDER BY "fbb_espn"."lineupSlotId"
+    """, {"team_id": team_id})
+    
+  pitchers = db.execute("SELECT * FROM fbb_espn WHERE team_id = :team_id", {"team_id": team_id})
+  db.commit()
+  return render_template("z3_team.html", hitters=hitters, pitchers=pitchers)
+
 if __name__ == '__main__':
     app.run()
