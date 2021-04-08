@@ -11,6 +11,12 @@
     {% endfor %}
 
     <div class="container mt-2">
+        {% for updated in time %}
+            <h6>Updated: {{updated[58]}} </h6>
+        {% endfor %}
+    </div>
+    
+    <div class="container mt-2">
         <h5>Hitters</h5>
         <div class="table-responsive text-nowrap">
             <table class="table table-sm text-xsmall table-hover sortable ;" >

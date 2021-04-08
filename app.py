@@ -264,39 +264,41 @@ def search_name_results():
 
 @app.route("/fbb/team/<int:team_id>")
 def fbb_team(team_id):
-  #hitters  = db.execute("""SELECT * FROM fbb_espn WHERE team_id = :team_id AND "fbb_espn.scoringPeriodId" = 7""", {"team_id": team_id})
-  hitters = db.execute("""SELECT * FROM fbb_espn 
+    time = db.execute("SELECT DISTINCT * FROM fbb_espn WHERE index = 0")
+
+    #hitters  = db.execute("""SELECT * FROM fbb_espn WHERE team_id = :team_id AND "fbb_espn.scoringPeriodId" = 7""", {"team_id": team_id})
+    hitters = db.execute("""SELECT * FROM fbb_espn 
     WHERE team_id = :team_id AND 
     "fbb_espn"."scoringPeriodId" = (SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) AND 
     "fbb_espn"."lineupSlotId" NOT IN (13, 16, 17)
     ORDER BY "fbb_espn"."lineupSlotId"
     """, {"team_id": team_id})
 
-  pitchers = db.execute("""SELECT * FROM fbb_espn 
+    pitchers = db.execute("""SELECT * FROM fbb_espn 
     WHERE team_id = :team_id AND 
     "fbb_espn"."scoringPeriodId" = (SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) AND 
     "fbb_espn"."lineupSlotId" IN (13)
     ORDER BY "fbb_espn"."lineupSlotId"
     """, {"team_id": team_id})
 
-  bench = db.execute("""SELECT * FROM fbb_espn 
+    bench = db.execute("""SELECT * FROM fbb_espn 
     WHERE team_id = :team_id AND 
     "fbb_espn"."scoringPeriodId" = (SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) AND 
     "fbb_espn"."lineupSlotId" IN (16, 17)
     ORDER BY "fbb_espn"."lineupSlotId"
     """, {"team_id": team_id})
 
-  owner = db.execute("""
+    owner = db.execute("""
     SELECT * FROM "fbb_teams" WHERE team_id = :team_id  
-  """, {"team_id": team_id})
-  
-  #owner = db.execute(owner, {"team_id": team_id})
-  #owner_f = format_results(owner)
-  
-  #owner_name = owner_f[0]['owner']
-  db.commit()
+    """, {"team_id": team_id})
 
-  return render_template("z3_team.html", hitters=hitters, pitchers=pitchers, bench=bench, owner=owner) #, owner_name=owner_name)
+    #owner = db.execute(owner, {"team_id": team_id})
+    #owner_f = format_results(owner)
+
+    #owner_name = owner_f[0]['owner']
+    db.commit()
+
+    return render_template("z3_team.html", hitters=hitters, pitchers=pitchers, bench=bench, owner=owner, time=time) #, owner_name=owner_name)
 
 if __name__ == '__main__':
     app.run()
