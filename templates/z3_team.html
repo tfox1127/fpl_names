@@ -1,16 +1,16 @@
 {% extends "z3_base.html" %}
 
 {% block title %}
-    {% for own in owner %}
-        {{own[4]}}
+    {% for own2 in owner2 %}
+        {{own2[4]}}
     {% endfor %}
 {% endblock %}
 
 {% block content %}
-    {% for own in owner %}
+    {% for own1 in owner1 %}
         <div class="container mt-2">
-            <h3>{{own[4]}}</h3>
-            <h4>{{own[3]}}</h4>
+            <h3>{{own1[4]}}</h3>
+            <h4>{{own1[3]}}</h4>
         </div>
     {% endfor %}
 

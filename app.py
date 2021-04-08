@@ -288,7 +288,11 @@ def fbb_team(team_id):
     ORDER BY "fbb_espn"."lineupSlotId"
     """, {"team_id": team_id})
 
-    owner = db.execute("""
+    owner1 = db.execute("""
+    SELECT * FROM "fbb_teams" WHERE team_id = :team_id  
+    """, {"team_id": team_id})
+
+    owner2 = db.execute("""
     SELECT * FROM "fbb_teams" WHERE team_id = :team_id  
     """, {"team_id": team_id})
 
@@ -298,7 +302,7 @@ def fbb_team(team_id):
     #owner_name = owner_f[0]['owner']
     db.commit()
 
-    return render_template("z3_team.html", hitters=hitters, pitchers=pitchers, bench=bench, owner=owner, time=time) #, owner_name=owner_name)
+    return render_template("z3_team.html", hitters=hitters, pitchers=pitchers, bench=bench, owner1=owner1, owner2=owner2, time=time) #, owner_name=owner_name)
 
 if __name__ == '__main__':
     app.run()
