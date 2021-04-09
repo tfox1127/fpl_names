@@ -304,5 +304,36 @@ def fbb_team(team_id):
 
     return render_template("z3_team.html", hitters=hitters, pitchers=pitchers, bench=bench, owner1=owner1, owner2=owner2, time=time) #, owner_name=owner_name)
 
+@app.route("/fbb/leaderboard")
+def fbb_leaderboard():
+    time = db.execute("SELECT DISTINCT * FROM fbb_espn WHERE index = 0")
+
+    team_hitters = db.execute("""SELECT "team_id_f", SUM("PA") as "PA", SUM("AB") as AB, 
+        SUM("H") as "H", SUM("1B") as "1B", SUM("2B") as "2B", SUM("3B") as "3B", SUM("HR") as "HR", 
+        SUM("TB") as "TB", SUM("K") as "K", SUM("BB") as "BB", SUM("IBB") as "IBB", SUM("HBP") as "HBP", 
+        SUM("R") as "R", SUM("RBI") as "RBI", SUM("SB") as "SB", SUM("CS") as "CS", 
+        TRUNC(SUM("H") / SUM("AB"), 3) as "AVG", 
+        TRUNC(((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")), 3) as "OBP",
+        TRUNC((SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "SLG", 
+        TRUNC(((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")) + (SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "OPS"
+    FROM fbb_espn    
+    WHERE 
+        "fbb_espn"."scoringPeriodId" = (SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) AND 
+        "fbb_espn"."PA" > 0
+    GROUP BY "team_id_f"
+    """)
+
+
+    hitters = db.execute("""SELECT * FROM fbb_espn 
+    WHERE 
+        "fbb_espn"."scoringPeriodId" = (SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) AND 
+        "fbb_espn"."PA" > 0
+    ORDER BY "fbb_espn"."OPS" DESC, "fbb_espn"."PA" DESC
+    """)
+
+    db.commit()
+
+    return render_template("z3_leaderboard.html", team_hitters=team_hitters, hitters=hitters, time=time) #, owner_name=owner_name)
+
 if __name__ == '__main__':
     app.run()
