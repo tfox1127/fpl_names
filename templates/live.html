@@ -98,6 +98,7 @@
             <td class="align-middle">Match</td>
             <td class="align-middle">Team 1 Score</td>
             <td class="align-middle">Team 2 Score</td>
+            <td class="align-middle">Agg</td>
           </thead>
           <tbody class="text-center align-middle">
             {% for cup in cups %}
@@ -106,6 +107,7 @@
               <td class="align-middle"><a href="/cup_matchup/{{cup[4]}}" class="text-dark">{{cup[1]}}</a></td>
               <td class="align-middle">{{cup[2]}}</td>
               <td class="align-middle">{{cup[3]}}</td>
+              <td class="align-middle">{{cup[9]}}</td>
             </tr>
             {% endfor %}
           </tbody>
