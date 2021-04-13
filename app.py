@@ -340,6 +340,7 @@ def fbb_leaderboard():
         "fbb_espn"."scoringPeriodId" = (SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) AND 
         "fbb_espn"."PA" > 0
     GROUP BY "team_id_f"
+    ORDER BY "OPS" DESC
     """)
 
 
