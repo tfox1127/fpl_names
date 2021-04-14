@@ -1,4 +1,4 @@
-import random
+import random, os
 from flask import Flask, render_template, request, session, redirect, url_for
 from sqlalchemy import create_engine
 from sqlalchemy import exc
@@ -7,7 +7,11 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 app = Flask(__name__)
 ENV = 'dev'
 
-engine = create_engine('postgres://oqivztlextiryy:f910e63e9de02a848ecddc6941e46d9cc16b3f4cc65fd8a24475f8affea90c93@ec2-3-215-207-12.compute-1.amazonaws.com:5432/davc1l7co2fgm', isolation_level="AUTOCOMMIT")
+#DATABASE_URL
+DATABASE_URL = os.environ['DATABASE_URL']
+
+engine = create_engine(DATABASE_URL, isolation_level="AUTOCOMMIT")
+#engine = create_engine('postgres://oqivztlextiryy:f910e63e9de02a848ecddc6941e46d9cc16b3f4cc65fd8a24475f8affea90c93@ec2-3-215-207-12.compute-1.amazonaws.com:5432/davc1l7co2fgm', isolation_level="AUTOCOMMIT")
 db = scoped_session(sessionmaker(bind=engine))
 app.secret_key = 'pizza'
 
@@ -281,6 +285,12 @@ def search_name_results():
         db.commit()
         return render_template("names/z2_search_name_results.html", search_results_data=search_results_data, search_for_name=search_for_name)
 
+#FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB 
+#FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB 
+@app.route("/fbb")
+def fbb(): 
+    return render_template('z3_fbb.html')
+
 @app.route("/fbb/team/<int:team_id>")
 def fbb_team(team_id):
     time = db.execute("SELECT DISTINCT * FROM fbb_espn WHERE index = 0")
@@ -323,6 +333,50 @@ def fbb_team(team_id):
 
     return render_template("z3_team.html", hitters=hitters, pitchers=pitchers, bench=bench, owner1=owner1, owner2=owner2, time=time) #, owner_name=owner_name)
 
+@app.route("/fbb/team/<int:team_id>/<int:gameday>")
+def fbb_team_specific(team_id, gameday):
+    time = db.execute("SELECT DISTINCT * FROM fbb_espn WHERE index = 0")
+
+    hitters = db.execute("""SELECT * FROM fbb_espn_attic 
+    WHERE 
+    team_id = :team_id AND 
+    "fbb_espn_attic"."scoringPeriodId" = :gameday AND 
+    "fbb_espn_attic"."lineupSlotId" NOT IN (13, 16, 17)
+    ORDER BY "fbb_espn_attic"."lineupSlotId"
+    """, {"team_id": team_id, "gameday": gameday})
+
+    pitchers = db.execute("""SELECT * FROM fbb_espn_attic 
+    WHERE 
+    team_id = :team_id AND 
+    "fbb_espn_attic"."scoringPeriodId" = :gameday AND 
+    "fbb_espn_attic"."lineupSlotId" IN (13)
+    ORDER BY "fbb_espn_attic"."lineupSlotId"
+    """, {"team_id": team_id, "gameday": gameday})
+
+    bench = db.execute("""SELECT * FROM fbb_espn_attic 
+    WHERE 
+    team_id = :team_id AND 
+    "fbb_espn_attic"."scoringPeriodId" = :gameday AND 
+    "fbb_espn_attic"."lineupSlotId" IN (16, 17)
+    ORDER BY "fbb_espn_attic"."lineupSlotId"
+    """, {"team_id": team_id, "gameday": gameday})
+
+    owner1 = db.execute("""
+    SELECT * FROM "fbb_teams" WHERE team_id = :team_id  
+    """, {"team_id": team_id, "gameday": gameday})
+
+    owner2 = db.execute("""
+    SELECT * FROM "fbb_teams" WHERE team_id = :team_id  
+    """, {"team_id": team_id, "gameday": gameday})
+
+    #owner = db.execute(owner, {"team_id": team_id})
+    #owner_f = format_results(owner)
+
+    #owner_name = owner_f[0]['owner']
+    db.commit()
+
+    return render_template("z3_team.html", hitters=hitters, pitchers=pitchers, bench=bench, owner1=owner1, owner2=owner2, time=time) #, owner_name=owner_name)
+
 @app.route("/fbb/leaderboard")
 def fbb_leaderboard():
     time = db.execute("SELECT DISTINCT * FROM fbb_espn WHERE index = 0")
@@ -342,6 +396,38 @@ def fbb_leaderboard():
     GROUP BY "team_id_f"
     ORDER BY "OPS" DESC
     """)
+
+
+    hitters = db.execute("""SELECT * FROM fbb_espn 
+    WHERE 
+        "fbb_espn"."scoringPeriodId" = (SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) AND 
+        "fbb_espn"."PA" > 0
+    ORDER BY "fbb_espn"."OPS" DESC, "fbb_espn"."PA" DESC
+    """)
+
+    db.commit()
+
+    return render_template("z3_leaderboard.html", team_hitters=team_hitters, hitters=hitters, time=time) #, owner_name=owner_name)
+
+@app.route("/fbb/leaderboard/<int:gameday>")
+def fbb_leaderboard_specific(gameday):
+    time = db.execute("SELECT DISTINCT * FROM fbb_espn WHERE index = 0")
+
+    team_hitters = db.execute("""SELECT "team_id_f", SUM("PA") as "PA", SUM("AB") as AB, 
+        SUM("H") as "H", SUM("1B") as "1B", SUM("2B") as "2B", SUM("3B") as "3B", SUM("HR") as "HR", 
+        SUM("TB") as "TB", SUM("K") as "K", SUM("BB") as "BB", SUM("IBB") as "IBB", SUM("HBP") as "HBP", 
+        SUM("R") as "R", SUM("RBI") as "RBI", SUM("SB") as "SB", SUM("CS") as "CS", 
+        TRUNC(SUM("H") / SUM("AB"), 3) as "AVG", 
+        TRUNC(((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")), 3) as "OBP",
+        TRUNC((SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "SLG", 
+        TRUNC(((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")) + (SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "OPS"
+    FROM fbb_espn_attic
+    WHERE 
+        "fbb_espn_attic"."scoringPeriodId" = :gameday AND 
+        "fbb_espn_attic"."PA" > 0
+    GROUP BY "team_id_f"
+    ORDER BY "OPS" DESC
+    """, {"gameday": gameday})
 
 
     hitters = db.execute("""SELECT * FROM fbb_espn 
