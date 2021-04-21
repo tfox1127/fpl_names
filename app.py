@@ -291,7 +291,17 @@ def search_name_results():
 def fbb(): 
     return render_template('z3_fbb.html')
 
+@app.route("/fbb/login", methods = ["POST", "GET"])
+def fbb_login():
+    if request.method == "POST":
+        fbb_user = request.form["fbb_user"]
+        session['fbb_user'] = fbb_user
+        return redirect(url_for("fbb_leaderboard", fbb_user=fbb_user))
+    else:
+        return render_template("z3_login.html")
+
 @app.route("/fbb/team/<int:team_id>")
+
 def fbb_team(team_id):
     time = db.execute("SELECT DISTINCT * FROM fbb_espn WHERE index = 0")
 
@@ -379,6 +389,8 @@ def fbb_team_specific(team_id, gameday):
 
 @app.route("/fbb/leaderboard")
 def fbb_leaderboard():
+    fbb_user = session['fbb_user']
+
     time = db.execute("SELECT DISTINCT * FROM fbb_espn WHERE index = 0")
 
     team_hitters = db.execute("""SELECT "team_id_f", SUM("PA") as "PA", SUM("AB") as AB, 
@@ -398,7 +410,8 @@ def fbb_leaderboard():
     """)
 
 
-    hitters = db.execute("""SELECT * FROM fbb_espn 
+    hitters = db.execute("""SELECT "team_id_f", "lineupSlotId_f", "fullName", "proTeamId_f", "PA", "AB", "H", "1B", "2B", "3B", "HR", "TB", "K", "BB", "IBB", "HBP", "R", "RBI", "SB", "CS", "AVG", "OBP", "SLG", "OPS"
+    FROM fbb_espn 
     WHERE 
         "fbb_espn"."scoringPeriodId" = (SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) AND 
         "fbb_espn"."PA" > 0
@@ -407,7 +420,7 @@ def fbb_leaderboard():
 
     db.commit()
 
-    return render_template("z3_leaderboard.html", team_hitters=team_hitters, hitters=hitters, time=time) #, owner_name=owner_name)
+    return render_template("z3_leaderboard.html", team_hitters=team_hitters, hitters=hitters, time=time, fbb_user=fbb_user) #, owner_name=owner_name)
 
 @app.route("/fbb/leaderboard/<int:gameday>")
 def fbb_leaderboard_specific(gameday):
