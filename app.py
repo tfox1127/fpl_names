@@ -296,7 +296,10 @@ def fbb_login():
     if request.method == "POST":
         fbb_user = request.form["fbb_user"]
         session['fbb_user'] = fbb_user
-        return redirect(url_for("fbb_leaderboard", fbb_user=fbb_user))
+
+        #fbb_team_name = db.execute(""" SELECT * FROM "fbb_teams" WHERE short_name = :fbb_user""", {"fbb_user" : fbb_user}) 
+        #session['fbb_team_name'] = fbb_team_name
+        return redirect(url_for("fbb_leaderboard", fbb_user=fbb_user)) #, fbb_team_name = fbb_team_name
     else:
         return render_template("z3_login.html")
 
@@ -389,7 +392,9 @@ def fbb_team_specific(team_id, gameday):
 
 @app.route("/fbb/leaderboard")
 def fbb_leaderboard():
+
     fbb_user = session['fbb_user']
+    #fbb_team_name = session['fbb_team_name']
 
     time = db.execute("SELECT DISTINCT * FROM fbb_espn WHERE index = 0")
 
@@ -409,7 +414,6 @@ def fbb_leaderboard():
     ORDER BY "OPS" DESC
     """)
 
-
     hitters = db.execute("""SELECT "team_id_f", "lineupSlotId_f", "fullName", "proTeamId_f", "PA", "AB", "H", "1B", "2B", "3B", "HR", "TB", "K", "BB", "IBB", "HBP", "R", "RBI", "SB", "CS", "AVG", "OBP", "SLG", "OPS"
     FROM fbb_espn 
     WHERE 
@@ -421,6 +425,30 @@ def fbb_leaderboard():
     db.commit()
 
     return render_template("z3_leaderboard.html", team_hitters=team_hitters, hitters=hitters, time=time, fbb_user=fbb_user) #, owner_name=owner_name)
+
+@app.route("/fbb/free_agents")
+def fbb_fas():
+
+    fbb_user = session['fbb_user']
+    #fbb_team_name = session['fbb_team_name']
+
+    fa_batters = db.execute("""SELECT "fullName", SUM("PA") as "PA", SUM("AB") as AB, 
+        SUM("H") as "H", SUM("1B") as "1B", SUM("2B") as "2B", SUM("3B") as "3B", SUM("HR") as "HR", 
+        SUM("TB") as "TB", SUM("K") as "K", SUM("BB") as "BB", SUM("IBB") as "IBB", SUM("HBP") as "HBP", 
+        SUM("R") as "R", SUM("RBI") as "RBI", SUM("SB") as "SB", SUM("CS") as "CS", 
+        TRUNC(SUM("H") / SUM("AB"), 3) as "AVG", 
+        TRUNC(((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")), 3) as "OBP",
+        TRUNC((SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "SLG", 
+        TRUNC(((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")) + (SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "OPS"
+    FROM fbb_batters_07   
+    WHERE "fbb_batters_07"."AB" > 0
+    GROUP BY "fullName"
+    ORDER BY "OPS" DESC
+    """)
+
+    db.commit()
+
+    return render_template("z3_free_agents.html", fa_batters=fa_batters) #, owner_name=owner_name)
 
 @app.route("/fbb/leaderboard/<int:gameday>")
 def fbb_leaderboard_specific(gameday):
