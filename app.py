@@ -398,7 +398,23 @@ def fbb_leaderboard():
 
     time = db.execute("SELECT DISTINCT * FROM fbb_espn WHERE index = 0")
 
-    team_hitters = db.execute("""SELECT "team_id_f", SUM("PA") as "PA", SUM("AB") as AB, 
+    playing_yet_test = db.execute("""SELECT "team_id_f", SUM("PA") as "PA" FROM fbb_espn WHERE 
+        "fbb_espn"."scoringPeriodId" = (SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) AND 
+        "fbb_espn"."PA" > 0
+    GROUP BY "team_id_f"
+    """)
+
+    dates = db.execute("""SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ""")
+    today = dates.fetchall()[0][0]
+
+    if playing_yet_test.rowcount == 0: 
+        today_or_yest = today - 1 
+        live_or_attic = "fbb_espn_attic"
+    else: 
+        today_or_yest = today
+        live_or_attic = "fbb_espn"
+
+    team_hitters = db.execute(f"""SELECT "team_id_f", SUM("PA") as "PA", SUM("AB") as AB, 
         SUM("H") as "H", SUM("1B") as "1B", SUM("2B") as "2B", SUM("3B") as "3B", SUM("HR") as "HR", 
         SUM("TB") as "TB", SUM("K") as "K", SUM("BB") as "BB", SUM("IBB") as "IBB", SUM("HBP") as "HBP", 
         SUM("R") as "R", SUM("RBI") as "RBI", SUM("SB") as "SB", SUM("CS") as "CS", 
@@ -406,20 +422,21 @@ def fbb_leaderboard():
         TRUNC(((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")), 3) as "OBP",
         TRUNC((SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "SLG", 
         TRUNC(((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")) + (SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "OPS"
-    FROM fbb_espn    
+    FROM {live_or_attic}    
     WHERE 
-        "fbb_espn"."scoringPeriodId" = (SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) AND 
-        "fbb_espn"."PA" > 0
+        {live_or_attic}."scoringPeriodId" = {today_or_yest} AND 
+        {live_or_attic}."PA" > 0
     GROUP BY "team_id_f"
     ORDER BY "OPS" DESC
     """)
+    #(SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) - {yesterday} AND 
 
-    hitters = db.execute("""SELECT "team_id_f", "lineupSlotId_f", "fullName", "proTeamId_f", "PA", "AB", "H", "1B", "2B", "3B", "HR", "TB", "K", "BB", "IBB", "HBP", "R", "RBI", "SB", "CS", "AVG", "OBP", "SLG", "OPS"
-    FROM fbb_espn 
+    hitters = db.execute(f"""SELECT "team_id_f", "lineupSlotId_f", "fullName", "proTeamId_f", "PA", "AB", "H", "1B", "2B", "3B", "HR", "TB", "K", "BB", "IBB", "HBP", "R", "RBI", "SB", "CS", "AVG", "OBP", "SLG", "OPS"
+    FROM {live_or_attic} 
     WHERE 
-        "fbb_espn"."scoringPeriodId" = (SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) AND 
-        "fbb_espn"."PA" > 0
-    ORDER BY "fbb_espn"."OPS" DESC, "fbb_espn"."PA" DESC
+        "{live_or_attic}"."scoringPeriodId" = {today_or_yest} AND 
+        "{live_or_attic}"."PA" > 0
+    ORDER BY "{live_or_attic}"."OPS" DESC, "{live_or_attic}"."PA" DESC
     """)
 
     db.commit()
