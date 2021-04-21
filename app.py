@@ -426,13 +426,26 @@ def fbb_leaderboard():
 
     return render_template("z3_leaderboard.html", team_hitters=team_hitters, hitters=hitters, time=time, fbb_user=fbb_user) #, owner_name=owner_name)
 
-@app.route("/fbb/free_agents")
-def fbb_fas():
+@app.route("/fbb/free_agents/<int:period>")
+def fbb_fas(period):
 
     fbb_user = session['fbb_user']
     #fbb_team_name = session['fbb_team_name']
 
-    fa_batters = db.execute("""SELECT "fullName", SUM("PA") as "PA", SUM("AB") as AB, 
+    if period == 7: 
+        this_table = "fbb_batters_07"
+        page_type  = "Last 7 Days"
+    elif period == 14:
+        this_table = "fbb_batters_14"
+        page_type  = "Last 14 Days"
+    elif period == 28:
+        this_table = "fbb_batters_28"
+        page_type  = "Last 28 Days"
+    else: 
+        this_table = "fbb_batters_99"
+        page_type  = "2021"
+
+    fa_batters = db.execute(f"""SELECT "fullName", SUM("PA") as "PA", SUM("AB") as AB, 
         SUM("H") as "H", SUM("1B") as "1B", SUM("2B") as "2B", SUM("3B") as "3B", SUM("HR") as "HR", 
         SUM("TB") as "TB", SUM("K") as "K", SUM("BB") as "BB", SUM("IBB") as "IBB", SUM("HBP") as "HBP", 
         SUM("R") as "R", SUM("RBI") as "RBI", SUM("SB") as "SB", SUM("CS") as "CS", 
@@ -440,15 +453,16 @@ def fbb_fas():
         TRUNC(((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")), 3) as "OBP",
         TRUNC((SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "SLG", 
         TRUNC(((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")) + (SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "OPS"
-    FROM fbb_batters_07   
-    WHERE "fbb_batters_07"."AB" > 0
+    FROM {this_table}   
+    WHERE "{this_table}"."AB" > 0 AND 
+     "{this_table}"."playerId" NOT IN (SELECT "fbb_espn"."playerId" FROM "fbb_espn")
     GROUP BY "fullName"
     ORDER BY "OPS" DESC
     """)
 
     db.commit()
 
-    return render_template("z3_free_agents.html", fa_batters=fa_batters) #, owner_name=owner_name)
+    return render_template("z3_free_agents.html", fa_batters=fa_batters, page_type=page_type) #, owner_name=owner_name)
 
 @app.route("/fbb/leaderboard/<int:gameday>")
 def fbb_leaderboard_specific(gameday):
