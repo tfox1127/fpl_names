@@ -11,7 +11,7 @@
     <div class="container mt-2">
         <h3>Leaderboard</h3>
         {% for updated in time %}
-            <h6><i>Updated: {{updated[58]}}</i> </h6>
+            <h6><i>Updated: {{updated[58]}} ({{today}} | {{today_or_yest}})</i> </h6>
             <h6>Logged in as: {{fbb_user}} </h6>
         {% endfor %}
     </div>

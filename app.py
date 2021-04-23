@@ -441,7 +441,7 @@ def fbb_leaderboard():
 
     db.commit()
 
-    return render_template("z3_leaderboard.html", team_hitters=team_hitters, hitters=hitters, time=time, fbb_user=fbb_user) #, owner_name=owner_name)
+    return render_template("z3_leaderboard.html", team_hitters=team_hitters, hitters=hitters, time=time, fbb_user=fbb_user, today_or_yest=today_or_yest, today=today) #, owner_name=owner_name)
 
 @app.route("/fbb/free_agents/<int:period>")
 def fbb_fas(period):
