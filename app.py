@@ -143,7 +143,9 @@ def team_picker():
         ON fpl_lg2_team.element_id = fpl_free_agent_base.element_id
         """)    
 
-    free_agents = db.execute("""SELECT "element_id", "web_name", "element_type", "team_name", "now_cost" FROM fpl_free_agent_base""")
+    free_agents = db.execute("""
+        SELECT "element_id", "web_name", "element_type", "team_name", "now_cost", "goals_scored", "assists", "bonus", "minutes", "total_points", "points_per_game", "value_season"
+    FROM fpl_free_agent_base""")
 
     db.commit()
 
