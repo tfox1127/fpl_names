@@ -131,12 +131,48 @@ def elli():
 
     return render_template('elli.html', ellis=ellis, nonellis=nonellis)
 
+@app.route('/team_picker')
+def team_picker():
+    #ellis = db.execute("SELECT * FROM ftbl_elli2 WHERE ownership != '0.0%' ORDER BY score DESC")
+    owner = 1
+    owner_name = "tFox"
+
+    team = db.execute("""
+        SELECT fpl_free_agent_base."element_id", "web_name", "element_type", "team_name", "now_cost" 
+        FROM fpl_lg2_team LEFT JOIN fpl_free_agent_base 
+        ON fpl_lg2_team.element_id = fpl_free_agent_base.element_id
+        """)    
+
+    free_agents = db.execute("""SELECT "element_id", "web_name", "element_type", "team_name", "now_cost" FROM fpl_free_agent_base""")
+
+    db.commit()
+
+    return render_template('team_picker.html', owner=owner, owner_name = owner_name, team=team, free_agents=free_agents)
+
+@app.route("/<int:owner>/add/<int:player>")
+def add_player(owner, player):
+  db.execute("INSERT INTO fpl_lg2_team (\"element_id\", \"owner\") VALUES (:x, :y)", {"x": player, "y": owner})
+
+  db.commit()
+  return redirect(url_for("team_picker"))
+
+@app.route("/<int:owner>/drop/<int:player>")
+def drop_player(owner, player):
+  db.execute(f"""
+    DELETE FROM "fpl_lg2_team" 
+    WHERE ctid = (SELECT ctid FROM "fpl_lg2_team"
+    WHERE "element_id" = {player} AND "owner" = '{owner}' LIMIT 1);""", {"x": player, "y": owner})
+
+  db.commit()
+  return redirect(url_for("team_picker"))
+
 @app.route("/player/<int:player_id>")
 def players(player_id):
   headers    = db.execute("SELECT * FROM eplayer_info WHERE id = :player_id", {"player_id": player_id})
   players    = db.execute("SELECT * FROM df_phistory WHERE element = :player_id", {"player_id": player_id})
   owners     = db.execute("SELECT * FROM df_owner_info WHERE element = :player_id", {"player_id": player_id})
   db.commit()
+  
   return render_template("epl_player.html", headers=headers, players=players, owners=owners)
 
 @app.route("/teams30/<int:team_id>")
