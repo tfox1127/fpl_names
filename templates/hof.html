@@ -38,12 +38,14 @@
           <thead class="thead-light text-center align-middle">
             <td class="align-middle">Competition</td>
             <td class="align-middle">Manager Name</td>
+            <td class="align-middle">Season</td>
           </thead>
           <tbody class="text-center align-middle">
             {% for champ in champs %}
             <tr>
               <td class="align-middle">{{champ[1]}}</td>
               <td class="align-middle">{{champ[2]}}</td>
+              <td class="align-middle">{{champ[3]}}</td>
             </tr>
             {% endfor %}
           </tbody>
