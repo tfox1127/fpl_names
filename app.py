@@ -344,7 +344,7 @@ def fbb_login():
     else:
         return render_template("z3_login.html")
 
-@app.route("fbb/team/<int:team_id>")
+@app.route("/fbb/team/<int:team_id>")
 def fbb_team(team_id):
     
     time = db.execute("SELECT DISTINCT * FROM fbb_espn WHERE index = 0")
