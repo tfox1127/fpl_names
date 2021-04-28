@@ -1,0 +1,133 @@
+{% extends "z3_base.html" %}
+
+{% block title %}
+    {% for own2 in owner2 %}
+        {{own2[4]}}
+    {% endfor %}
+{% endblock %}
+
+{% block content %}
+    
+    <div class="container mt-2">
+        <div class="row">
+            <div class="col-6"><h3>Leaderboard</h3></div>
+            <div class="col-6 text-right"><h3>{{fbb_user}}</h3></div>
+        </div>
+        {% for updated in time %}
+            <h6><i>Updated: {{updated[58]}}</i> </h6>
+            <h6><i>(Gameday: {{today}} | Showing: {{today_or_yest}})</i></h6>
+        {% endfor %}
+    </div>
+
+    <div class="container mt-2">
+        <h5>Offense Summary</h5>
+        <div class="table-responsive text-nowrap">
+            <table class="table table-sm text-xsmall table-hover sortable ;" >
+                
+                <thead class="thead-light text-center">
+                    <td class="align-middle">Team</td>
+                    <td class="align-middle">G</td>
+                    <td class="align-middle">GS</td>
+                    <td class="align-middle">OUTS</td>
+                    <td class="align-middle">BF</td>
+                    <td class="align-middle">PC</td>
+                    <td class="align-middle">H</td>
+                    <td class="align-middle">BB</td>
+                    <td class="align-middle">SO</td>
+                    <td class="align-middle">R</td>
+                    <td class="align-middle">ER</td>
+                    <td class="align-middle">HR</td>
+                    <td class="align-middle">W</td>
+                    <td class="align-middle">L</td>
+                    <td class="align-middle">QS</td>
+                    <td class="align-middle">HD</td>
+                    <td class="align-middle">SVOPP</td>
+                    <td class="align-middle">SV</td>
+                    <td class="align-middle">BS</td>
+                    <td class="align-middle">Kp9</td>
+                    <td class="align-middle">BAA</td>
+                    <td class="align-middle">WHIP</td>
+                    <td class="align-middle">OBPA</td>
+                    <td class="align-middle">ERA</td>
+                </thead>
+                <tbody class="text-center align-middle">
+                {% for t_hit in team_hitters %}
+                    {% if t_hit[0] == fbb_user %}
+                        <tr style ="  background-color: #08ff87;">
+                            {% for td in t_hit %}
+                                <td class="align-left">{{ td }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% else %}
+                        <tr>
+                            {% for td in t_hit %}
+                                <td class="align-left">{{ td }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="container mt-2">
+        <h5>Today's Hitters</h5>
+        <div class="table-fixed text-nowrap">
+            <table class="table table-sm text-xsmall table-hover sortable ;" >
+                
+                <thead class="thead-light text-center header-fixed">
+                    <td class="align-middle">Owner</td>
+                    <td class="align-middle">Position</td>
+                    <td class="align-middle">Player</td>
+                    <td class="align-middle">Team</td>
+                    <td class="align-middle">G</td>
+                    <td class="align-middle">GS</td>
+                    <td class="align-middle">OUTS</td>
+                    <td class="align-middle">BF</td>
+                    <td class="align-middle">PC</td>
+                    <td class="align-middle">H</td>
+                    <td class="align-middle">BB</td>
+                    <td class="align-middle">SO</td>
+                    <td class="align-middle">R</td>
+                    <td class="align-middle">ER</td>
+                    <td class="align-middle">HR</td>
+                    <td class="align-middle">W</td>
+                    <td class="align-middle">L</td>
+                    <td class="align-middle">QS</td>
+                    <td class="align-middle">HD</td>
+                    <td class="align-middle">SVOPP</td>
+                    <td class="align-middle">SV</td>
+                    <td class="align-middle">BS</td>
+                    <td class="align-middle">Kp9</td>
+                    <td class="align-middle">BAA</td>
+                    <td class="align-middle">WHIP</td>
+                    <td class="align-middle">OBPA</td>
+                    <td class="align-middle">ERA</td>
+                </thead>
+                <tbody class="text-center align-middle table-fixed">
+                    {% for hit in hitters %}
+                        <tr>
+                            {% if hit[0] == fbb_user %}
+                            <tr style ="  background-color: #08ff87;">
+                                {% for td in hit %}
+                                    <td class="align-left">{{ td }}</td>
+                                {% endfor %}
+                            </tr>
+                        {% else %}
+                            <tr>
+                                {% for td in hit %}
+                                    <td class="align-left">{{ td }}</td>
+                                {% endfor %}
+                            </tr>
+                        {% endif %}
+                        </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+{% endblock %}

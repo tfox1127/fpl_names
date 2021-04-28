@@ -341,8 +341,6 @@ def fbb_login():
     else:
         return render_template("z3_login.html")
 
-@app.route("/fbb/team/<int:team_id>")
-
 def fbb_team(team_id):
     time = db.execute("SELECT DISTINCT * FROM fbb_espn WHERE index = 0")
 
@@ -435,15 +433,14 @@ def fbb_leaderboard():
     #fbb_team_name = session['fbb_team_name']
 
     time = db.execute("SELECT DISTINCT * FROM fbb_espn WHERE index = 0")
+    dates = db.execute("""SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ""")
+    today = dates.fetchall()[0][0]
 
     playing_yet_test = db.execute("""SELECT "team_id_f", SUM("PA") as "PA" FROM fbb_espn WHERE 
         "fbb_espn"."scoringPeriodId" = (SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) AND 
         "fbb_espn"."PA" > 0
     GROUP BY "team_id_f"
     """)
-
-    dates = db.execute("""SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ""")
-    today = dates.fetchall()[0][0]
 
     if playing_yet_test.rowcount == 0: 
         today_or_yest = today - 1 
@@ -479,7 +476,7 @@ def fbb_leaderboard():
 
     db.commit()
 
-    return render_template("z3_leaderboard.html", team_hitters=team_hitters, hitters=hitters, time=time, fbb_user=fbb_user, today_or_yest=today_or_yest, today=today) #, owner_name=owner_name)
+    return render_template("z3_lbd_hit.html", team_hitters=team_hitters, hitters=hitters, time=time, fbb_user=fbb_user, today_or_yest=today_or_yest, today=today) #, owner_name=owner_name)
 
 @app.route("/fbb/free_agents/<int:period>")
 def fbb_fas(period):
@@ -521,35 +518,95 @@ def fbb_fas(period):
 
 @app.route("/fbb/leaderboard/<int:gameday>")
 def fbb_leaderboard_specific(gameday):
-    time = db.execute("SELECT DISTINCT * FROM fbb_espn WHERE index = 0")
 
-    team_hitters = db.execute("""SELECT "team_id_f", SUM("PA") as "PA", SUM("AB") as AB, 
-        SUM("H") as "H", SUM("1B") as "1B", SUM("2B") as "2B", SUM("3B") as "3B", SUM("HR") as "HR", 
-        SUM("TB") as "TB", SUM("K") as "K", SUM("BB") as "BB", SUM("IBB") as "IBB", SUM("HBP") as "HBP", 
-        SUM("R") as "R", SUM("RBI") as "RBI", SUM("SB") as "SB", SUM("CS") as "CS", 
-        TRUNC(SUM("H") / SUM("AB"), 3) as "AVG", 
-        TRUNC(((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")), 3) as "OBP",
-        TRUNC((SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "SLG", 
-        TRUNC(((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")) + (SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "OPS"
-    FROM fbb_espn_attic
-    WHERE 
-        "fbb_espn_attic"."scoringPeriodId" = :gameday AND 
-        "fbb_espn_attic"."PA" > 0
-    GROUP BY "team_id_f"
-    ORDER BY "OPS" DESC
-    """, {"gameday": gameday})
+    if "user" in session:
+        time = db.execute("SELECT DISTINCT * FROM fbb_espn WHERE index = 0")
+        dates = db.execute("""SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ""")
+        today = dates.fetchall()[0][0]
+        fbb_user = session['fbb_user']
 
+        team_hitters = db.execute("""SELECT "team_id_f", SUM("PA") as "PA", SUM("AB") as AB, 
+            SUM("H") as "H", SUM("1B") as "1B", SUM("2B") as "2B", SUM("3B") as "3B", SUM("HR") as "HR", 
+            SUM("TB") as "TB", SUM("K") as "K", SUM("BB") as "BB", SUM("IBB") as "IBB", SUM("HBP") as "HBP", 
+            SUM("R") as "R", SUM("RBI") as "RBI", SUM("SB") as "SB", SUM("CS") as "CS", 
+            TRUNC(SUM("H") / SUM("AB"), 3) as "AVG", 
+            TRUNC(((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")), 3) as "OBP",
+            TRUNC((SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "SLG", 
+            TRUNC(((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")) + (SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "OPS"
+        FROM fbb_espn_attic
+        WHERE 
+            "fbb_espn_attic"."scoringPeriodId" = :gameday AND 
+            "fbb_espn_attic"."PA" > 0
+        GROUP BY "team_id_f"
+        ORDER BY "OPS" DESC
+        """, {"gameday": gameday})
 
-    hitters = db.execute("""SELECT * FROM fbb_espn 
-    WHERE 
-        "fbb_espn"."scoringPeriodId" = (SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) AND 
-        "fbb_espn"."PA" > 0
-    ORDER BY "fbb_espn"."OPS" DESC, "fbb_espn"."PA" DESC
-    """)
+        live_or_attic = "fbb_espn_attic"
+        today_or_yest = gameday
 
-    db.commit()
+        hitters = db.execute(f"""SELECT "team_id_f", "lineupSlotId_f", "fullName", "proTeamId_f", "PA", "AB", "H", "1B", "2B", "3B", "HR", "TB", "K", "BB", "IBB", "HBP", "R", "RBI", "SB", "CS", "AVG", "OBP", "SLG", "OPS"
+        FROM {live_or_attic} 
+        WHERE 
+            "{live_or_attic}"."scoringPeriodId" = {today_or_yest} AND 
+            "{live_or_attic}"."PA" > 0
+        ORDER BY "{live_or_attic}"."OPS" DESC, "{live_or_attic}"."PA" DESC
+        """)
 
-    return render_template("z3_leaderboard.html", team_hitters=team_hitters, hitters=hitters, time=time) #, owner_name=owner_name)
+        db.commit()
+
+        return render_template("z3_lbd_hit.html", team_hitters=team_hitters, hitters=hitters, time=time, dates=dates, fbb_user=fbb_user, today_or_yest=gameday, today=today)
+    else:
+        return redirect(url_for("fbb_login"))
+
+@app.route("/fbb/lbd_pitch")
+def fbb_lbd_pit():
+    if "fbb_user" in session:
+        fbb_user = session['fbb_user']
+        #fbb_team_name = session['fbb_team_name']
+
+        time = db.execute("SELECT DISTINCT * FROM fbb_espn WHERE index = 0")
+        dates = db.execute("""SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ""")
+        today = dates.fetchall()[0][0]
+
+        playing_yet_test = db.execute("""SELECT "team_id_f", SUM("PA") as "PA" FROM fbb_espn WHERE 
+            "fbb_espn"."scoringPeriodId" = (SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) AND 
+            "fbb_espn"."PA" > 0
+        GROUP BY "team_id_f"
+        """)
+
+        if playing_yet_test.rowcount == 0: 
+            today_or_yest = today - 1 
+            live_or_attic = "fbb_espn_attic"
+        else: 
+            today_or_yest = today
+            live_or_attic = "fbb_espn"
+
+        team_hitters = db.execute(f"""SELECT "team_id_f", SUM("G"), SUM("GS"), SUM("OUTS"), SUM("BF"), SUM("PITCH COUNT"), SUM("HA"), SUM("BBag"), 
+            SUM("SO"), SUM("RA"), SUM("ERAG"), SUM("HRA"), SUM("W"), SUM("L"), SUM("QS"), SUM("HD"), SUM("SVOPP"), SUM("SV"), SUM("BS"),
+            TRUNC(SUM("SO") / (SUM("OUTS") / 3) * 9, 2) AS "KP9",  TRUNC(SUM("HA") / (SUM("BF") - SUM("BBag")), 3) AS "BAA", 
+            TRUNC((SUM("BBag") + SUM("HA")) / (SUM("OUTS") / 3), 2) AS "WHIP", TRUNC((SUM("HA") + SUM("BBag")) / SUM("BF"), 3) AS "OBPA",
+            TRUNC((SUM("ERAG") * 9) / (SUM("OUTS") / 3), 3) AS "ERA"
+        FROM {live_or_attic}    
+        WHERE 
+            {live_or_attic}."scoringPeriodId" = {today_or_yest}  
+        GROUP BY "team_id_f"
+        """)
+        #(SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) - {yesterday} AND 
+
+        hitters = db.execute(f"""SELECT "team_id_f", "lineupSlotId_f", "fullName", "proTeamId_f", 
+        "G", "GS", "OUTS", "BF", "PITCH COUNT", "HA", "BBag", "SO", "RA", "ERAG", "HRA", "W", "L", "QS", "HD", "SVOPP", "SV", "BS", "KP9", "BAA", "WHIP", "OBPA", "ERA"
+        FROM {live_or_attic} 
+        WHERE 
+            "{live_or_attic}"."scoringPeriodId" = {today_or_yest} AND 
+            "{live_or_attic}"."BF" > 0
+        ORDER BY "{live_or_attic}"."OPS" DESC, "{live_or_attic}"."OUTS" DESC
+        """)
+
+        db.commit()
+
+        return render_template("z3_lbd_pitch.html", team_hitters=team_hitters, hitters=hitters, time=time, fbb_user=fbb_user, today_or_yest=today_or_yest, today=today) #, owner_name=owner_name)
+    else:
+        return redirect(url_for("fbb_login"))
 
 if __name__ == '__main__':
     app.run()

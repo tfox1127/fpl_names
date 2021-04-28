@@ -9,10 +9,13 @@
 {% block content %}
     
     <div class="container mt-2">
-        <h3>Leaderboard</h3>
+        <div class="row">
+            <div class="col-6"><h3>Leaderboard</h3></div>
+            <div class="col-6 text-right"><h3>{{fbb_user}}</h3></div>
+        </div>
         {% for updated in time %}
-            <h6><i>Updated: {{updated[58]}} ({{today}} | {{today_or_yest}})</i> </h6>
-            <h6>Logged in as: {{fbb_user}} </h6>
+            <h6><i>Updated: {{updated[58]}}</i> </h6>
+            <h6><i>(Gameday: {{today}} | Showing: {{today_or_yest}})</i></h6>
         {% endfor %}
     </div>
 
