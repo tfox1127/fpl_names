@@ -589,14 +589,18 @@ def fbb_lbd_pit():
             today_or_yest = today
             live_or_attic = "fbb_espn"
 
-        team_hitters = db.execute(f"""SELECT "team_id_f", SUM("G"), SUM("GS"), SUM("OUTS"), SUM("BF"), SUM("PITCH COUNT"), SUM("HA"), SUM("BBag"), 
-            SUM("SO"), SUM("RA"), SUM("ERAG"), SUM("HRA"), SUM("W"), SUM("L"), SUM("QS"), SUM("HD"), SUM("SVOPP"), SUM("SV"), SUM("BS"),
-            TRUNC(SUM("SO") / (SUM("OUTS") / 3) * 9, 2) AS "KP9",  TRUNC(SUM("HA") / (SUM("BF") - SUM("BBag")), 3) AS "BAA", 
-            TRUNC((SUM("BBag") + SUM("HA")) / (SUM("OUTS") / 3), 2) AS "WHIP", TRUNC((SUM("HA") + SUM("BBag")) / SUM("BF"), 3) AS "OBPA",
-            TRUNC((SUM("ERAG") * 9) / (SUM("OUTS") / 3), 3) AS "ERA"
+        team_hitters = db.execute(f"""SELECT "team_id_f", SUM("G"), SUM("GS"), SUM("OUTS") as "OUTS", SUM("BF"), SUM("PITCH COUNT"), SUM("HA"), SUM("BBag"), 
+            SUM("SO"), SUM("RA"), SUM("ERAG"), SUM("HRA"), SUM("W"), SUM("L"), SUM("QS"), SUM("HD"), SUM("SVOPP"), SUM("SV"), SUM("BS")
+            ,
+            TRUNC(SUM("SO") / (SUM("OUTS") / 3) * 9, 2) AS "KP9",  
+            TRUNC(SUM("HA") / (SUM("BF") - SUM("BBag")), 3) AS "BAA", 
+            TRUNC((SUM("BBag") + SUM("HA")) / (SUM("OUTS") / 3), 2) AS "WHIP", 
+            TRUNC((SUM("HA") + SUM("BBag")) / SUM("BF"), 3) AS "OBPA",
+            TRUNC((SUM("ERAG") * 9) / (SUM("OUTS") / 3), 2) AS "ERA"
         FROM {live_or_attic}    
         WHERE 
-            {live_or_attic}."scoringPeriodId" = {today_or_yest}  
+            {live_or_attic}."scoringPeriodId" = {today_or_yest} AND  
+            {live_or_attic}."OUTS" > 0
         GROUP BY "team_id_f"
         """)
         #(SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) - {yesterday} AND 
@@ -606,7 +610,7 @@ def fbb_lbd_pit():
         FROM {live_or_attic} 
         WHERE 
             "{live_or_attic}"."scoringPeriodId" = {today_or_yest} AND 
-            "{live_or_attic}"."BF" > 0
+            "{live_or_attic}"."OUTS" > 0
         ORDER BY "{live_or_attic}"."OPS" DESC, "{live_or_attic}"."OUTS" DESC
         """)
 
@@ -618,3 +622,11 @@ def fbb_lbd_pit():
 
 if __name__ == '__main__':
     app.run()
+
+
+            # ,
+            # TRUNC(SUM("SO") / (SUM("OUTS") / 3) * 9, 2) AS "KP9",  
+            # TRUNC(SUM("HA") / (SUM("BF") - SUM("BBag")), 3) AS "BAA", 
+            # TRUNC((SUM("BBag") + SUM("HA")) / (SUM("OUTS") / 3), 2) AS "WHIP", 
+            # TRUNC((SUM("HA") + SUM("BBag")) / SUM("BF"), 3) AS "OBPA",
+            # TRUNC((SUM("ERAG") * 9) / (SUM("OUTS") / 3), 3) AS "ERA"
