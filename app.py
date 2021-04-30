@@ -41,24 +41,39 @@ def live():
         ORDER BY "Group"
         """)
 
-    cups = db.execute("""
-        SELECT DISTINCT "Cup"."Group", "Cup"."Match", CAST("l21"."score" AS INTEGER) as "Team 1 Score", CAST("l22"."score" AS INTEGER) as "Team 2 Score", "Cup"."Match ID",
-            "lw"."t2_leg1",
-            "lw"."t1_leg1",
-            "lw"."t2_leg1" + "l21"."score" as "A",
-            "lw"."t1_leg1" + "l22"."score" as "B",
-            ("lw"."t2_leg1" + "l21"."score") - ("lw"."t1_leg1" + "l22"."score") as "C" 
+    #cups = db.execute("""
+    #    SELECT DISTINCT "Cup"."Group", "Cup"."Match", CAST("l21"."score" AS INTEGER) as "Team 1 Score", CAST("l22"."score" AS INTEGER) as "Team 2 Score", "Cup"."Match ID",
+    #        "lw"."t2_leg1",
+    #        "lw"."t1_leg1",
+    #        "lw"."t2_leg1" + "l21"."score" as "A",
+    #        "lw"."t1_leg1" + "l22"."score" as "B",
+    #        ("lw"."t2_leg1" + "l21"."score") - ("lw"."t1_leg1" + "l22"."score") as "C" 
+    #        FROM "Cup"
+    #        LEFT JOIN "ftbl_live_notro" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
+    #        LEFT JOIN "ftbl_live_notro" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
+    #        LEFT JOIN (
+    #        SELECT DISTINCT "Group", "Match", CAST("T2 Score" AS INTEGER) as "t2_leg1", CAST("T1 Score" AS INTEGER) as "t1_leg1", "Match ID", "Team 1 ID", "Team 2 ID" FROM "Cup"
+    #        WHERE "GW" = (SELECT * FROM "tbl_GW" limit 1) - 1
+    #        ) AS "lw" ON "Cup"."Team 1 ID" = "lw"."Team 2 ID"
+    #        WHERE "GW" = (SELECT * FROM "tbl_GW" limit 1)
+    #        ORDER BY "Cup"."Group"
+    #        """
+    #)
+
+    cups = db.execute(""" 
+        SELECT DISTINCT
+        "Cup"."Group",
+        "Cup"."Match",
+        CAST("l21"."score" AS INTEGER) as "Team 1 Score",
+        CAST("l22"."score" AS INTEGER) as "Team 2 Score",
+        "Cup"."Match ID",
+        CAST(("l21"."score" -  "l22"."score") AS INTEGER)  as "c" 
             FROM "Cup"
-            LEFT JOIN "ftbl_live_notro" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
-            LEFT JOIN "ftbl_live_notro" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
-            LEFT JOIN (
-            SELECT DISTINCT "Group", "Match", CAST("T2 Score" AS INTEGER) as "t2_leg1", CAST("T1 Score" AS INTEGER) as "t1_leg1", "Match ID", "Team 1 ID", "Team 2 ID" FROM "Cup"
-            WHERE "GW" = (SELECT * FROM "tbl_GW" limit 1) - 1
-            ) AS "lw" ON "Cup"."Team 1 ID" = "lw"."Team 2 ID"
-            WHERE "GW" = (SELECT * FROM "tbl_GW" limit 1)
-            ORDER BY "Cup"."Group"
-            """
-    )
+                    LEFT JOIN "ftbl_live_notro" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
+                    LEFT JOIN "ftbl_live_notro" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
+                    WHERE "GW" = (SELECT * FROM "tbl_GW" limit 1)
+                    ORDER BY "Cup"."Group"
+    """)
 
     epls =  db.execute("SELECT * FROM \"ftbl_scoreboard2\" ORDER BY \"minutes_game\" DESC, \"id\" LIMIT 50")
     
