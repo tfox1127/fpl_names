@@ -621,12 +621,13 @@ def fbb_lbd_pit():
         #(SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) - {yesterday} AND 
 
         hitters = db.execute(f"""SELECT "team_id_f", "lineupSlotId_f", "fullName", "proTeamId_f", 
-        "G", "GS", "OUTS", "BF", "PITCH COUNT", "HA", "BBag", "SO", "RA", "ERAG", "HRA", "W", "L", "QS", "HD", "SVOPP", "SV", "BS", "KP9", "BAA", "WHIP", "OBPA", "ERA"
+        "G", "GS", "OUTS", "BF", "PITCH COUNT", "HA", "BBag", "SO", "RA", "ERAG", "HRA", "W", "L", "QS", "HD", "SVOPP", "SV", "BS", "KP9", "BAA", "WHIP", "OBPA", "ERA", 
+        40 + (2 * "OUTS") + "SO" - (2 *  "BBag") - (2 *  "HA") - (3 *  "RA") - (6 * "HRA")  as "Game Score"
         FROM {live_or_attic} 
         WHERE 
             "{live_or_attic}"."scoringPeriodId" = {today_or_yest} AND 
             "{live_or_attic}"."OUTS" > 0
-        ORDER BY "{live_or_attic}"."OPS" DESC, "{live_or_attic}"."OUTS" DESC
+        ORDER BY "Game Score" DESC
         """)
 
         db.commit()
