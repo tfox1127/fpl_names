@@ -20,6 +20,41 @@
     </div>
 
     <div class="container mt-2">
+        <h5>Scoreboard</h5>
+        <div class="table-responsive text-nowrap">
+            <table class="table table-sm text-xsmall table-hover sortable ;" >
+                
+                <thead class="thead-light text-center">
+                    <td class="align-middle">Owner</td>
+                    <td class="align-middle">TB</td>
+                    <td class="align-middle">BB</td>
+                    <td class="align-middle">R</td>
+                    <td class="align-middle">RBI</td>
+                    <td class="align-middle">SB</td>
+                    <td class="align-middle">OPS</td>
+                </thead>
+                <tbody class="text-center align-middle">
+                {% for sboard in scoreboard %}
+                    {% if sboard[0] == fbb_user %}
+                        <tr style ="  background-color: #08ff87;">
+                            {% for td in sboard %}
+                                <td class="align-left">{{ td }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% else %}
+                        <tr>
+                            {% for td in sboard %}
+                                <td class="align-left">{{ td }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="container mt-2">
         <h5>Offense Summary</h5>
         <div class="table-responsive text-nowrap">
             <table class="table table-sm text-xsmall table-hover sortable ;" >

@@ -269,7 +269,7 @@ def login():
         return redirect(url_for("profile", user=user))
 
     else:
-        return render_template("z2_login.html")
+        return render_template("/names/z2_login.html")
 
 @app.route("/profile/<string:user>")
 def profile(user):
@@ -280,8 +280,8 @@ def random_name():
     if "user" in session:
         #get list of unrated names
         user = session["user"]
-        q = ("SELECT src_name_list.\"2020 Rank\" FROM src_name_list LEFT JOIN ratings ON "
-         "src_name_list.\"2020 Rank\" = ratings.\"2020 Rank\" WHERE ratings.\"User\" != :user OR ratings.\"User\" is NULL")
+        q = ("SELECT z_src_name_list.\"2020 Rank\" FROM z_src_name_list LEFT JOIN z_ratings ON "
+         "z_src_name_list.\"2020 Rank\" = z_ratings.\"2020 Rank\" WHERE z_ratings.\"User\" != :user OR z_ratings.\"User\" is NULL")
         full = db.execute(q, {"user": user})
         f_full = format_results(full)
 
@@ -291,7 +291,7 @@ def random_name():
         pick = f_full[pick]['2020 Rank']
 
         #run query to get that picks info
-        q = "SELECT * FROM src_name_list WHERE \"2020 Rank\" = :pick"
+        q = "SELECT * FROM z_src_name_list WHERE \"2020 Rank\" = :pick"
         names = db.execute(q, {"pick": pick})
         f_names = format_results(names)
         f_name = f_names[0]['Name']
@@ -318,7 +318,7 @@ def submit():
         y = request.form['user']
         z = request.form['rating']
 
-        db.execute("INSERT INTO ratings (\"2020 Rank\", \"User\", \"Rating\") VALUES (:x, :y, :z)", {"x": x, "y": y, "z": z})
+        db.execute("INSERT INTO z_ratings (\"2020 Rank\", \"User\", \"Rating\") VALUES (:x, :y, :z)", {"x": x, "y": y, "z": z})
         #db.execute("UPDATE name_list_g SET \"Michelle\" = (:x) WHERE \"Name\" = (:y)", {"x": x, "y":y})
         db.commit()
         #return redirect(request.referrer)
@@ -469,14 +469,23 @@ def fbb_leaderboard():
             today_or_yest = today
             live_or_attic = "fbb_espn"
 
+        scoreboard = db.execute(f"""SELECT "team_id_f", SUM("TB") as "TB", SUM("BB") as "BB", 
+            SUM("R") as "R", SUM("RBI") as "RBI", SUM("SB") as "SB", 
+            TRUNC(((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")) + (SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "OPS"
+        FROM fbb_scoreboard    
+        GROUP BY "team_id_f"
+        ORDER BY "OPS" DESC
+        """)
+            #SUM("OUTS") as "OUTS", SUM("HD"), SUM("SV"), TRUNC(SUM("SO") / (SUM("OUTS") / 3) * 9, 2) AS "KP9", TRUNC((SUM("BBag") + SUM("HA")) / (SUM("OUTS") / 3), 2) AS "WHIP", TRUNC((SUM("ERAG") * 9) / (SUM("OUTS") / 3), 2) AS "ERA"
+
         team_hitters = db.execute(f"""SELECT "team_id_f", SUM("PA") as "PA", SUM("AB") as AB, 
             SUM("H") as "H", SUM("1B") as "1B", SUM("2B") as "2B", SUM("3B") as "3B", SUM("HR") as "HR", 
             SUM("TB") as "TB", SUM("K") as "K", SUM("BB") as "BB", SUM("IBB") as "IBB", SUM("HBP") as "HBP", 
             SUM("R") as "R", SUM("RBI") as "RBI", SUM("SB") as "SB", SUM("CS") as "CS", 
             TRUNC(SUM("H") / SUM("AB"), 3) as "AVG", 
             TRUNC(((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")), 3) as "OBP",
-            TRUNC((SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "SLG", 
-            TRUNC(((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")) + (SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "OPS"
+            TRUNC(SUM("TB") / SUM("AB"), 3) as "SLG", 
+            TRUNC( (((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")) + SUM("TB") / SUM("AB")), 3   ) AS "OPS"
         FROM {live_or_attic}    
         WHERE 
             {live_or_attic}."scoringPeriodId" = {today_or_yest} AND 
@@ -484,6 +493,7 @@ def fbb_leaderboard():
         GROUP BY "team_id_f"
         ORDER BY "OPS" DESC
         """)
+        #TRUNC((SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "SLG", 
         #(SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) - {yesterday} AND 
 
         hitters = db.execute(f"""SELECT "team_id_f", "lineupSlotId_f", "fullName", "proTeamId_f", "PA", "AB", "H", "1B", "2B", "3B", "HR", "TB", "K", "BB", "IBB", "HBP", "R", "RBI", "SB", "CS", "AVG", "OBP", "SLG", "OPS"
@@ -495,7 +505,7 @@ def fbb_leaderboard():
         """)
 
         db.commit()
-        return render_template("z3_lbd_hit.html", team_hitters=team_hitters, hitters=hitters, time=time, fbb_user=fbb_user, today_or_yest=today_or_yest, today=today) #, owner_name=owner_name)
+        return render_template("z3_lbd_hit.html", scoreboard=scoreboard, team_hitters=team_hitters, hitters=hitters, time=time, fbb_user=fbb_user, today_or_yest=today_or_yest, today=today) #, owner_name=owner_name)
     else:
         return redirect(url_for("fbb_login"))
 
