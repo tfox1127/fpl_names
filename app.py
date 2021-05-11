@@ -505,7 +505,7 @@ def fbb_leaderboard():
             TRUNC(((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")) + (SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "OPS"
         FROM fbb_scoreboard    
         GROUP BY "team_id_f"
-        HAVING SUM("PA") > 0 
+        HAVING SUM("AB") > 0 
         ORDER BY "OPS" DESC
         """)
             #SUM("OUTS") as "OUTS", SUM("HD"), SUM("SV"), TRUNC(SUM("SO") / (SUM("OUTS") / 3) * 9, 2) AS "KP9", TRUNC((SUM("BBag") + SUM("HA")) / (SUM("OUTS") / 3), 2) AS "WHIP", TRUNC((SUM("ERAG") * 9) / (SUM("OUTS") / 3), 2) AS "ERA"
@@ -523,6 +523,7 @@ def fbb_leaderboard():
             {live_or_attic}."scoringPeriodId" = {today_or_yest} AND 
             {live_or_attic}."PA" > 0
         GROUP BY "team_id_f"
+        HAVING SUM("AB") > 0 
         ORDER BY "OPS" DESC
         """)
         #TRUNC((SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "SLG", 
