@@ -261,6 +261,16 @@ def format_results(result):
         a.append(d)
     return a
 
+@app.route("/names", methods = ["POST", "GET"])
+def landing():
+    if request.method == "POST":
+        user = request.form["name"]
+        session['user'] = user
+        return redirect(url_for("profile", user=user))
+
+    else:
+        return render_template("/names/z2_names.html")
+
 @app.route("/login", methods = ["POST", "GET"])
 def login():
     if request.method == "POST":
@@ -270,6 +280,15 @@ def login():
 
     else:
         return render_template("/names/z2_login.html")
+
+@app.route("/signup", methods = ["POST", "GET"])
+def signup():
+    if request.method == "POST":
+        user = request.form["name"]
+        session['user'] = user
+        return redirect(url_for("profile", user=user))
+    else:
+        return render_template("/names/z2_signup.html")
 
 @app.route("/profile/<string:user>")
 def profile(user):
