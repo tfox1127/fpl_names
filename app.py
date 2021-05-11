@@ -488,11 +488,12 @@ def fbb_leaderboard():
             today_or_yest = today
             live_or_attic = "fbb_espn"
 
-        scoreboard = db.execute(f"""SELECT "team_id_f", SUM("TB") as "TB", SUM("BB") as "BB", 
+        scoreboard = db.execute(f"""SELECT "team_id_f" as a, SUM("TB") as "TB", SUM("BB") as "BB", 
             SUM("R") as "R", SUM("RBI") as "RBI", SUM("SB") as "SB", 
             TRUNC(((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")) + (SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "OPS"
         FROM fbb_scoreboard    
         GROUP BY "team_id_f"
+        HAVING SUM("PA") > 0 
         ORDER BY "OPS" DESC
         """)
             #SUM("OUTS") as "OUTS", SUM("HD"), SUM("SV"), TRUNC(SUM("SO") / (SUM("OUTS") / 3) * 9, 2) AS "KP9", TRUNC((SUM("BBag") + SUM("HA")) / (SUM("OUTS") / 3), 2) AS "WHIP", TRUNC((SUM("ERAG") * 9) / (SUM("OUTS") / 3), 2) AS "ERA"
