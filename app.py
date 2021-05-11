@@ -294,6 +294,18 @@ def signup():
 def profile(user):
   return render_template("names/z2_profile.html", user=user)
 
+@app.route("/profile/<string:user>/list/<string:list_type>")
+def user_ratings(user, list_type):
+    user_ratings = db.execute( """
+        SELECT "nl"."2020 Rank", "nl"."Name", CAST("rt"."Rating" AS INTEGER) 
+        FROM "z_src_name_list" as "nl"
+        LEFT JOIN "z_ratings" as "rt"
+        ON "nl"."2020 Rank" = "rt"."2020 Rank"
+        WHERE "rt"."Rating" IS NOT NULL 
+        """)
+
+    return render_template("names/z2_user_ratings.html", user=user, list_type = list_type, user_ratings=user_ratings)
+
 @app.route("/name/random_name")
 def random_name():
     if "user" in session:

@@ -5,31 +5,23 @@
 {% block content %}
 
     <div class="container mt-2">
-        <h5>Results</h5>
+        <h5>Results for {{user}}</h5>
         <div class="table-fixed text-nowrap">
             <table class="table table-sm text-xsmall table-hover sortable ;" >
                 
                 <thead class="thead-light text-center header-fixed">
                     <td class="align-middle">Id</td>
                     <td class="align-middle">Name</td>
-                    <td class="align-middle">Order</td>
+                    <td class="align-middle">Rating</td>
                 </thead>
                 <tbody class="text-center align-middle table-fixed">
-                    {% for fa in fa_batters %}
+                    {% for fa in user_ratings %}
                         <tr>
-                            {% if fa[0] == fbb_user %}
-                            <tr style ="  background-color: #08ff87;">
-                                {% for td in fa %}
-                                    <td class="align-left">{{ td }}</td>
-                                {% endfor %}
-                            </tr>
-                        {% else %}
                             <tr>
                                 {% for td in fa %}
                                     <td class="align-left">{{ td }}</td>
                                 {% endfor %}
                             </tr>
-                        {% endif %}
                         </tr>
                     {% endfor %}
 
