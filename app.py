@@ -554,7 +554,17 @@ def fbb_power_ranks():
     else:
         return redirect(url_for("fbb_login"))
 
+@app.route("/fbb/power_ranks/<int:week>")
+def fbb_power_ranks_sp(week):
+    if "fbb_user" in session:
+        fbb_user = session['fbb_user']
 
+        pRanks = db.execute(f"""SELECT * FROM fbb_pr WHERE "fbb_pr"."Week" = :week""", {"week": week})
+
+        db.commit()
+        return render_template("z3_power_ranks.html", fbb_user=fbb_user, pRanks=pRanks) #, owner_name=owner_name)
+    else:
+        return redirect(url_for("fbb_login"))
 
 @app.route("/fbb/free_agents/<int:period>")
 def fbb_fas(period):
