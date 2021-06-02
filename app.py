@@ -302,8 +302,7 @@ def profile(user):
 
 @app.route("/profile/<string:user>/list/<string:list_type>")
 def user_ratings(user, list_type):
-    if list_type == 'all': 
-        user_summary = db.execute("""
+    user_summary = db.execute("""
             SELECT CAST("rt"."Rating" AS INTEGER), COUNT("nl"."Name") as Count
             FROM "z_src_name_list" as "nl"
             LEFT JOIN "z_ratings" as "rt"
@@ -312,6 +311,8 @@ def user_ratings(user, list_type):
             GROUP BY "rt"."Rating"
             """, {"user":user})
 
+    if list_type == 'all': 
+        
         user_ratings = db.execute( """
             SELECT "nl"."2020 Rank", "nl"."Name", CAST("rt"."Rating" AS INTEGER) 
             FROM "z_src_name_list" as "nl"
@@ -321,6 +322,7 @@ def user_ratings(user, list_type):
             AND "rt"."User" = :user
             """, {"user":user})
     else: 
+        
         user_ratings = db.execute( """
             SELECT "nl"."2020 Rank", "nl"."Name", CAST("rt"."Rating" AS INTEGER) 
             FROM "z_src_name_list" as "nl"
