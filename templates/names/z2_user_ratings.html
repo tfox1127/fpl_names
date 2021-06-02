@@ -24,6 +24,29 @@
             </div>
           </div>
 
+
+        <div class="table-fixed text-nowrap">
+            <table class="table table-sm text-xsmall table-hover sortable ;" >
+                
+                <thead class="thead-light text-center">
+                    <td class="align-middle">Rating</td>
+                    <td class="align-middle">Count</td>
+                </thead>
+                <tbody class="text-center align-middle">
+                    {% for us in user_summary %}
+                        <tr>
+                            <tr>
+                                {% for td in us %}
+                                    <td class="align-left">{{ td }}</td>
+                                {% endfor %}
+                            </tr>
+                        </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+
         <div class="table-fixed text-nowrap">
             <table class="table table-sm text-xsmall table-hover sortable ;" >
                 
