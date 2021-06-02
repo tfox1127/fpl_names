@@ -341,8 +341,20 @@ def random_name():
     if "user" in session:
         #get list of unrated names
         user = session["user"]
-        q = ("SELECT z_src_name_list.\"2020 Rank\" FROM z_src_name_list LEFT JOIN z_ratings ON "
-         "z_src_name_list.\"2020 Rank\" = z_ratings.\"2020 Rank\" WHERE z_ratings.\"User\" != :user")
+        #q = ("SELECT z_src_name_list.\"2020 Rank\" FROM z_src_name_list LEFT JOIN z_ratings ON "
+        # "z_src_name_list.\"2020 Rank\" = z_ratings.\"2020 Rank\" WHERE z_ratings.\"User\" != :user")
+
+        q ="""
+            SELECT a."2020 Rank"
+            FROM (SELECT z_src_name_list.*
+            FROM z_src_name_list) as a
+            LEFT JOIN (
+            SELECT z_ratings.*
+            FROM z_ratings WHERE z_ratings."User" = :user ) as b
+            ON a."2020 Rank" = b."2020 Rank"
+            WHERE b."User" IS NULL
+        """
+
         full = db.execute(q, {"user": user})
         f_full = format_results(full)
 
