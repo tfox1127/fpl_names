@@ -3,13 +3,27 @@
 {% block title %}Pickle - Login{% endblock %}
 
 {% block content %}
-  <div class="container">
-    <div class="d-flex justify-content-center text-center">
-      <p>Searched for: {{search_for_name}}</p>
-      {% for i in search_results_data %}
-        <p>{{i[2]}} </p> <br>
-      {% endfor %}
-
+  <div class="container mt-2">
+    <h4>Serching for: {{search_for_name}}</h4>
+    <div class="table-responsive text-nowrap">
+      <table class="table table-sm text-xsmall table-hover sortable ;" >
+        <thead class="thead-light text-center">
+          <td class="align-middle">2020 Rank</td>
+          <td class="align-middle">Name</td>
+          <td class="align-middle">Your Rating</td>
+          <td class="align-middle">Partner's Rating</td>
+        </thead>
+        <tbody class="text-center align-middle">
+          {% for element in search_results_data %}
+          <tr>
+            <td class="align-middle">{{element[0]}}</td>
+            <td class="align-middle"><a href="/name/{{element[1]}}" class="text-dark">{{element[1]}}</a></td>
+            <td class="align-middle">{{element[2]}}</td>
+            <td class="align-middle">{{element[3]}}</td>  
+          </tr>
+          {% endfor %}
+        </tbody>
     </div>
   </div>
+
 {% endblock %}

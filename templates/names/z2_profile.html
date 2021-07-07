@@ -1,6 +1,6 @@
 {% extends "/names/z2_base.html" %}
 
-{% block title %}Pickle - Login{% endblock %}
+{% block title %}Name Pickler{% endblock %}
 
 {% block content %}
 
@@ -19,13 +19,19 @@
 
     <div class="row mt-3 d-flex justify-content-center text-center">
       <div class="col-xs-5 col-lg-5">
-        <a href="#" class="btn btn-outline-dark btn-block" role="button">Search Name</a>
+        <a href="/search_name" class="btn btn-outline-dark btn-block" role="button">Search Name</a>
       </div>
     </div>
 
     <div class="row mt-3 d-flex justify-content-center text-center">
       <div class="col-xs-5 col-lg-5">
-        <a href="/profile/{{user}}/list/all" class="btn btn-outline-dark btn-block" role="button">See Results</a>
+        <a href="/profile/{{user}}/list/all" class="btn btn-outline-dark btn-block" role="button">See Your Results</a>
+      </div>
+    </div>
+
+    <div class="row mt-3 d-flex justify-content-center text-center">
+      <div class="col-xs-5 col-lg-5">
+        <a href="/profile/{{session['partner']}}/list/all" class="btn btn-outline-dark btn-block" role="button">See {{session['partner']}}'s Results</a>
       </div>
     </div>
 

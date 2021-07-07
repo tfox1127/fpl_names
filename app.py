@@ -276,7 +276,15 @@ def login():
     if request.method == "POST":
         user = request.form["name"]
         session['user'] = user
-        return redirect(url_for("profile", user=user))
+
+        q = """SELECT user_name FROM z_users WHERE user_id = (SELECT partner FROM z_users WHERE user_name = :user)"""
+        partners = db.execute(q, {"user": session['user']})
+        partner = partners.fetchall()
+        partner = partner[0][0]
+
+        session['partner'] = partner
+
+        return redirect(url_for("profile", user=user, partner=partner))
 
     else:
         return render_template("/names/z2_login.html")
@@ -344,31 +352,36 @@ def random_name():
         #q = ("SELECT z_src_name_list.\"2020 Rank\" FROM z_src_name_list LEFT JOIN z_ratings ON "
         # "z_src_name_list.\"2020 Rank\" = z_ratings.\"2020 Rank\" WHERE z_ratings.\"User\" != :user")
 
-        q ="""
-            SELECT a."2020 Rank"
+        q = """SELECT a."2020 Rank"
             FROM (SELECT z_src_name_list.*
             FROM z_src_name_list) as a
             LEFT JOIN (
             SELECT z_ratings.*
             FROM z_ratings WHERE z_ratings."User" = :user ) as b
             ON a."2020 Rank" = b."2020 Rank"
-            WHERE b."User" IS NULL
-        """
+            WHERE b."User" IS NULL"""
 
-        full = db.execute(q, {"user": user})
-        f_full = format_results(full)
+        undone = db.execute(q, {"user": user})
+        undone = undone.fetchall()
+
+        todo = len(undone)
+        undone[random.choice(range(todo))][0]
+        pick = undone[0][0]
+        
+        #f_full = format_results(full)
 
         #pick random formatted result
-        this_many = len(f_full)
-        pick = random.choice(range(this_many))
-        pick = f_full[pick]['2020 Rank']
+        #this_many = len(f_full)
+        #pick = random.choice(range(this_many))
+        #pick = f_full[pick]['2020 Rank']
 
         #run query to get that picks info
         q = "SELECT * FROM z_src_name_list WHERE \"2020 Rank\" = :pick"
         names = db.execute(q, {"pick": pick})
-        f_names = format_results(names)
-        f_name = f_names[0]['Name']
-        f_rank = f_names[0]['2020 Rank']
+        names = names.fetchall()
+        #f_names = format_results(names)
+        f_rank = names[0][1]
+        f_name = names[0][2]
 
         session['name'] = f_name
         session['rank'] = f_rank
@@ -379,10 +392,31 @@ def random_name():
 
 @app.route('/name/<string:name>')
 def name_page(name):
-    user = session['user']
-    name = session['name']
-    rank = session['rank']
-    return render_template('names/z2_name.html', user=user, name=name, rank=rank)
+
+    name_combo = db.execute("""SELECT a.*, b."Rating" as "Tommy",  c."Rating" as "Michelle"
+            FROM (SELECT z_src_name_list.*
+            FROM z_src_name_list) as a
+
+            LEFT JOIN (
+            SELECT z_ratings.*
+            FROM z_ratings WHERE z_ratings."User" = :user ) as b
+            ON a."2020 Rank" = b."2020 Rank"
+
+            LEFT JOIN (
+            SELECT z_ratings.*
+            FROM z_ratings WHERE z_ratings."User" = :partner ) as c
+            ON a."2020 Rank" = c."2020 Rank"
+
+            WHERE a."Name" = :name """, {"name" : name, "user" : session['user'], "partner" : session['partner']})
+    
+    name_combo = name_combo.fetchall()
+
+    name = name
+    rank = name_combo[0][1]
+    rate_u = name_combo[0][3]
+    rate_p = name_combo[0][4]
+
+    return render_template('names/z2_name.html', user=session['user'], name=name, rank=rank, rate_u= rate_u, rate_p= rate_p)
 
 @app.route('/submit', methods=['POST'])
 def submit():
@@ -399,6 +433,7 @@ def submit():
 
 @app.route('/search_name')
 def search_name():
+
     return render_template('names/z2_search.html')
 
 @app.route("/search_name_results", methods = ["POST", "GET"])
@@ -406,8 +441,33 @@ def search_name_results():
     if request.method == 'POST':
         search_for_name = request.form['search_for_name']
         search_for_name_like = "%" + search_for_name + "%"
-        search_results_data = db.execute("SELECT * FROM \"df_elli\" WHERE UPPER(\"df_elli\".\"web_name\") LIKE UPPER(:search_for_name_like)", {"search_for_name_like":search_for_name_like})
-
+        #search_results_data = db.execute("""SELECT * FROM z_src_name_list WHERE UPPER("Name") LIKE UPPER(:search_for_name_like)""", {"search_for_name_like":search_for_name_like})
+        search_results_data = db.execute("""
+            SELECT wuser."2020 Rank", names."Name", wuser."Rating" as "Your Rating" , wpartner."Rating" as "Partner's Rating" FROM 
+                (SELECT ratings_recent.*, ratings_all.* FROM 
+                (SELECT "2020 Rank", "User", MAX("id") as "MID"
+                FROM "z_ratings"
+                GROUP BY "2020 Rank", "User") as ratings_recent 
+                LEFT JOIN 
+                (SELECT "id", "Rating"
+                FROM "z_ratings") as ratings_all
+                ON ratings_recent."MID" = ratings_all."id"
+                WHERE ratings_recent."User" = :user) as wuser
+            LEFT JOIN
+                (SELECT ratings_recent.*, ratings_all.* FROM 
+                (SELECT "2020 Rank", "User", MAX("id") as "MID"
+                FROM "z_ratings"
+                GROUP BY "2020 Rank", "User") as ratings_recent 
+                LEFT JOIN 
+                (SELECT "id", "Rating"
+                FROM "z_ratings") as ratings_all
+                ON ratings_recent."MID" = ratings_all."id"
+                WHERE ratings_recent."User" = :partner) as wpartner
+            ON wuser."2020 Rank" = wpartner."2020 Rank" 
+            LEFT JOIN
+            (SELECT "2020 Rank", "Name" FROM z_src_name_list) as names
+            ON wuser."2020 Rank" = names."2020 Rank" 
+            WHERE UPPER("Name") LIKE UPPER(:search_for_name_like) """, {"search_for_name_like":search_for_name_like, "user" : session['user'], "partner" : session['partner']})
         db.commit()
         return render_template("names/z2_search_name_results.html", search_results_data=search_results_data, search_for_name=search_for_name)
 
