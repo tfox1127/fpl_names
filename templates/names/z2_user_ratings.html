@@ -51,19 +51,17 @@
             <table class="table table-sm text-xsmall table-hover sortable ;" >
                 
                 <thead class="thead-light text-center">
-                    <td class="align-middle">Id</td>
+                    <td class="align-middle">2020 Ranking</td>
                     <td class="align-middle">Name</td>
-                    <td class="align-middle">Rating</td>
+                    <td class="align-middle">Your Rating</td>
                 </thead>
                 <tbody class="text-center align-middle">
-                    {% for fa in user_ratings %}
-                        <tr>
-                            <tr>
-                                {% for td in fa %}
-                                    <td class="align-left">{{ td }}</td>
-                                {% endfor %}
-                            </tr>
-                        </tr>
+                    {% for element in user_ratings %}
+                    <tr>
+                      <td class="align-middle">{{element[0]}}</td>
+                      <td class="align-middle"><a href="/name/{{element[1]}}" class="text-dark">{{element[1]}}</a></td>
+                      <td class="align-middle">{{element[2]}}</td>
+                    </tr>
                     {% endfor %}
 
                 </tbody>

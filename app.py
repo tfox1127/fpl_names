@@ -279,6 +279,7 @@ def login():
 
         q = """SELECT user_name FROM z_users WHERE user_id = (SELECT partner FROM z_users WHERE user_name = :user)"""
         partners = db.execute(q, {"user": session['user']})
+        db.commit()
         partner = partners.fetchall()
         partner = partner[0][0]
 
@@ -318,29 +319,62 @@ def user_ratings(user, list_type):
             WHERE "rt"."Rating" IS NOT NULL AND "rt"."User" = :user
             GROUP BY "rt"."Rating"
             """, {"user":user})
+    db.commit()
 
     if list_type == 'all': 
         
-        user_ratings = db.execute( """
-            SELECT "nl"."2020 Rank", "nl"."Name", CAST("rt"."Rating" AS INTEGER) 
-            FROM "z_src_name_list" as "nl"
-            LEFT JOIN "z_ratings" as "rt"
-            ON "nl"."2020 Rank" = "rt"."2020 Rank"
-            WHERE "rt"."Rating" IS NOT NULL 
-            AND "rt"."User" = :user
-            """, {"user":user})
+       # user_ratings = db.execute( """
+       #     SELECT "nl"."2020 Rank", "nl"."Name", CAST("rt"."Rating" AS INTEGER) 
+       #     FROM "z_src_name_list" as "nl"
+       #     LEFT JOIN "z_ratings" as "rt"
+       #     ON "nl"."2020 Rank" = "rt"."2020 Rank"
+       #     WHERE "rt"."Rating" IS NOT NULL 
+       #     AND "rt"."User" = :user
+       #     """, {"user":user})
+
+        user_ratings = db.execute("""
+            SELECT wuser."2020 Rank", names."Name", wuser."Rating" as "Your Rating"  FROM 
+                (
+                    SELECT ratings_recent.*, ratings_all.* FROM 
+                    (   SELECT "2020 Rank", "User", MAX("id") as "MID"
+                        FROM "z_ratings"
+                        GROUP BY "2020 Rank", "User"
+                    ) as ratings_recent 
+                    LEFT JOIN 
+                    (   SELECT "id", "Rating"
+                        FROM "z_ratings"
+                    ) as ratings_all
+                    ON ratings_recent."MID" = ratings_all."id"
+                    WHERE ratings_recent."User" = :user
+                    ) as wuser
+                LEFT JOIN
+                    (SELECT "2020 Rank", "Name" FROM z_src_name_list) as names
+                    ON wuser."2020 Rank" = names."2020 Rank" 
+            WHERE wuser."User" = :user """, {"user" : session['user']})
+        db.commit()
     else: 
         
-        user_ratings = db.execute( """
-            SELECT "nl"."2020 Rank", "nl"."Name", CAST("rt"."Rating" AS INTEGER) 
-            FROM "z_src_name_list" as "nl"
-            LEFT JOIN "z_ratings" as "rt"
-            ON "nl"."2020 Rank" = "rt"."2020 Rank"
-            WHERE "rt"."Rating" IS NOT NULL 
-            AND "rt"."User" = :user
-            AND "rt"."Rating" = :list_type
-            """, {"user":user, "list_type": list_type})
-
+        user_ratings = db.execute("""
+            SELECT wuser."2020 Rank", names."Name", CAST(wuser."Rating" AS INTEGER) as "Your Rating"  FROM 
+                (
+                    SELECT ratings_recent.*, ratings_all.* FROM 
+                    (   SELECT "2020 Rank", "User", MAX("id") as "MID"
+                        FROM "z_ratings"
+                        GROUP BY "2020 Rank", "User"
+                    ) as ratings_recent 
+                    LEFT JOIN 
+                    (   SELECT "id", "Rating"
+                        FROM "z_ratings"
+                    ) as ratings_all
+                    ON ratings_recent."MID" = ratings_all."id"
+                    WHERE ratings_recent."User" = :user
+                    ) as wuser
+                LEFT JOIN
+                    (SELECT "2020 Rank", "Name" FROM z_src_name_list) as names
+                    ON wuser."2020 Rank" = names."2020 Rank" 
+            WHERE wuser."User" = :user 
+            AND wuser."Rating" = :list_type """, {"user":user, "list_type": list_type})
+        db.commit()
 
     return render_template("names/z2_user_ratings.html", user=user, list_type = list_type, user_ratings=user_ratings, user_summary=user_summary)
 
@@ -362,6 +396,7 @@ def random_name():
             WHERE b."User" IS NULL"""
 
         undone = db.execute(q, {"user": user})
+        db.commit()
         undone = undone.fetchall()
 
         todo = len(undone)
@@ -378,6 +413,7 @@ def random_name():
         #run query to get that picks info
         q = "SELECT * FROM z_src_name_list WHERE \"2020 Rank\" = :pick"
         names = db.execute(q, {"pick": pick})
+        db.commit()
         names = names.fetchall()
         #f_names = format_results(names)
         f_rank = names[0][1]
@@ -408,7 +444,7 @@ def name_page(name):
             ON a."2020 Rank" = c."2020 Rank"
 
             WHERE a."Name" = :name """, {"name" : name, "user" : session['user'], "partner" : session['partner']})
-    
+    db.commit()
     name_combo = name_combo.fetchall()
 
     name = name
