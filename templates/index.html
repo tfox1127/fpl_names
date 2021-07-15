@@ -1,60 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <title>No Trophy Home</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <link rel="stylesheet" href="/static/style2.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-  </head>
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="/">Not Everyone Gets A Trophy</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div class="navbar-nav">
-          <a class="nav-item nav-link active" href="/">Home <span class="sr-only">(current)</span></a>
-          <a class="nav-item nav-link" href="/live">Live Scores</a>
-          <a class="nav-item nav-link" href="/elli">EPL Leaderboard</a>
-          <a class="nav-item nav-link" href="/cup_summary">Cup Summary</a>
-          <a class="nav-item nav-link" href="/hof">HOF</a>
-          <a class="nav-item nav-link" href="/lms">LMS</a>
-        </div>
+{% extends "base.html" %}
+
+{% block title %}FPL - Home{% endblock %}
+
+{% block content %}
+
+  <div class="container mt-2">
+    <h2>2021/22 Season Format</h2>
+    <div class="row"><img src="./static/FPL 2021-22 Format.png" class="img-fluid rounded mx-auto d-block"
+      style="max-width: 900px min-width: 300px" alt="..."></div>
+    <div class="row"><p> <br><br> I'll have more updates on the site here soon! <br>Tom Fox</p></div>
+  </div>
+
+  <!-- <div class="container">
+    <img src="https://notrophy.s3.us-east-2.amazonaws.com/trophy.jpeg" class="rounded mx-auto d-block"
+      style="max-width: 300px" alt="...">
+  </div> -->
+
+  <div class="container mt-2">
+    <div class="row">
+      <div class="col text-center">
+        <a href="https://fantasy.premierleague.com/leagues/25895/standings/c" class="btn btn-outline-dark btn-lg mx-1"
+          role="button" aria-disabled="true">Our FPL Page</a>
+        <a href="https://join.slack.com/t/noteveryonege-n9y8783/shared_invite/zt-ggwes1ky-yB8Ft3zo2mEG39xxD~65kw"
+          class="btn btn-outline-dark btn-lg mx-1" role="button" aria-disabled="true">Join the Slack</a>
+        <br><br>
       </div>
-    </nav>
+    </div>
+  </div>
 
-    <div class="container mt-2">
-
+  <div class="container mt-2">
+    <h2>2020/21 Season Updates</h2>
     {% for element in elements %}
-        <p class="col-lg-5 col-sm-12">
-        <h2>{{ element[1] | safe }}</h2>
-        {{ element[2] | safe }}</p>
+      <p class="col-lg-5 col-sm-12">
+      <h3>{{ element[1] | safe }}</h3>
+      {{ element[2] | safe }}</p>
     {% endfor %}
 
     <div class="container">
-        <img src="https://notrophy.s3.us-east-2.amazonaws.com/trophy.jpeg" class="rounded mx-auto d-block" style="max-width: 300px" alt="...">
+      <img src="https://notrophy.s3.us-east-2.amazonaws.com/trophy.jpeg" class="rounded mx-auto d-block"
+        style="max-width: 300px" alt="...">
+        <br><br>
+      <div class="col text-center">
+        <a href="https://fantasy.premierleague.com/leagues/25895/standings/c" class="btn btn-outline-dark btn-lg mx-1"
+          role="button" aria-disabled="true">Our FPL Page</a>
+        <a href="https://join.slack.com/t/noteveryonege-n9y8783/shared_invite/zt-ggwes1ky-yB8Ft3zo2mEG39xxD~65kw"
+          class="btn btn-outline-dark btn-lg mx-1" role="button" aria-disabled="true">Join the Slack</a>
+        <br><br>
     </div>
 
-    </div>
+  </div>
 
-    <div class="container">
-      <div class="row">
-        <div class="col text-center">
-          <a href="https://fantasy.premierleague.com/leagues/6407/standings/c" class="btn btn-outline-dark btn-lg mx-1" role="button"  aria-disabled="true">Our FPL Page</a>
-          <a href="https://join.slack.com/t/noteveryonege-n9y8783/shared_invite/zt-ggwes1ky-yB8Ft3zo2mEG39xxD~65kw" class="btn btn-outline-dark btn-lg mx-1" role="button" aria-disabled="true">Join the Slack</a>
-          <br><br>
-        </div>
-      </div>
-    </div>
-
-  </body>
-</html>
+{% endblock %}
