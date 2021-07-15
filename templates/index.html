@@ -4,50 +4,52 @@
 
 {% block content %}
 
-  <div class="container mt-2">
-    <h2>2021/22 Season Format</h2>
-    <div class="row"><img src="./static/FPL 2021-22 Format.png" class="img-fluid rounded mx-auto d-block"
-      style="max-width: 900px min-width: 300px" alt="..."></div>
-    <div class="row"><p> <br><br> I'll have more updates on the site here soon! <br>Tom Fox</p></div>
+<div class="container mt-2">
+  <h2>2021/22 Season Format</h2>
+  <div class="row"><img src="./static/FPL 2021-22 Format.png" class="img-fluid rounded mx-auto d-block"
+      style="max-width: 900px; min-width: 300px;" alt="..."></div>
+  <div class="row">
+    <p> <br><br> I'll have more updates on the site here soon. Until then, please let me know if you have any ideas for
+      things you'd like to see or would find useful <br>Tom Fox</p>
   </div>
+</div>
 
-  <!-- <div class="container">
+<!-- <div class="container">
     <img src="https://notrophy.s3.us-east-2.amazonaws.com/trophy.jpeg" class="rounded mx-auto d-block"
       style="max-width: 300px" alt="...">
   </div> -->
 
-  <div class="container mt-2">
-    <div class="row">
-      <div class="col text-center">
-        <a href="https://fantasy.premierleague.com/leagues/25895/standings/c" class="btn btn-outline-dark btn-lg mx-1"
-          role="button" aria-disabled="true">Our FPL Page</a>
-        <a href="https://join.slack.com/t/noteveryonege-n9y8783/shared_invite/zt-ggwes1ky-yB8Ft3zo2mEG39xxD~65kw"
-          class="btn btn-outline-dark btn-lg mx-1" role="button" aria-disabled="true">Join the Slack</a>
-        <br><br>
-      </div>
+<div class="container mt-2">
+  <div class="row">
+    <div class="col text-center">
+      <a href="https://fantasy.premierleague.com/leagues/25895/standings/c" class="btn btn-outline-dark btn-lg mx-1"
+        role="button" aria-disabled="true">Our FPL Page</a>
+      <a href="https://join.slack.com/t/noteveryonege-n9y8783/shared_invite/zt-ggwes1ky-yB8Ft3zo2mEG39xxD~65kw"
+        class="btn btn-outline-dark btn-lg mx-1" role="button" aria-disabled="true">Join the Slack</a>
+      <br><br>
     </div>
   </div>
+</div>
 
-  <div class="container mt-2">
-    <h2>2020/21 Season Updates</h2>
-    {% for element in elements %}
-      <p class="col-lg-5 col-sm-12">
-      <h3>{{ element[1] | safe }}</h3>
-      {{ element[2] | safe }}</p>
-    {% endfor %}
+<div class="container mt-2">
+  <h2>2020/21 Season Updates</h2>
+  {% for element in elements %}
+  <p class="col-lg-5 col-sm-12">
+  <h3>{{ element[1] | safe }}</h3>
+  {{ element[2] | safe }}</p>
+  {% endfor %}
 
-    <div class="container">
-      <img src="https://notrophy.s3.us-east-2.amazonaws.com/trophy.jpeg" class="rounded mx-auto d-block"
-        style="max-width: 300px" alt="...">
-        <br><br>
-      <div class="col text-center">
-        <a href="https://fantasy.premierleague.com/leagues/25895/standings/c" class="btn btn-outline-dark btn-lg mx-1"
-          role="button" aria-disabled="true">Our FPL Page</a>
-        <a href="https://join.slack.com/t/noteveryonege-n9y8783/shared_invite/zt-ggwes1ky-yB8Ft3zo2mEG39xxD~65kw"
-          class="btn btn-outline-dark btn-lg mx-1" role="button" aria-disabled="true">Join the Slack</a>
-        <br><br>
-    </div>
-
+  <img src="https://notrophy.s3.us-east-2.amazonaws.com/trophy.jpeg" class="rounded mx-auto d-block"
+    style="max-width: 300px" alt="...">
+  <br><br>
+  <div class="col text-center">
+    <a href="https://fantasy.premierleague.com/leagues/25895/standings/c" class="btn btn-outline-dark btn-lg mx-1"
+      role="button" aria-disabled="true">Our FPL Page</a>
+    <a href="https://join.slack.com/t/noteveryonege-n9y8783/shared_invite/zt-ggwes1ky-yB8Ft3zo2mEG39xxD~65kw"
+      class="btn btn-outline-dark btn-lg mx-1" role="button" aria-disabled="true">Join the Slack</a>
+    <br><br>
   </div>
+
+</div>
 
 {% endblock %}
