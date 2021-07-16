@@ -393,10 +393,10 @@ def compare(list_type):
         
         list_types_f = {   
         'all' : "All Name Options",
-        'full': "Full Matches (3s on both)", 
-        'partial': "Partial Matches (2s or 3s on each)", 
-        'veto_u' : "Vetoed by You (Partner's likes, you don't)", 
-        'veto_p': "Vetoed by Partner (You like, Partner doesn't)", }
+        'full': "Full Matches", 
+        'partial': "Partial Matches", 
+        'veto_u' : "Vetoed by You", 
+        'veto_p': "Vetoed by Partner" }
 
         title = list_types_f[list_type]
 
