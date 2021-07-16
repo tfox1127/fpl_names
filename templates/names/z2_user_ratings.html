@@ -1,75 +1,88 @@
 {% extends "/names/z2_base.html" %}
 
-{% block title %}Name Pickle{% endblock %}
+{% block title %}Name Pickler{% endblock %}
 
 {% block content %}
 
-    <div class="container">
+<div class="container">
 
-        <div class="row m-1"><h3>Results for {{user}}</h3></div>
+    <div class="row m-1">
+        <h3>Results for {{user}}</h3>
+    </div>
 
-        <div class="row justify-content-md-center text-center my-1 p-2">
-            <div class="col-md-auto">
-                <a href="/names/profile/{{user}}/list/3" class="btn btn-outline-dark btn-sm mx-1 my-1" role="button"
-                    aria-disabled="true">3s</a>
-            </div>
-            <div class="col-md-auto">
-                <a href="/names/profile/{{user}}/list/2" class="btn btn-outline-dark btn-sm mx-1 my-1" role="button"
-                    aria-disabled="true">2s</a>
-            </div>
-            <div class="col-md-auto">
-                <a href="/names/profile/{{user}}/list/1" class="btn btn-outline-dark btn-sm mx-1 my-1" role="button"
-                    aria-disabled="true">1s</a>
-            </div>
-            <div class="col-md-auto">
-                <a href="/names/profile/{{user}}/list/all" class="btn btn-outline-dark btn-sm mx-1 my-1" role="button"
-                    aria-disabled="true">all</a>
-            </div>
+    <!-- <div class="row justify-content-md-center text-center my-1 p-2">
+        <div class="col-md-auto">
+            <a href="/names/profile/{{user}}/list/3" class="btn btn-outline-dark btn-sm mx-1 my-1" role="button"
+                aria-disabled="true">3s</a>
         </div>
-
-        <div class="table-fixed text-nowrap">
-            <table class="table table-sm text-xsmall table-hover sortable ;" >
-                
-                <thead class="thead-light text-center">
-                    <td class="align-middle">Rating</td>
-                    <td class="align-middle">Count</td>
-                </thead>
-                <tbody class="text-center align-middle">
-                    {% for us in user_summary %}
-                        <tr>
-                            <tr>
-                                {% for td in us %}
-                                    <td class="align-left">{{ td }}</td>
-                                {% endfor %}
-                            </tr>
-                        </tr>
-                    {% endfor %}
-
-                </tbody>
-            </table>
+        <div class="col-md-auto">
+            <a href="/names/profile/{{user}}/list/2" class="btn btn-outline-dark btn-sm mx-1 my-1" role="button"
+                aria-disabled="true">2s</a>
         </div>
+        <div class="col-md-auto">
+            <a href="/names/profile/{{user}}/list/1" class="btn btn-outline-dark btn-sm mx-1 my-1" role="button"
+                aria-disabled="true">1s</a>
+        </div>
+        <div class="col-md-auto">
+            <a href="/names/profile/{{user}}/list/all" class="btn btn-outline-dark btn-sm mx-1 my-1" role="button"
+                aria-disabled="true">all</a>
+        </div>
+    </div> -->
 
-        <div class="table-fixed text-nowrap">
-            <table class="table table-sm text-xsmall table-hover sortable ;" >
-                
-                <thead class="thead-light text-center">
-                    <td class="align-middle">2020 Ranking</td>
-                    <td class="align-middle">Name</td>
-                    <td class="align-middle">Your Rating</td>
-                </thead>
-                <tbody class="text-center align-middle">
-                    {% for element in user_ratings %}
-                    <tr>
-                      <td class="align-middle">{{element[0]}}</td>
-                      <td class="align-middle"><a href="/names/{{element[1]}}" class="text-dark">{{element[1]}}</a></td>
-                      <td class="align-middle">{{element[2]}}</td>
-                    </tr>
-                    {% endfor %}
-
-                </tbody>
-            </table>
+    <div class="row justify-content-lg-center text-center my-1 p-2">
+        <div class="col-12">
+            <div class="btn-group btn-group-justified" role="group" aria-label="First group">
+                <a href="/names/profile/{{user}}/list/3" class="btn btn-outline-dark" role="button">3s</a>
+                <a href="/names/profile/{{user}}/list/2" class="btn btn-outline-dark" role="button">2s</a>
+                <a href="/names/profile/{{user}}/list/1" class="btn btn-outline-dark" role="button">1s</a>
+                <a href="/names/profile/{{user}}/list/all" class="btn btn-outline-dark" role="button">All</a>
+            </div>
         </div>
     </div>
+
+    <div class="table-fixed text-nowrap">
+        <table class="table table-sm text-xsmall table-hover sortable ;">
+
+            <thead class="thead-light text-center">
+                <td class="align-middle">Rating</td>
+                <td class="align-middle">Count</td>
+            </thead>
+            <tbody class="text-center align-middle">
+                {% for us in user_summary %}
+                <tr>
+                <tr>
+                    {% for td in us %}
+                    <td class="align-left">{{ td }}</td>
+                    {% endfor %}
+                </tr>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-fixed text-nowrap">
+        <table class="table table-sm text-xsmall table-hover sortable ;">
+
+            <thead class="thead-light text-center">
+                <td class="align-middle">2020 Ranking</td>
+                <td class="align-middle">Name</td>
+                <td class="align-middle">Your Rating</td>
+            </thead>
+            <tbody class="text-center align-middle">
+                {% for element in user_ratings %}
+                <tr>
+                    <td class="align-middle">{{element[0]}}</td>
+                    <td class="align-middle"><a href="/names/{{element[1]}}" class="text-dark">{{element[1]}}</a></td>
+                    <td class="align-middle">{{element[2]}}</td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+</div>
 
 
 {% endblock %}
