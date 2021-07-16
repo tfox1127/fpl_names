@@ -4,26 +4,28 @@
 
 {% block content %}
 
-    <div class="container mt-2">
-        <h5>Results for {{user}}</h5>
+    <div class="container">
 
-        <div class="container mt-2">
-            <div class="row justify-content-md-center">
-              <div class="col-md-auto">
-                <a href="/profile/{{user}}/list/3">3s</a>
-              </div>
-              <div class="col-md-auto">
-                <a href="/profile/{{user}}/list/2">2s</a>
-              </div>
-              <div class="col-md-auto">
-                <a href="/profile/{{user}}/list/1">1s</a>
-              </div>
-              <div class="col-md-auto">
-                <a href="/profile/{{user}}/list/all">all</a>
-              </div>
+        <div class="row m-1"><h3>Results for {{user}}</h3></div>
+
+        <div class="row justify-content-md-center text-center my-1 p-2">
+            <div class="col-md-auto">
+                <a href="/names/profile/{{user}}/list/3" class="btn btn-outline-dark btn-sm mx-1 my-1" role="button"
+                    aria-disabled="true">3s</a>
             </div>
-          </div>
-
+            <div class="col-md-auto">
+                <a href="/names/profile/{{user}}/list/2" class="btn btn-outline-dark btn-sm mx-1 my-1" role="button"
+                    aria-disabled="true">2s</a>
+            </div>
+            <div class="col-md-auto">
+                <a href="/names/profile/{{user}}/list/1" class="btn btn-outline-dark btn-sm mx-1 my-1" role="button"
+                    aria-disabled="true">1s</a>
+            </div>
+            <div class="col-md-auto">
+                <a href="/names/profile/{{user}}/list/all" class="btn btn-outline-dark btn-sm mx-1 my-1" role="button"
+                    aria-disabled="true">all</a>
+            </div>
+        </div>
 
         <div class="table-fixed text-nowrap">
             <table class="table table-sm text-xsmall table-hover sortable ;" >

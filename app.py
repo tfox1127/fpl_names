@@ -261,17 +261,15 @@ def format_results(result):
         a.append(d)
     return a
 
-@app.route("/names", methods = ["POST", "GET"])
+@app.route("/names")
 def landing():
-    if request.method == "POST":
-        user = request.form["name"]
-        session['user'] = user
-        return redirect(url_for("profile", user=user))
+    if 'user' in session:
+        return redirect(url_for("profile", user=session['user']))
 
     else:
-        return render_template("/names/z2_names.html")
+        return render_template("/names/z2_landing.html")
 
-@app.route("/login", methods = ["POST", "GET"])
+@app.route("/names/login", methods = ["POST", "GET"])
 def login():
     if request.method == "POST":
         user = request.form["name"]
@@ -281,59 +279,64 @@ def login():
         partners = db.execute(q, {"user": session['user']})
         db.commit()
         partner = partners.fetchall()
-        partner = partner[0][0]
 
-        session['partner'] = partner
+        try: 
+            session['partner'] = partner[0][0]
+        except: 
+            session['partner'] = "unavailable"
 
-        return redirect(url_for("profile", user=user, partner=partner))
-
+        return redirect(url_for("profile", user=session['user'], partner=session['partner']))
     else:
         return render_template("/names/z2_login.html")
 
-@app.route("/logout", methods = ["POST", "GET"])
+@app.route("/names/logout", methods = ["POST", "GET"])
 def logout():
+
+    session.pop('user')
+    session.pop('partner')
     db.remove()
 
     return redirect(url_for("login"))
 
-@app.route("/signup", methods = ["POST", "GET"])
-def signup():
-    if request.method == "POST":
-        user = request.form["name"]
-        session['user'] = user
-        return redirect(url_for("profile", user=user))
+@app.route("/names/profile")
+def profile_redir():
+    if 'user' in session: 
+        return redirect(f"/names/profile/{session['user']}")
     else:
-        return render_template("/names/z2_signup.html")
+        return render_template("/names/z2_login.html")
 
-@app.route("/profile/<string:user>")
+@app.route("/names/profile/<string:user>")
 def profile(user):
-  return render_template("names/z2_profile.html", user=user)
+    if 'user' in session: 
+        return render_template("/names/z2_profile.html", user=session['user'], partner=session['partner'])
+    else:
+        return render_template("/names/z2_login.html")
 
-@app.route("/profile/<string:user>/list/<string:list_type>")
+@app.route("/names/profile/<string:user>/list/<string:list_type>")
 def user_ratings(user, list_type):
     user_summary = db.execute("""
-            SELECT CAST("rt"."Rating" AS INTEGER), COUNT("nl"."Name") as Count
-            FROM "z_src_name_list" as "nl"
-            LEFT JOIN "z_ratings" as "rt"
-            ON "nl"."2020 Rank" = "rt"."2020 Rank"
-            WHERE "rt"."Rating" IS NOT NULL AND "rt"."User" = :user
-            GROUP BY "rt"."Rating"
+            SELECT CAST("wuser"."Rating" AS INTEGER), COUNT("wuser"."User") as Count FROM 
+            (
+                                SELECT ratings_recent.*, ratings_all.* FROM 
+                                (   SELECT "2020 Rank", "User", MAX("id") as "MID"
+                                    FROM "z_ratings"
+                                    GROUP BY "2020 Rank", "User"
+                                ) as ratings_recent 
+                                LEFT JOIN 
+                                (   SELECT "id", "Rating"
+                                    FROM "z_ratings"
+                                ) as ratings_all
+                                ON ratings_recent."MID" = ratings_all."id"
+                                ) as wuser
+            WHERE "wuser"."User" = :user
+            GROUP BY "wuser"."Rating"
             """, {"user":user})
     db.commit()
 
     if list_type == 'all': 
         
-       # user_ratings = db.execute( """
-       #     SELECT "nl"."2020 Rank", "nl"."Name", CAST("rt"."Rating" AS INTEGER) 
-       #     FROM "z_src_name_list" as "nl"
-       #     LEFT JOIN "z_ratings" as "rt"
-       #     ON "nl"."2020 Rank" = "rt"."2020 Rank"
-       #     WHERE "rt"."Rating" IS NOT NULL 
-       #     AND "rt"."User" = :user
-       #     """, {"user":user})
-
         user_ratings = db.execute("""
-            SELECT wuser."2020 Rank", names."Name", wuser."Rating" as "Your Rating"  FROM 
+            SELECT wuser."2020 Rank", names."Name", CAST(wuser."Rating" AS INTEGER) as "Your Rating"  FROM 
                 (
                     SELECT ratings_recent.*, ratings_all.* FROM 
                     (   SELECT "2020 Rank", "User", MAX("id") as "MID"
@@ -378,13 +381,64 @@ def user_ratings(user, list_type):
 
     return render_template("names/z2_user_ratings.html", user=user, list_type = list_type, user_ratings=user_ratings, user_summary=user_summary)
 
-@app.route("/name/random_name")
+@app.route("/names/compare/<string:list_type>")
+def compare(list_type):
+    if "user" in session:
+        list_types = {   
+        'all' : "",
+        'full': """ AND wuser."Rating" = 3 AND wpartner."Rating" = 3""", 
+        'partial': """ AND wuser."Rating" > 1 AND wpartner."Rating" > 1""", 
+        'veto_u' : """ AND wuser."Rating" = 1 AND wpartner."Rating" > 1""", 
+        'veto_p': """ AND wuser."Rating" > 1 AND wpartner."Rating" = 1"""}
+        
+        list_types_f = {   
+        'all' : "All Name Options",
+        'full': "Full Matches (3s on both)", 
+        'partial': "Partial Matches (2s or 3s on each)", 
+        'veto_u' : "Vetoed by You (Partner's likes, you don't)", 
+        'veto_p': "Vetoed by Partner (You like, Partner doesn't)", }
+
+        title = list_types_f[list_type]
+
+        compare = db.execute("""SELECT wuser."2020 Rank", names."Name", CAST(wuser."Rating" as INTEGER) as "Your Rating" , CAST(wpartner."Rating" as INTEGER) as "Partner's Rating" FROM 
+            (SELECT ratings_recent.*, ratings_all.* FROM 
+            (SELECT "2020 Rank", "User", MAX("id") as "MID"
+            FROM "z_ratings"
+            GROUP BY "2020 Rank", "User") as ratings_recent 
+            LEFT JOIN 
+            (SELECT "id", "Rating"
+            FROM "z_ratings") as ratings_all
+            ON ratings_recent."MID" = ratings_all."id"
+            WHERE ratings_recent."User" = :user) as wuser
+            LEFT JOIN
+            (SELECT ratings_recent.*, ratings_all.* FROM 
+            (SELECT "2020 Rank", "User", MAX("id") as "MID"
+            FROM "z_ratings"
+            GROUP BY "2020 Rank", "User") as ratings_recent 
+            LEFT JOIN 
+            (SELECT "id", "Rating"
+            FROM "z_ratings") as ratings_all
+            ON ratings_recent."MID" = ratings_all."id"
+            WHERE ratings_recent."User" = :partner) as wpartner
+            ON wuser."2020 Rank" = wpartner."2020 Rank" 
+            LEFT JOIN
+            (SELECT "2020 Rank", "Name" FROM z_src_name_list) as names
+            ON wuser."2020 Rank" = names."2020 Rank" 
+            WHERE 
+            wuser."User" = :user AND 
+            wpartner."User" = :partner """ + list_types[list_type],  {"user" : session['user'], "partner" : session['partner']})
+
+        db.commit()
+    
+        return render_template('/names/z2_compare.html', compare=compare, title=title)
+    else:
+        return redirect(url_for("login"))
+
+@app.route("/names/random_name")
 def random_name():
     if "user" in session:
         #get list of unrated names
         user = session["user"]
-        #q = ("SELECT z_src_name_list.\"2020 Rank\" FROM z_src_name_list LEFT JOIN z_ratings ON "
-        # "z_src_name_list.\"2020 Rank\" = z_ratings.\"2020 Rank\" WHERE z_ratings.\"User\" != :user")
 
         q = """SELECT a."2020 Rank"
             FROM (SELECT z_src_name_list.*
@@ -400,33 +454,30 @@ def random_name():
         undone = undone.fetchall()
 
         todo = len(undone)
-        undone[random.choice(range(todo))][0]
-        pick = undone[0][0]
-        
-        #f_full = format_results(full)
 
-        #pick random formatted result
-        #this_many = len(f_full)
-        #pick = random.choice(range(this_many))
-        #pick = f_full[pick]['2020 Rank']
+        if todo == 0: 
+            return redirect(url_for("profile_redir"))
+        else: 
+            undone[random.choice(range(todo))][0]
+            pick = undone[0][0]
+            
+            #run query to get that picks info
+            q = "SELECT * FROM z_src_name_list WHERE \"2020 Rank\" = :pick"
+            names = db.execute(q, {"pick": pick})
+            db.commit()
+            names = names.fetchall()
+            #f_names = format_results(names)
+            f_rank = names[0][1]
+            f_name = names[0][2]
 
-        #run query to get that picks info
-        q = "SELECT * FROM z_src_name_list WHERE \"2020 Rank\" = :pick"
-        names = db.execute(q, {"pick": pick})
-        db.commit()
-        names = names.fetchall()
-        #f_names = format_results(names)
-        f_rank = names[0][1]
-        f_name = names[0][2]
+            session['name'] = f_name
+            session['rank'] = f_rank
 
-        session['name'] = f_name
-        session['rank'] = f_rank
-
-        return redirect(url_for("name_page", name=session['name']))
+            return redirect(url_for("name_page", name=session['name']))
     else:
         return redirect(url_for("login"))
 
-@app.route('/name/<string:name>')
+@app.route('/names/<string:name>')
 def name_page(name):
 
     name_combo = db.execute("""SELECT a.*, b."Rating" as "Tommy",  c."Rating" as "Michelle"
@@ -454,7 +505,7 @@ def name_page(name):
 
     return render_template('names/z2_name.html', user=session['user'], name=name, rank=rank, rate_u= rate_u, rate_p= rate_p)
 
-@app.route('/submit', methods=['POST'])
+@app.route('/names/submit', methods=['POST'])
 def submit():
     if request.method == 'POST':
         x = request.form['rank']
@@ -467,19 +518,19 @@ def submit():
         #return redirect(request.referrer)
         return redirect(url_for("random_name"))
 
-@app.route('/search_name')
+@app.route('/names/search_name')
 def search_name():
 
     return render_template('names/z2_search.html')
 
-@app.route("/search_name_results", methods = ["POST", "GET"])
+@app.route("/names/search_name_results", methods = ["POST", "GET"])
 def search_name_results():
     if request.method == 'POST':
         search_for_name = request.form['search_for_name']
         search_for_name_like = "%" + search_for_name + "%"
         #search_results_data = db.execute("""SELECT * FROM z_src_name_list WHERE UPPER("Name") LIKE UPPER(:search_for_name_like)""", {"search_for_name_like":search_for_name_like})
         search_results_data = db.execute("""
-            SELECT wuser."2020 Rank", names."Name", wuser."Rating" as "Your Rating" , wpartner."Rating" as "Partner's Rating" FROM 
+            SELECT wuser."2020 Rank", names."Name", CAST(wuser."Rating" as INTEGER) as "Your Rating" , CAST(wpartner."Rating" as INTEGER) as "Partner's Rating" FROM 
                 (SELECT ratings_recent.*, ratings_all.* FROM 
                 (SELECT "2020 Rank", "User", MAX("id") as "MID"
                 FROM "z_ratings"
@@ -506,6 +557,15 @@ def search_name_results():
             WHERE UPPER("Name") LIKE UPPER(:search_for_name_like) """, {"search_for_name_like":search_for_name_like, "user" : session['user'], "partner" : session['partner']})
         db.commit()
         return render_template("names/z2_search_name_results.html", search_results_data=search_results_data, search_for_name=search_for_name)
+
+@app.route("/names/signup", methods = ["POST", "GET"])
+def signup():
+    if request.method == "POST":
+        user = request.form["name"]
+        session['user'] = user
+        return redirect(url_for("profile", user=user))
+    else:
+        return render_template("/names/z2_signup.html")
 
 #FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB 
 #FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB 
