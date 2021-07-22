@@ -251,6 +251,140 @@ def run_search():
         db.commit()
         return render_template('search_results.html', elements=elements, search_for=search_for)
 
+#PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS 
+#PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS 
+
+@app.route('/picks')
+def picks():
+    if "user" in session:
+        #return render_template('picks.html')
+        return redirect(url_for('picks_home'))
+    else:
+        return render_template('p_login.html')
+
+@app.route('/picks/register', methods = ["POST", "GET"])
+def picks_register():
+    if request.method == 'POST':
+        session['name'] = request.form["name"]
+        #session['user'] = request.form["email"]
+        session['password_choice'] = request.form["password_choice"]
+        session['userid'] = request.form["userid"]        
+
+        db.execute(
+            """INSERT INTO fpl_picks_users ("user_id", "name", "password") VALUES (:x, :y, :z)""", 
+            {"x": session['userid'], "y": session['name'], "z": session['password_choice']})
+        #db.execute("UPDATE name_list_g SET \"Michelle\" = (:x) WHERE \"Name\" = (:y)", {"x": x, "y":y})
+        db.commit()
+
+        return redirect(url_for('picks_home'))
+
+    if request.method == 'GET':
+        if "user" in session:
+            pass # logout and send to register 
+        else:
+            #get password 
+            r_word_list = db.execute("""SELECT words_med FROM z_wordlist_med """)
+            db.commit()
+
+            word_list = r_word_list.fetchall()
+            LIST_LEN = len(word_list)
+
+            passwords = [] 
+            for i in range(5): 
+                x = word_list[random.choice(range(LIST_LEN))][0]
+                y = word_list[random.choice(range(LIST_LEN))][0]
+                password = x + "_" + y
+                passwords.append(password)
+
+            #get new user key
+            r_userid = db.execute("""SELECT max(user_id) FROM fpl_picks_users """)
+            db.commit()
+
+            userid = r_userid.fetchall()
+
+            userid = userid[0][0] + 1 
+
+            #send to register
+            return render_template('/picks/p_register.html', passwords=passwords, userid=userid)
+
+@app.route('/picks/login', methods = ["POST", "GET"])
+def picks_login():
+    # if request.method == "POST":
+    #     subbed_name = request.form["name"]
+    #     subbed_password = request.form["password"]
+    #     session['user_id'] = 'test_a'
+    #     session['name'] = 'test_b'
+
+    #     return redirect(url_for("picks_home"))   
+
+        
+    if request.method == "POST":
+        subbed_name = request.form["name"]
+        subbed_password = request.form["password"]
+
+        q = """SELECT user_id, password FROM fpl_picks_users WHERE UPPER(name) = UPPER((:subbed_name))"""
+        user_check = db.execute(q, {"subbed_name": subbed_name})
+        db.commit()
+
+        if user_check.rowcount == 0: 
+            #TODO
+            print("error")
+        else: 
+            user_check = user_check.fetchall()
+
+            user_id = user_check[0][0]            
+            password_answer = user_check[0][1]
+            
+        if password_answer == subbed_password:
+            session['user_id'] = user_id
+            session['name'] = subbed_name
+
+            return redirect(url_for("picks_home"))   
+
+        else: 
+            return redirect(url_for("picks_login"))    
+        
+    else:
+        return render_template("/picks/p_login.html")
+
+@app.route('/picks/home')
+def picks_home(): 
+    return render_template('/picks/p_home.html')
+
+@app.route('/picks/standings')
+@app.route('/picks/scores')
+
+@app.route('/picks/make_picks')
+def make_picks_router(): 
+    CURRENT_WEEK= 1 
+    return redirect(f'/picks/make_picks/{CURRENT_WEEK}')
+    #return redirect(url_for(make_picks(CURRENT_WEEK)))
+
+@app.route('/picks/make_picks/<int:gameweek>')
+def make_picks(gameweek): 
+    
+    CURRENT_WEEK= 1 
+    q = """SELECT "code", "kickoff_time", h_team."team_h", a_team."team_a" FROM
+    ((SELECT "code", "kickoff_time", "minutes", "team_a", "team_h" FROM fpl_picks_schedule WHERE event = :gameweek) as sch
+    LEFT JOIN 
+    (SELECT "id", "short_name" as "team_h", "points" as "points_h" FROM "fpl_picks_teams") as h_team
+    ON sch.team_h = h_team.id
+    LEFT JOIN 
+    (SELECT "id", "short_name" as "team_a", "points" as "points_a" FROM "fpl_picks_teams") as a_team
+    ON sch.team_a = a_team.id)"""
+
+    #q = """SELECT * FROM fpl_picks_schedule WHERE event = :gameweek"""
+    week_schedule = db.execute(q, {"gameweek" : gameweek})
+    db.commit()
+
+    return render_template('picks/p_make_picks.html', current_week=CURRENT_WEEK, week_schedule=week_schedule)
+
+@app.route('/picks/logout')
+
+
+#PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS 
+#PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS 
+
 #NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES 
 #NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES 
 def format_results(result):
