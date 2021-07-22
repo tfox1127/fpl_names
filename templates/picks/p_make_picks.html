@@ -1,6 +1,6 @@
 {% extends "/picks/p_base.html" %}
 
-{% block title %}EPL Picks Home]{% endblock %}
+{% block title %}EPL Picks - Pick Games{% endblock %}
 
 {% block content %}
 
@@ -13,15 +13,17 @@
                 <td class="align-middle">kickoff_time</td>
                 <td class="align-middle">team_h</td>
                 <td class="align-middle">team_a</td>
+                <td class="align-middle">your_pick</td>
             </thead>
             <tbody class="text-center align-middle">
                 {% for game in week_schedule %}
-                    <tr style="  background-color: #08ff87;">
-                        {% for td in game %}
-                        <td class="align-left">{{ td }}</td>
-                        {% endfor %}
-                    </tr>
-                 {% endfor %}
+                <!-- <tr style="  background-color: #08ff87;">
+                <tr></tr> -->
+                {% for td in game %}
+                <td class="align-left">{{ td }}</td>
+                {% endfor %}
+                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
@@ -64,15 +66,3 @@
 
 </div>
 {% endblock %}
-
-
-
-
-
-
-
-
-
-
-
-

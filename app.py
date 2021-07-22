@@ -260,7 +260,7 @@ def picks():
         #return render_template('picks.html')
         return redirect(url_for('picks_home'))
     else:
-        return render_template('p_login.html')
+        return redirect(url_for("picks_login"))
 
 @app.route('/picks/register', methods = ["POST", "GET"])
 def picks_register():
@@ -309,15 +309,7 @@ def picks_register():
 
 @app.route('/picks/login', methods = ["POST", "GET"])
 def picks_login():
-    # if request.method == "POST":
-    #     subbed_name = request.form["name"]
-    #     subbed_password = request.form["password"]
-    #     session['user_id'] = 'test_a'
-    #     session['name'] = 'test_b'
 
-    #     return redirect(url_for("picks_home"))   
-
-        
     if request.method == "POST":
         subbed_name = request.form["name"]
         subbed_password = request.form["password"]
@@ -380,6 +372,37 @@ def make_picks(gameweek):
     return render_template('picks/p_make_picks.html', current_week=CURRENT_WEEK, week_schedule=week_schedule)
 
 @app.route('/picks/logout')
+
+@app.route("/picks/logout", methods = ["POST", "GET"])
+def picks_logout():
+    try: 
+        session.pop('name')
+    except:
+        pass
+
+    try:
+        session.pop('password_choice')
+    except:
+        pass    
+
+    try:
+        session.pop('userid')
+    except:
+        pass        
+
+    try: 
+        session.pop('user_id')
+    except:
+        pass
+
+    try: 
+        session.pop('user')
+    except:
+        pass
+
+    db.remove()
+
+    return redirect(url_for("picks_login"))
 
 
 #PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS 
