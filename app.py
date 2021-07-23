@@ -10,6 +10,7 @@ ENV = 'dev'
 
 #DATABASE_URL
 DATABASE_URL = os.environ['DATABASE_URL']
+DATABASE_URL = DATABASE_URL.replace("s://", "sql://", 1)
 
 engine = create_engine(DATABASE_URL, isolation_level="AUTOCOMMIT")
 #engine = create_engine('postgresql://oqivztlextiryy:f910e63e9de02a848ecddc6941e46d9cc16b3f4cc65fd8a24475f8affea90c93@ec2-3-215-207-12.compute-1.amazonaws.com:5432/davc1l7co2fgm', isolation_level="AUTOCOMMIT")
