@@ -270,7 +270,8 @@ def picks_register():
         session['name'] = request.form["name"]
         #session['user'] = request.form["email"]
         session['password_choice'] = request.form["password_choice"]
-        session['userid'] = request.form["userid"]        
+        session['userid'] = request.form["userid"]       
+        session['user_id'] = request.form["userid"]       
 
         db.execute(
             """INSERT INTO fpl_picks_users ("user_id", "name", "password") VALUES (:x, :y, :z)""", 
