@@ -412,10 +412,10 @@ def make_picks_match(match_number):
         #date_time = date_time.dt.tz_convert('US/Central')
         #date_time = dt.fromisoformat(single_game[0][0])
 
-        date_time = parser.isoparse(single_game[0][0])
-        date_time = date_time.strftime("%a %m-%d at %H:%M")
+        #date_time = parser.isoparse(single_game[0][0])
+        #date_time = date_time.strftime("%a %m-%d at %H:%M")
 
-        #date_time = single_game[0][0]
+        date_time = single_game[0][0]
         team_h = single_game[0][1]
         team_a = single_game[0][2]
         
