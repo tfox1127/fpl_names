@@ -7,12 +7,11 @@ verify_ssl = true
 
 [packages]
 flask = "*"
-psycopg2 = "==2.7.7"
-psycopg2-binary = "==2.7.7"
+psycopg2 = "==2.8.6"
+psycopg2-binary = "==2.8.6"
 flask-sqlalchemy = "*"
 gunicorn = "*"
-sqlalchemy = "*" 
-dateutil = "*"
+sqlalchemy = "==1.4.15" 
 
 [requires]
 python_version = "3.8.10"
