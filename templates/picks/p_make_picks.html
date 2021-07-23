@@ -17,12 +17,13 @@
             </thead>
             <tbody class="text-center align-middle">
                 {% for game in week_schedule %}
-                <!-- <tr style="  background-color: #08ff87;">
-                <tr></tr> -->
-                {% for td in game %}
-                <td class="align-left">{{ td }}</td>
-                {% endfor %}
-                </tr>
+                    <tr>
+                        <td class="align-left"><a href="/picks/make_picks/match/{{game[0]}}">{{game[0]}}</a></td>
+                        <td class="align-left">{{game[1]}}</td>
+                        <td class="align-left">{{game[2]}}</td>
+                        <td class="align-left">{{game[3]}}</td>
+                        <td class="align-left">{{game[4]}} ({{game[5]}})</td>
+                    </tr>
                 {% endfor %}
             </tbody>
         </table>

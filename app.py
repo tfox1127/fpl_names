@@ -1,4 +1,6 @@
 import random, os
+from datetime import datetime as dt
+from dateutil import parser
 from flask import Flask, render_template, request, session, redirect, url_for
 from sqlalchemy import create_engine
 from sqlalchemy import exc
@@ -350,26 +352,87 @@ def picks_home():
 def make_picks_router(): 
     CURRENT_WEEK= 1 
     return redirect(f'/picks/make_picks/{CURRENT_WEEK}')
-    #return redirect(url_for(make_picks(CURRENT_WEEK)))
+    #return redirect(url_for(make_picks_router))
 
 @app.route('/picks/make_picks/<int:gameweek>')
 def make_picks(gameweek): 
     
     CURRENT_WEEK= 1 
-    q = """SELECT "code", "kickoff_time", h_team."team_h", a_team."team_a" FROM
-    ((SELECT "code", "kickoff_time", "minutes", "team_a", "team_h" FROM fpl_picks_schedule WHERE event = :gameweek) as sch
-    LEFT JOIN 
-    (SELECT "id", "short_name" as "team_h", "points" as "points_h" FROM "fpl_picks_teams") as h_team
-    ON sch.team_h = h_team.id
-    LEFT JOIN 
-    (SELECT "id", "short_name" as "team_a", "points" as "points_a" FROM "fpl_picks_teams") as a_team
-    ON sch.team_a = a_team.id)"""
+    # q = """SELECT "code", "kickoff_time", h_team."team_h", a_team."team_a" FROM
+    # ((SELECT "code", "kickoff_time", "minutes", "team_a", "team_h" FROM fpl_picks_schedule WHERE event = :gameweek) as sch
+    # LEFT JOIN 
+    # (SELECT "id", "short_name" as "team_h", "points" as "points_h" FROM "fpl_picks_teams") as h_team
+    # ON sch.team_h = h_team.id
+    # LEFT JOIN 
+    # (SELECT "id", "short_name" as "team_a", "points" as "points_a" FROM "fpl_picks_teams") as a_team
+    # ON sch.team_a = a_team.id)"""
+
+    q = """ 
+        SELECT sch."code", "kickoff_time", h_team."team_h", a_team."team_a", picks."choice", picks."pick" FROM
+        ((SELECT "code", "kickoff_time", "minutes", "team_a", "team_h" FROM fpl_picks_schedule WHERE event = :gameweek) as sch
+        LEFT JOIN 
+        (SELECT "id", "short_name" as "team_h", "points" as "points_h" FROM "fpl_picks_teams") as h_team
+        ON sch.team_h = h_team.id
+        LEFT JOIN 
+        (SELECT "id", "short_name" as "team_a", "points" as "points_a" FROM "fpl_picks_teams") as a_team
+        ON sch.team_a = a_team.id
+        LEFT JOIN 
+        (SELECT "code", "pick", "choice", "user_id" FROM "fpl_picks_picks" WHERE "user_id" = :user_id) as picks
+        ON sch.code = picks.code)
+    """
 
     #q = """SELECT * FROM fpl_picks_schedule WHERE event = :gameweek"""
-    week_schedule = db.execute(q, {"gameweek" : gameweek})
+    week_schedule = db.execute(q, {"gameweek" : gameweek, "user_id": session["user_id"]})
     db.commit()
 
     return render_template('picks/p_make_picks.html', current_week=CURRENT_WEEK, week_schedule=week_schedule)
+
+
+@app.route('/picks/make_picks/match/<int:match_number>', methods=['POST', 'GET'])
+def make_picks_match(match_number): 
+    if request.method == 'GET':
+        #check user in session 
+        q = """SELECT "kickoff_time", h_team."team_h", a_team."team_a" FROM
+        ((SELECT "code", "kickoff_time", "minutes", "team_a", "team_h" FROM fpl_picks_schedule WHERE code = :match_number) as sch
+        LEFT JOIN 
+        (SELECT "id", "short_name" as "team_h", "points" as "points_h" FROM "fpl_picks_teams") as h_team
+        ON sch.team_h = h_team.id
+        LEFT JOIN 
+        (SELECT "id", "short_name" as "team_a", "points" as "points_a" FROM "fpl_picks_teams") as a_team
+        ON sch.team_a = a_team.id)"""
+
+ 
+        single_game = db.execute(q, {"match_number" : match_number})
+        db.commit()
+
+        single_game = single_game.fetchall()
+
+        match_number = match_number
+        #date_time = dt.strptime(single_game[0][0], '%d/%m/%y %H:%M:%S')
+        #date_time = date_time.dt.tz_convert('US/Central')
+        #date_time = dt.fromisoformat(single_game[0][0])
+
+        date_time = parser.isoparse(single_game[0][0])
+        date_time = date_time.strftime("%a %m-%d at %H:%M")
+
+        #date_time = single_game[0][0]
+        team_h = single_game[0][1]
+        team_a = single_game[0][2]
+        
+        return render_template('picks/p_match.html', match_number=match_number, date_time=date_time, team_h=team_h, team_a=team_a)
+
+    else: 
+        choice = request.form["choice"]
+        wager = request.form["wager"]
+        ts_now = dt.now()
+
+        db.execute(
+            """INSERT INTO fpl_picks_picks ("user_id", "code", "pick", "timestamp", "choice") VALUES (:v, :w, :x, :y, :z)""", 
+            {"v": session["user_id"], "w": match_number, "x": wager, "y": ts_now, "z": choice})
+
+        db.commit()
+
+        return redirect("/picks/make_picks")
 
 @app.route('/picks/logout')
 
