@@ -377,9 +377,21 @@ def make_picks(gameweek):
         (SELECT "id", "name" as "team_a", "points" as "points_a" FROM "fpl_picks_teams") as a_team
         ON sch.team_a = a_team.id
         LEFT JOIN 
-        (SELECT "code", "pick", "choice", "user_id" FROM "fpl_picks_picks" WHERE "user_id" = :user_id) as picks
+        (SELECT "p_code" as "code", "u_pick" as "pick", "u_choice" as "choice", "p_user_id" as "user_id" FROM 
+        ((SELECT "code" as "p_code", "user_id" as "p_user_id", MAX(timestamp) as p_ts FROM "fpl_picks_picks" WHERE "user_id" = 3
+        GROUP BY "code", "user_id"
+        ) AS tbl_p
+        LEFT JOIN
+        (SELECT "code" as "u_code",
+        "user_id" as "u_user_id",
+        "timestamp" as "u_timestamp",
+        "pick" as "u_pick",
+        "choice" as "u_choice" FROM "fpl_picks_picks" 
+        ) AS tbl_u
+        ON tbl_p.p_code = tbl_u.u_code AND tbl_p.p_user_id = tbl_u.u_user_id AND tbl_p.p_ts = tbl_u.u_timestamp) as a
+        WHERE "p_user_id" = :user_id) as picks
         ON sch.code = picks.code)
-    """
+    """ #(SELECT "code", "pick", "choice", "user_id" FROM "fpl_picks_picks" WHERE "user_id" = :user_id)
 
     #q = """SELECT * FROM fpl_picks_schedule WHERE event = :gameweek"""
     week_schedule = db.execute(q, {"gameweek" : gameweek, "user_id": session["user_id"]})
