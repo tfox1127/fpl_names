@@ -368,13 +368,13 @@ def make_picks(gameweek):
     # ON sch.team_a = a_team.id)"""
 
     q = """ 
-        SELECT sch."code", "kickoff_time", h_team."team_h", a_team."team_a", picks."choice", picks."pick" FROM
-        ((SELECT "code", "kickoff_time", "minutes", "team_a", "team_h" FROM fpl_picks_schedule WHERE event = :gameweek) as sch
+        SELECT sch."code", "london_str", h_team."team_h", a_team."team_a", picks."choice", picks."pick" FROM
+        ((SELECT "code", "london_str", "minutes", "team_a", "team_h" FROM fpl_picks_schedule WHERE event = :gameweek) as sch
         LEFT JOIN 
-        (SELECT "id", "short_name" as "team_h", "points" as "points_h" FROM "fpl_picks_teams") as h_team
+        (SELECT "id", "name" as "team_h", "points" as "points_h" FROM "fpl_picks_teams") as h_team
         ON sch.team_h = h_team.id
         LEFT JOIN 
-        (SELECT "id", "short_name" as "team_a", "points" as "points_a" FROM "fpl_picks_teams") as a_team
+        (SELECT "id", "name" as "team_a", "points" as "points_a" FROM "fpl_picks_teams") as a_team
         ON sch.team_a = a_team.id
         LEFT JOIN 
         (SELECT "code", "pick", "choice", "user_id" FROM "fpl_picks_picks" WHERE "user_id" = :user_id) as picks
@@ -392,13 +392,13 @@ def make_picks(gameweek):
 def make_picks_match(match_number): 
     if request.method == 'GET':
         #check user in session 
-        q = """SELECT "kickoff_time", h_team."team_h", a_team."team_a" FROM
-        ((SELECT "code", "kickoff_time", "minutes", "team_a", "team_h" FROM fpl_picks_schedule WHERE code = :match_number) as sch
+        q = """SELECT "london_str", h_team."team_h", a_team."team_a" FROM
+        ((SELECT "code", "london_str", "minutes", "team_a", "team_h" FROM fpl_picks_schedule WHERE code = :match_number) as sch
         LEFT JOIN 
-        (SELECT "id", "short_name" as "team_h", "points" as "points_h" FROM "fpl_picks_teams") as h_team
+        (SELECT "id", "name" as "team_h", "points" as "points_h" FROM "fpl_picks_teams") as h_team
         ON sch.team_h = h_team.id
         LEFT JOIN 
-        (SELECT "id", "short_name" as "team_a", "points" as "points_a" FROM "fpl_picks_teams") as a_team
+        (SELECT "id", "name" as "team_a", "points" as "points_a" FROM "fpl_picks_teams") as a_team
         ON sch.team_a = a_team.id)"""
 
  
