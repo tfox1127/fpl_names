@@ -33,7 +33,7 @@ def live():
     #        ON live2.entry = scores2.entry
     #        ORDER BY new_live DESC""" )
 
-    elements = db.execute("SELECT * FROM ftbl_live_notro ORDER BY rank_live ")
+    elements = db.execute("SELECT * FROM ftbl_live_notro ORDER BY score DESC ") #rank_live ")
     #bottoms =  db.execute("SELECT * FROM live2 where entry not in (SELECT \"Team ID\" FROM \"lms_el\" WHERE \"Team ID\" IS NOT NULL) ORDER BY rank_lv DESC LIMIT 5")
 
     cups = db.execute(f"""SELECT DISTINCT "Group", "Match", "l21"."score" as "Team 1 Score", "l22"."score" as "Team 2 Score", "Match ID" FROM "Cup"
