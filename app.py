@@ -1,5 +1,6 @@
-import random, os
+import random, os, time
 from datetime import datetime as dt
+import datetime as dtt
 from flask import Flask, render_template, request, session, redirect, url_for
 from sqlalchemy import create_engine
 from sqlalchemy import exc
@@ -357,6 +358,11 @@ def make_picks_router():
 @app.route('/picks/make_picks/<int:gameweek>')
 def make_picks(gameweek): 
     
+    #print("browser time: ", request.args.get("time"))
+
+    #print("server time : ", time.strftime('%A %B, %d %Y %H:%M:%S'));
+    asdf = dtt.datetime.now()
+
     CURRENT_WEEK= 1 
     # q = """SELECT "code", "kickoff_time", h_team."team_h", a_team."team_a" FROM
     # ((SELECT "code", "kickoff_time", "minutes", "team_a", "team_h" FROM fpl_picks_schedule WHERE event = :gameweek) as sch
@@ -368,8 +374,8 @@ def make_picks(gameweek):
     # ON sch.team_a = a_team.id)"""
 
     q = """ 
-        SELECT sch."code", "london_str", h_team."team_h", a_team."team_a", picks."choice", picks."pick" FROM
-        ((SELECT "code", "london_str", "minutes", "team_a", "team_h" FROM fpl_picks_schedule WHERE event = :gameweek) as sch
+        SELECT sch."code", "london_str", h_team."team_h", a_team."team_a", picks."choice", picks."pick", "london" FROM
+        ((SELECT "code", "london_str", "minutes", "team_a", "team_h", "london" FROM fpl_picks_schedule WHERE event = :gameweek) as sch
         LEFT JOIN 
         (SELECT "id", "name" as "team_h", "points" as "points_h" FROM "fpl_picks_teams") as h_team
         ON sch.team_h = h_team.id
@@ -378,7 +384,7 @@ def make_picks(gameweek):
         ON sch.team_a = a_team.id
         LEFT JOIN 
         (SELECT "p_code" as "code", "u_pick" as "pick", "u_choice" as "choice", "p_user_id" as "user_id" FROM 
-        ((SELECT "code" as "p_code", "user_id" as "p_user_id", MAX(timestamp) as p_ts FROM "fpl_picks_picks" WHERE "user_id" = 3
+        ((SELECT "code" as "p_code", "user_id" as "p_user_id", MAX(timestamp) as p_ts FROM "fpl_picks_picks" WHERE "user_id" = :user_id
         GROUP BY "code", "user_id"
         ) AS tbl_p
         LEFT JOIN
@@ -397,7 +403,7 @@ def make_picks(gameweek):
     week_schedule = db.execute(q, {"gameweek" : gameweek, "user_id": session["user_id"]})
     db.commit()
 
-    return render_template('picks/p_make_picks.html', current_week=CURRENT_WEEK, week_schedule=week_schedule)
+    return render_template('picks/p_make_picks.html', current_week=CURRENT_WEEK, week_schedule=week_schedule, asdf=asdf)
 
 
 @app.route('/picks/make_picks/match/<int:match_number>', methods=['POST', 'GET'])
@@ -434,6 +440,7 @@ def make_picks_match(match_number):
         return render_template('picks/p_match.html', match_number=match_number, date_time=date_time, team_h=team_h, team_a=team_a)
 
     else: 
+        
         choice = request.form["choice"]
         wager = request.form["wager"]
         ts_now = dt.now()

@@ -5,7 +5,7 @@
 {% block content %}
 
 <div class="container">
-
+    {{asdf}}
     <div class="table-responsive text-nowrap">
         <table class="table table-sm text-xsmall table-hover sortable ;">
             <thead class="thead-light text-center">
@@ -18,7 +18,11 @@
             <tbody class="text-center align-middle">
                 {% for game in week_schedule %}
                     <tr>
-                        <td class="align-left"><a href="/picks/make_picks/match/{{game[0]}}">{{game[0]}}</a></td>
+                        {% if game[6].replace(tzinfo=None) > asdf %}
+                            <td class="align-left"><a href="/picks/make_picks/match/{{game[0]}}">{{game[0]}}</a></td>
+                        {% else %}
+                            <td class="align-left">{{game[0]}}</td>
+                        {% endif %}
                         <!-- <td class="align-left">{{game[1]}}</td> -->
                         <td class="align-left">{{game[1]}}</td>
                         <td class="align-left">{{game[2]}}</td>
@@ -32,6 +36,7 @@
                             {% else %}
                                 <td class="align-left"></td>
                             {% endif %}
+                        <td class="align-left">{{game[6].replace(tzinfo=None) > asdf}}</td>    
                     </tr>
                 {% endfor %}
             </tbody>
