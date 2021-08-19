@@ -351,7 +351,7 @@ def picks_home():
 
 @app.route('/picks/make_picks')
 def make_picks_router(): 
-    CURRENT_WEEK= 1 
+    CURRENT_WEEK= 2
     return redirect(f'/picks/make_picks/{CURRENT_WEEK}')
     #return redirect(url_for(make_picks_router))
 
@@ -363,7 +363,7 @@ def make_picks(gameweek):
     #print("server time : ", time.strftime('%A %B, %d %Y %H:%M:%S'));
     asdf = dtt.datetime.now()
 
-    CURRENT_WEEK= 1 
+    CURRENT_WEEK= 2
     # q = """SELECT "code", "kickoff_time", h_team."team_h", a_team."team_a" FROM
     # ((SELECT "code", "kickoff_time", "minutes", "team_a", "team_h" FROM fpl_picks_schedule WHERE event = :gameweek) as sch
     # LEFT JOIN 
@@ -397,6 +397,7 @@ def make_picks(gameweek):
         ON tbl_p.p_code = tbl_u.u_code AND tbl_p.p_user_id = tbl_u.u_user_id AND tbl_p.p_ts = tbl_u.u_timestamp) as a
         WHERE "p_user_id" = :user_id) as picks
         ON sch.code = picks.code)
+        ORDER BY "london_str"
     """ #(SELECT "code", "pick", "choice", "user_id" FROM "fpl_picks_picks" WHERE "user_id" = :user_id)
 
     #q = """SELECT * FROM fpl_picks_schedule WHERE event = :gameweek"""
