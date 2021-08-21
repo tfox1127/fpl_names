@@ -37,7 +37,7 @@
       <div class="row">
         <div class="col text-center">
           <div class="alert alert-danger" role="alert">
-            I'm hoping to get the site up and running with live stats before the end of Gameweek 1. -Tom
+            Sorry we aren't full operation yet... should be there soon. Shoot me a note on the slack if you have any questions / suggestions. -Tom Fox
           </div>
         </div>
       </div>
@@ -90,6 +90,44 @@
         </p>
       </form>
     </div>
+
+
+    <div class="container float-center text-center">
+      <div class="row">
+        <h2>Last Man Standings</h2>
+      </div>
+
+      <p class="col-lg-12 col-sm-12">
+      <div class="table-responsive text-nowrap">
+        <table class="table table-sm text-xsmall table-hover sortable ;" >
+          <thead class="thead-light text-center align-middle">
+            <td class="align-middle">Team</td>
+            <td class="align-middle">GP</td>
+            <td class="align-middle"><div data-toggle="tooltip" data-placement="top" title="% of Salary Played">SP</div></td>
+            <td class="align-middle">Pts</td>
+            <td class="align-middle">Captain</td>
+            <td class="align-middle">Vice</td>
+            
+          </thead>
+          <tbody class="text-center align-middle">
+            {% for bottom in bottoms %}
+              <tr>
+                <td class="align-middle">{{bottom[0]}}</td>
+                <td class="align-middle">{{bottom[1]}}</td>
+                <td class="align-middle">{{bottom[2]}}</td>
+                <td class="align-middle">{{bottom[3]}}</td>
+                <td class="align-middle">{{bottom[4]}}</td>
+                <td class="align-middle">{{bottom[5]}}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      </p>
+    </div>
+
+  </div>
+</div>
 
     <!-- <div class="container mt-2" >
       <h2>League Cup</h2>

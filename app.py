@@ -33,8 +33,8 @@ def live():
     #        ON live2.entry = scores2.entry
     #        ORDER BY new_live DESC""" )
 
-    elements = db.execute("SELECT * FROM ftbl_live_notro ORDER BY score DESC ") #rank_live ")
-    #bottoms =  db.execute("SELECT * FROM live2 where entry not in (SELECT \"Team ID\" FROM \"lms_el\" WHERE \"Team ID\" IS NOT NULL) ORDER BY rank_lv DESC LIMIT 5")
+    elements = db.execute("SELECT * FROM ftbl_live_notro ORDER BY rank_live ") #rank_live ")
+    bottoms =  db.execute("""SELECT "entry_name", "played", "price_played", "score", "Captain", "Vice Captain" FROM ftbl_live_notro ORDER BY score LIMIT 5""") #where entry not in (SELECT \"Team ID\" FROM \"lms_el\" WHERE \"Team ID\" IS NOT NULL)
 
     cups = db.execute(f"""SELECT DISTINCT "Group", "Match", "l21"."score" as "Team 1 Score", "l22"."score" as "Team 2 Score", "Match ID" FROM "Cup"
         LEFT JOIN "ftbl_live_notro" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
@@ -92,7 +92,7 @@ def live():
     """)
     db.commit()
     #time = time.item() #.datetime.strftime("%m/%d/%Y, %H:%M:%S")
-    return render_template('live.html', elements=elements, time=time, cups=cups, epls=epls, actives=actives, sss=sss)
+    return render_template('live.html', elements=elements, time=time, cups=cups, epls=epls, actives=actives, sss=sss, bottoms=bottoms)
 
 @app.route('/cup_matchup/<int:cup_matchup_id>')
 def cup_matchup(cup_matchup_id):
