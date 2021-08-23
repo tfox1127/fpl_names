@@ -346,9 +346,6 @@ def picks_login():
 def picks_home(): 
     return render_template('/picks/p_home.html')
 
-@app.route('/picks/standings')
-
-
 @app.route('/picks/scores')
 def picks_scores():
     CURRENT_WEEK= 2
@@ -467,7 +464,6 @@ def picks_scores_summary():
 
     return render_template('/picks/p_scores_summary.html', scores_summ = scores_summ)
 
-
 @app.route('/picks/make_picks')
 def make_picks_router(): 
     CURRENT_WEEK= 2
@@ -525,7 +521,6 @@ def make_picks(gameweek):
 
     return render_template('picks/p_make_picks.html', current_week=CURRENT_WEEK, week_schedule=week_schedule, asdf=asdf)
 
-
 @app.route('/picks/make_picks/match/<int:match_number>', methods=['POST', 'GET'])
 def make_picks_match(match_number): 
     if request.method == 'GET':
@@ -572,8 +567,6 @@ def make_picks_match(match_number):
         db.commit()
 
         return redirect("/picks/make_picks")
-
-@app.route('/picks/logout')
 
 @app.route("/picks/logout", methods = ["POST", "GET"])
 def picks_logout():
