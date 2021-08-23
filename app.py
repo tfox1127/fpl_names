@@ -347,7 +347,126 @@ def picks_home():
     return render_template('/picks/p_home.html')
 
 @app.route('/picks/standings')
+
+
 @app.route('/picks/scores')
+def picks_scores():
+    CURRENT_WEEK= 2
+    q = """
+        SELECT d.event, d.code, a.ts, d.london, c.name, e.name as away, f.name as home, CAST("team_a_score" AS INTEGER), CAST("team_h_score" AS INTEGER),
+        CASE
+            WHEN team_a_score = team_h_score THEN 'pick_t'
+            WHEN team_a_score > team_h_score THEN 'pick_a'
+            ELSE 'pick_h'
+            END AS game_result,
+        b.pick as points, b.choice,
+        CASE
+            WHEN choice = (CASE
+            WHEN team_a_score = team_h_score THEN 'pick_t'
+            WHEN team_a_score > team_h_score THEN 'pick_a'
+            ELSE 'pick_h'
+            END) THEN b.pick
+            ELSE b.pick * -1 
+            END AS effective_points, 
+        d.london < (select now()) as game_started
+        FROM 
+        (SELECT "code", "user_id", MAX("timestamp") as ts
+        FROM "fpl_picks_picks"
+        GROUP BY "user_id", "code"
+        ) as a
+        LEFT JOIN
+        (SELECT "code", "user_id", "timestamp", "pick", "choice"
+        FROM "fpl_picks_picks"
+        ) as b
+        ON a.code = b.code AND a.user_id = b.user_id and a.ts = b.timestamp
+        LEFT JOIN 
+        (SELECT "user_id", "name", "active"
+        FROM "fpl_picks_users"
+        ) as c
+        ON a.user_id = c.user_id
+        LEFT JOIN
+        (SELECT "code", "team_a", "team_h", "london", "team_a_score", "team_h_score", "event"
+        FROM "fpl_picks_schedule"
+        ) as d
+        ON a.code = d.code
+        LEFT JOIN
+        (SELECT "id", "name"
+        FROM "fpl_picks_teams"
+        ) as e
+        on d.team_a = e.id
+        LEFT JOIN
+        (SELECT "id", "name"
+        FROM "fpl_picks_teams"
+        ) as f
+        on d.team_h = f.id
+        WHERE "active" = 1 AND  d.london < (select now())
+        ORDER BY d.london, d.code, name
+    """
+    scores = db.execute(q, {"CURRENT_WEEK" : CURRENT_WEEK})
+    db.commit()
+
+    return render_template('picks/p_scores.html', scores=scores)
+
+@app.route('/picks/scores/summary')
+def picks_scores_summary():
+    CURRENT_WEEK = 2
+    q = """
+    SELECT aa.name as Name, SUM(points) as Wagered, SUM(test3) as Score FROM  
+    (SELECT a.code, a.user_id, a.ts, c.name, d.team_a, d.team_h, e.name as away, f.name as home, 
+    b.pick as points, b.choice, d.london, "team_a_score", "team_h_score", d.london < (select now()) as test,
+        CASE
+            WHEN team_a_score = team_h_score THEN 'pick_t'
+            WHEN team_a_score > team_h_score THEN 'pick_a'
+            ELSE 'pick_h'
+        END AS test2,
+        CASE
+            WHEN choice = (CASE
+            WHEN team_a_score = team_h_score THEN 'pick_t'
+            WHEN team_a_score > team_h_score THEN 'pick_a'
+            ELSE 'pick_h'
+        END) THEN b.pick
+            ELSE b.pick * -1 
+        END AS test3
+    FROM 
+    (SELECT "code", "user_id", MAX("timestamp") as ts
+    FROM "fpl_picks_picks"
+    GROUP BY "user_id", "code"
+    ) as a
+    LEFT JOIN
+    (SELECT "code", "user_id", "timestamp", "pick", "choice"
+    FROM "fpl_picks_picks"
+    ) as b
+    ON a.code = b.code AND a.user_id = b.user_id and a.ts = b.timestamp
+    LEFT JOIN 
+    (SELECT "user_id", "name", "active"
+    FROM "fpl_picks_users"
+    ) as c
+    ON a.user_id = c.user_id
+    LEFT JOIN
+    (SELECT "code", "team_a", "team_h", "london", "team_a_score", "team_h_score", event
+    FROM "fpl_picks_schedule"
+    ) as d
+    ON a.code = d.code
+    LEFT JOIN
+    (SELECT "id", "name"
+    FROM "fpl_picks_teams"
+    ) as e
+    on d.team_a = e.id
+    LEFT JOIN
+    (SELECT "id", "name"
+    FROM "fpl_picks_teams"
+    ) as f
+    on d.team_h = f.id
+    WHERE "active" = 1 AND  d.london < (select now()) AND d.event = :gameweek) as aa 
+    GROUP BY aa.user_id, aa.name
+    ORDER BY Score DESC
+    """
+
+    scores_summ = db.execute(q, {"gameweek" : CURRENT_WEEK})
+    db.commit()
+
+    return render_template('/picks/p_scores_summary.html', scores_summ = scores_summ)
+
 
 @app.route('/picks/make_picks')
 def make_picks_router(): 

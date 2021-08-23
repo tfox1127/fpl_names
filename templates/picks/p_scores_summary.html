@@ -1,0 +1,28 @@
+{% extends "/picks/p_base.html" %}
+
+{% block title %}EPL Picks - Score Summary{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="table-responsive text-nowrap">
+        <table class="table table-sm text-xsmall table-hover sortable ;">
+            <thead class="thead-light text-center">
+                <td class="align-middle">Name</td>
+                <td class="align-middle">Wagered</td>
+                <td class="align-middle">Points</td>
+            </thead>
+            <tbody class="text-center align-middle">
+                {% for game in scores_summ %}
+                    <tr>
+                        <td class="align-left">{{game[0]}}</td>
+                        <td class="align-left">{{game[1]}}</td>
+                        <td class="align-left">{{game[2]}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}
