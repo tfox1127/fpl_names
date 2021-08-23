@@ -454,15 +454,25 @@ def picks_scores_summary():
     FROM "fpl_picks_teams"
     ) as f
     on d.team_h = f.id
+    """ 
+
+    sq1 = """
+    WHERE "active" = 1 AND  d.london < (select now())) as aa 
+    GROUP BY aa.user_id, aa.name
+    ORDER BY Score DESC
+    """
+
+    sq2 = """
     WHERE "active" = 1 AND  d.london < (select now()) AND d.event = :gameweek) as aa 
     GROUP BY aa.user_id, aa.name
     ORDER BY Score DESC
     """
 
-    scores_summ = db.execute(q, {"gameweek" : CURRENT_WEEK})
+    scores_summ_sesn = db.execute(q + sq1)
+    scores_summ_week  = db.execute(q + sq2, {"gameweek" : CURRENT_WEEK})
     db.commit()
 
-    return render_template('/picks/p_scores_summary.html', scores_summ = scores_summ)
+    return render_template('/picks/p_scores_summary.html', scores_summ_sesn = scores_summ_sesn, scores_summ_week=scores_summ_week)
 
 @app.route('/picks/make_picks')
 def make_picks_router(): 
