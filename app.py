@@ -348,7 +348,7 @@ def picks_home():
 
 @app.route('/picks/scores')
 def picks_scores():
-    CURRENT_WEEK= 2
+    CURRENT_WEEK= 3
     q = """
         SELECT d.event, d.code, a.ts, d.london, c.name, e.name as away, f.name as home, CAST("team_a_score" AS INTEGER), CAST("team_h_score" AS INTEGER),
         CASE
@@ -406,7 +406,7 @@ def picks_scores():
 
 @app.route('/picks/scores/summary')
 def picks_scores_summary():
-    CURRENT_WEEK = 2
+    CURRENT_WEEK = 3
     q = """
     SELECT aa.name as Name, SUM(points) as Wagered, SUM(test3) as Score FROM  
     (SELECT a.code, a.user_id, a.ts, c.name, d.team_a, d.team_h, e.name as away, f.name as home, 
@@ -476,7 +476,7 @@ def picks_scores_summary():
 
 @app.route('/picks/make_picks')
 def make_picks_router(): 
-    CURRENT_WEEK= 2
+    CURRENT_WEEK= 3
     return redirect(f'/picks/make_picks/{CURRENT_WEEK}')
     #return redirect(url_for(make_picks_router))
 
@@ -488,7 +488,7 @@ def make_picks(gameweek):
     #print("server time : ", time.strftime('%A %B, %d %Y %H:%M:%S'));
     asdf = dtt.datetime.now()
 
-    CURRENT_WEEK= 2
+    CURRENT_WEEK= 3
     # q = """SELECT "code", "kickoff_time", h_team."team_h", a_team."team_a" FROM
     # ((SELECT "code", "kickoff_time", "minutes", "team_a", "team_h" FROM fpl_picks_schedule WHERE event = :gameweek) as sch
     # LEFT JOIN 
