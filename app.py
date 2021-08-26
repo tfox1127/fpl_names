@@ -578,6 +578,91 @@ def make_picks_match(match_number):
 
         return redirect("/picks/make_picks")
 
+@app.route('/picks/checker')
+def picks_checker():
+    CURRENT_WEEK= 3
+
+    q = """ 
+        SELECT c.name, COUNT(b.choice)
+        FROM 
+        (SELECT "code", "user_id", MAX("timestamp") as ts
+        FROM "fpl_picks_picks"
+        GROUP BY "user_id", "code"
+        ) as a
+        LEFT JOIN
+        (SELECT "code", "user_id", "timestamp", "pick", "choice"
+        FROM "fpl_picks_picks"
+        ) as b
+        ON a.code = b.code AND a.user_id = b.user_id and a.ts = b.timestamp
+        LEFT JOIN 
+        (SELECT "user_id", "name", "active"
+        FROM "fpl_picks_users"
+        ) as c
+        ON a.user_id = c.user_id
+        LEFT JOIN
+        (SELECT "code", "team_a", "team_h", "london", "team_a_score", "team_h_score", "event"
+        FROM "fpl_picks_schedule"
+        ) as d
+        ON a.code = d.code
+        LEFT JOIN
+        (SELECT "id", "name"
+        FROM "fpl_picks_teams"
+        ) as e
+        on d.team_a = e.id
+        LEFT JOIN
+        (SELECT "id", "name"
+        FROM "fpl_picks_teams"
+        ) as f
+        on d.team_h = f.id
+        WHERE "event" = :CURRENT_WEEK
+        GROUP BY c.name
+    """
+    summary = db.execute(q, {"CURRENT_WEEK" : CURRENT_WEEK})
+    db.commit()
+
+    q = """
+        SELECT d.code, d.london, c.name, e.name, f.name, COUNT(b.choice)
+        FROM 
+        (SELECT "code", "user_id", MAX("timestamp") as ts
+        FROM "fpl_picks_picks"
+        GROUP BY "user_id", "code"
+        ) as a
+        LEFT JOIN
+        (SELECT "code", "user_id", "timestamp", "pick", "choice"
+        FROM "fpl_picks_picks"
+        ) as b
+        ON a.code = b.code AND a.user_id = b.user_id and a.ts = b.timestamp
+        LEFT JOIN 
+        (SELECT "user_id", "name", "active"
+        FROM "fpl_picks_users"
+        ) as c
+        ON a.user_id = c.user_id
+        LEFT JOIN
+        (SELECT "code", "team_a", "team_h", "london", "team_a_score", "team_h_score", "event"
+        FROM "fpl_picks_schedule"
+        ) as d
+        ON a.code = d.code
+        LEFT JOIN
+        (SELECT "id", "name"
+        FROM "fpl_picks_teams"
+        ) as e
+        on d.team_a = e.id
+        LEFT JOIN
+        (SELECT "id", "name"
+        FROM "fpl_picks_teams"
+        ) as f
+        on d.team_h = f.id
+        WHERE "event" = :CURRENT_WEEK
+        GROUP BY d.code, d.london, c.name, e.name, f.name
+        ORDER BY d.london, d.code
+    """
+
+    details = db.execute(q, {"CURRENT_WEEK" : CURRENT_WEEK})
+    db.commit()
+
+    return render_template('picks/p_checker.html', summary=summary, details=details)
+
+
 @app.route("/picks/logout", methods = ["POST", "GET"])
 def picks_logout():
     try: 
