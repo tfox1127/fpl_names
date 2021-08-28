@@ -17,6 +17,8 @@ engine = create_engine(DATABASE_URL, isolation_level="AUTOCOMMIT")
 db = scoped_session(sessionmaker(bind=engine))
 app.secret_key = 'pizza'
 
+CURRENT_WEEK = 3
+
 @app.route('/')
 def index():
     elements = db.execute('SELECT * FROM blog ORDER BY post_number DESC LIMIT 10')
@@ -34,8 +36,10 @@ def live():
     #        ORDER BY new_live DESC""" )
 
     elements = db.execute("SELECT * FROM ftbl_live_notro ORDER BY rank_live ") #rank_live ")
-    bottoms =  db.execute("""SELECT "entry_name", "played", "price_played", "score", "Captain", "Vice Captain" FROM ftbl_live_notro ORDER BY score LIMIT 5""") #where entry not in (SELECT \"Team ID\" FROM \"lms_el\" WHERE \"Team ID\" IS NOT NULL)
-
+    bottoms =  db.execute("""SELECT "entry_name", "played", "price_played", "score", "Captain", "Vice Captain" 
+                            FROM ftbl_live_notro WHERE entry not in (SELECT \"Team ID\" FROM \"lms_el\" WHERE \"Team ID\" IS NOT NULL)  ORDER BY score LIMIT 5 """)
+                            
+                            #WORKS: FROM ftbl_live_notro ORDER BY score LIMIT 5""") #where entry not in (SELECT \"Team ID\" FROM \"lms_el\" WHERE \"Team ID\" IS NOT NULL)
     cups = db.execute(f"""SELECT DISTINCT "Group", "Match", "l21"."score" as "Team 1 Score", "l22"."score" as "Team 2 Score", "Match ID" FROM "Cup"
         LEFT JOIN "ftbl_live_notro" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
         LEFT JOIN "ftbl_live_notro" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
@@ -348,7 +352,6 @@ def picks_home():
 
 @app.route('/picks/scores')
 def picks_scores():
-    CURRENT_WEEK= 3
     q = """
         SELECT d.event, d.code, a.ts, d.london, c.name, e.name as away, f.name as home, CAST("team_a_score" AS INTEGER), CAST("team_h_score" AS INTEGER),
         CASE
@@ -399,14 +402,14 @@ def picks_scores():
         WHERE "active" = 1 AND  d.london < (select now())
         ORDER BY d.london, d.code, name
     """
-    scores = db.execute(q, {"CURRENT_WEEK" : CURRENT_WEEK})
+    scores = db.execute(q)
     db.commit()
 
     return render_template('picks/p_scores.html', scores=scores)
 
 @app.route('/picks/scores/summary')
 def picks_scores_summary():
-    CURRENT_WEEK = 3
+    
     q = """
     SELECT aa.name as Name, SUM(points) as Wagered, SUM(test3) as Score FROM  
     (SELECT a.code, a.user_id, a.ts, c.name, d.team_a, d.team_h, e.name as away, f.name as home, 
@@ -476,7 +479,6 @@ def picks_scores_summary():
 
 @app.route('/picks/make_picks')
 def make_picks_router(): 
-    CURRENT_WEEK= 3
     return redirect(f'/picks/make_picks/{CURRENT_WEEK}')
     #return redirect(url_for(make_picks_router))
 
@@ -488,7 +490,6 @@ def make_picks(gameweek):
     #print("server time : ", time.strftime('%A %B, %d %Y %H:%M:%S'));
     asdf = dtt.datetime.now()
 
-    CURRENT_WEEK= 3
     # q = """SELECT "code", "kickoff_time", h_team."team_h", a_team."team_a" FROM
     # ((SELECT "code", "kickoff_time", "minutes", "team_a", "team_h" FROM fpl_picks_schedule WHERE event = :gameweek) as sch
     # LEFT JOIN 
@@ -580,7 +581,6 @@ def make_picks_match(match_number):
 
 @app.route('/picks/checker')
 def picks_checker():
-    CURRENT_WEEK= 3
 
     q = """ 
         SELECT c.name, COUNT(b.choice)
@@ -662,7 +662,6 @@ def picks_checker():
 
     return render_template('picks/p_checker.html', summary=summary, details=details)
 
-
 @app.route("/picks/logout", methods = ["POST", "GET"])
 def picks_logout():
     try: 
@@ -693,7 +692,6 @@ def picks_logout():
     db.remove()
 
     return redirect(url_for("picks_login"))
-
 
 #PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS 
 #PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS 
