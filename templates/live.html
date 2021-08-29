@@ -84,8 +84,10 @@
                 <td class="align-middle">{{element[12]}}</td>
                 <td class="align-middle">{{element[4]}}/{{element[5]}}</td>
                 <td class="align-middle">{{element[6]}}</td>
-                <td class="align-middle"><a href="/player/{{element[7]}}" class="text-dark">{{element[8]}} ({{element[22]}}/{{element[21]}})</a></td>
-                <td class="align-middle"><a href="/player/{{element[9]}}" class="text-dark">{{element[10]}} ({{element[25]}}/{{element[24]}})</a></td>
+                <td class="align-middle"><a href="/player/{{element[7]}}" class="text-dark">{{element[8]}}
+                    ({{element[22]}}/{{element[21]}})</a></td>
+                <td class="align-middle"><a href="/player/{{element[9]}}" class="text-dark">{{element[10]}}
+                    ({{element[25]}}/{{element[24]}})</a></td>
               </tr>
               {% endfor %}
             </tbody>
@@ -106,7 +108,7 @@
 
     <div class="container">
       <form action="/run_search" method="post">
-    
+
         <div class="form-group">
           <label for="search_for">
             <div class="row">
@@ -196,6 +198,9 @@
       <div class="row">
         <h2>EPL Scores</h2>
       </div>
+      <div class="row">
+        <i>Click Fixture to see more details from that match</i>
+      </div>
       <div class="table-responsive text-nowrap">
         <table class="table table-sm text-xsmall table-hover sortable ;">
           <thead class="thead-light text-center align-middle">
@@ -227,9 +232,7 @@
         <h2>Active Matches</h2>
       </div>
       <div class="row"><i>"Non-blanked" players with from matches that are ongoing | Add Bonus (proj) to Score for Total
-          | Click
-          Fixture
-          # from table above to see all players</i></div>
+          | Click Fixture# from table above to see all players</i></div>
       <div class="table-responsive">
         <table class="table table-sm text-xsmall table-hover sortable ;">
           <thead class="thead-light text-center">
@@ -285,6 +288,9 @@
     <div class="container">
       <div class="row">
         <h2>The Scoresheet</h2>
+      </div>
+      <div class="row">
+        <i>Click the player's name to see more details (including "5+" owners)</i>
       </div>
       <div class="table-responsive">
         <table class="table table-sm text-xsmall table-hover sortable ;">
