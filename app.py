@@ -27,6 +27,10 @@ def index():
 
 @app.route('/live')
 def live():
+    messages = db.execute("""SELECT "message" FROM "fpl_messages" WHERE "page" = 'live' """)
+    message = messages.fetchall()
+    message = message[0][0]      
+
     time = db.execute("SELECT DISTINCT * FROM ftbl_live_notro WHERE entry = 129150")
     #elements = db.execute("SELECT DISTINCT * FROM live2 ORDER BY points_lg DESC LIMIT 50")
     #elements = db.execute(f"""SELECT DISTINCT *, score_fix + sogw as new_live
@@ -130,7 +134,7 @@ def live():
     """)
     db.commit()
     #time = time.item() #.datetime.strftime("%m/%d/%Y, %H:%M:%S")
-    return render_template('live.html', elements=elements, time=time, cups=cups, epls=epls, actives=actives, sss=sss, bottoms=bottoms)
+    return render_template('live.html', message=message, elements=elements, time=time, cups=cups, epls=epls, actives=actives, sss=sss, bottoms=bottoms)
 
 @app.route('/cup_matchup/<int:cup_matchup_id>')
 def cup_matchup(cup_matchup_id):
