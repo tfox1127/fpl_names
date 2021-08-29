@@ -27,7 +27,7 @@ def index():
 
 @app.route('/live')
 def live():
-    time = db.execute("SELECT DISTINCT * FROM ftbl_live_notro WHERE entry = 142805")
+    time = db.execute("SELECT DISTINCT * FROM ftbl_live_notro WHERE entry = 129150")
     #elements = db.execute("SELECT DISTINCT * FROM live2 ORDER BY points_lg DESC LIMIT 50")
     #elements = db.execute(f"""SELECT DISTINCT *, score_fix + sogw as new_live
     #        FROM live2
@@ -35,7 +35,20 @@ def live():
     #        ON live2.entry = scores2.entry
     #        ORDER BY new_live DESC""" )
 
-    elements = db.execute("SELECT * FROM ftbl_live_notro ORDER BY rank_live ") #rank_live ")
+    #elements = db.execute("SELECT * FROM ftbl_live_notro ORDER BY rank_live ") #rank_live ")
+    elements = db.execute("""
+        SELECT * FROM 
+        (SELECT * FROM "ftbl_live_notro") as scoreboard
+        LEFT JOIN  
+        (SELECT "element_id" as "c_id", "points" as "c_pts", "minutes" as "c_mins"
+        FROM "ftbl_elli2") as c_points
+        ON scoreboard.cap_id = c_points.c_id
+        LEFT JOIN 
+        (SELECT "element_id" as "vc_id", "points" as "vc_pts", "minutes" as "vc_mins"
+        FROM "ftbl_elli2") as vc_points
+        ON scoreboard.vp_id = vc_points.vc_id
+        ORDER BY rank_live
+    """)
     bottoms =  db.execute("""SELECT "entry_name", "played", "price_played", "score", "Captain", "Vice Captain" 
                             FROM ftbl_live_notro WHERE entry not in (SELECT \"Team ID\" FROM \"lms_el\" WHERE \"Team ID\" IS NOT NULL)  ORDER BY score LIMIT 5 """)
                             
@@ -83,11 +96,32 @@ def live():
 
     epls =  db.execute("SELECT * FROM \"ftbl_scoreboard2\" ORDER BY \"minutes_game\" DESC, \"id\" LIMIT 50")
     
-    actives = db.execute("SELECT * FROM ftbl_elli2 WHERE minutes_game < 90 AND ((minutes > 0 AND minutes_game < 60 AND points > 1) or (minutes > 60 AND points > 2) or t_bonus > 0)  ORDER BY BPS DESC ")
-    
+    #actives = db.execute("SELECT * FROM ftbl_elli2 WHERE minutes_game < 90 AND ((minutes > 0 AND minutes_game < 60 AND points > 1) or (minutes > 60 AND points > 2) or t_bonus > 0)  ORDER BY BPS DESC ")
+    actives = db.execute("""
+        SELECT * FROM 
+        (SELECT * FROM "ftbl_elli2") as a
+        LEFT JOIN 
+        (SELECT "id", "finished"
+        FROM "fpl_picks_schedule") as b 
+        on a.fixture = b.id
+        WHERE "finished" = False 
+        AND ((minutes > 0 AND minutes_game < 60 AND points > 1) 
+        or (minutes > 60 AND points > 2) or t_bonus > 0) 
+        ORDER BY BPS DESC 
+    """) 
+    # """SELECT * FROM 
+    # (SELECT * FROM "ftbl_elli2") as a
+    # LEFT JOIN 
+    # (SELECT "id", "finished"
+    # FROM "fpl_picks_schedule") as b 
+    # on a.fixture = b.id
+    # WHERE "finished" = False"""
+
+
+
     #sss =  db.execute("SELECT DISTINCT * FROM score_sheet ORDER BY \"Team\"")
     sss = db.execute("""
-        SELECT "a"."element_id", "a"."web_name", "a"."team_name", "a"."goals_scored", "a"."assists", "b"."team_h_name", "b"."team_a_name", "c"."owner"
+        SELECT "a"."element_id", "a"."web_name", "a"."team_name", "a"."goals_scored", "a"."assists", "b"."team_h_name", "b"."team_a_name", "c"."owner", "a"."minutes", "a"."minutes_game", "a"."t_bonus", "a"."points"
         FROM "ftbl_elli2" as "a"
         LEFT JOIN "ftbl_scoreboard2" as "b" on "a"."fixture" = "b"."id" 
         LEFT JOIN "df_owners" as "c" on "a"."element_id" = "c"."element_id"
