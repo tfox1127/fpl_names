@@ -1,4 +1,4 @@
-import random, os
+import random, os, time
 from datetime import datetime as dt
 import datetime as dtt
 from flask import Flask, render_template, request, session, redirect, url_for
@@ -7,7 +7,7 @@ from sqlalchemy import exc
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 app = Flask(__name__)
-#ENV = 'dev'
+ENV = 'dev'
 
 #DATABASE_URL
 DATABASE_URL = os.environ['DATABASE_URL']
@@ -15,15 +15,13 @@ DATABASE_URL = DATABASE_URL.replace("s://", "sql://", 1)
 
 engine = create_engine(DATABASE_URL, isolation_level="AUTOCOMMIT")
 db = scoped_session(sessionmaker(bind=engine))
-#app.secret_key = 'pizza'
+app.secret_key = 'pizza'
 
 CURRENT_WEEK = 3
 
 @app.route('/')
 def index():
-    elements = db.execute("""
-        SELECT post_number, header, body FROM fpl_blog ORDER BY post_number DESC LIMIT 10
-    """)
+    elements = db.execute('SELECT * FROM blog ORDER BY post_number DESC LIMIT 10')
     db.commit()
     return render_template('index.html', elements=elements)
 
@@ -34,7 +32,14 @@ def live():
     message = message[0][0]      
 
     time = db.execute("SELECT DISTINCT * FROM ftbl_live_notro WHERE entry = 129150")
+    #elements = db.execute("SELECT DISTINCT * FROM live2 ORDER BY points_lg DESC LIMIT 50")
+    #elements = db.execute(f"""SELECT DISTINCT *, score_fix + sogw as new_live
+    #        FROM live2
+    #        LEFT JOIN (SELECT entry, sum(score) as "score_fix" FROM "teams30" GROUP BY entry) as scores2
+    #        ON live2.entry = scores2.entry
+    #        ORDER BY new_live DESC""" )
 
+    #elements = db.execute("SELECT * FROM ftbl_live_notro ORDER BY rank_live ") #rank_live ")
     elements = db.execute("""
         SELECT * FROM 
         (SELECT * FROM "ftbl_live_notro") as scoreboard
@@ -51,12 +56,32 @@ def live():
     bottoms =  db.execute("""SELECT "entry_name", "played", "price_played", "score", "Captain", "Vice Captain" 
                             FROM ftbl_live_notro WHERE entry not in (SELECT \"Team ID\" FROM \"lms_el\" WHERE \"Team ID\" IS NOT NULL)  ORDER BY score LIMIT 5 """)
                             
+                            #WORKS: FROM ftbl_live_notro ORDER BY score LIMIT 5""") #where entry not in (SELECT \"Team ID\" FROM \"lms_el\" WHERE \"Team ID\" IS NOT NULL)
     cups = db.execute(f"""SELECT DISTINCT "Group", "Match", "l21"."score" as "Team 1 Score", "l22"."score" as "Team 2 Score", "Match ID" FROM "Cup"
         LEFT JOIN "ftbl_live_notro" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
         LEFT JOIN "ftbl_live_notro" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
         WHERE "GW" = (SELECT * FROM "tbl_GW" limit 1)
         ORDER BY "Group"
         """)
+
+    #cups = db.execute("""
+    #    SELECT DISTINCT "Cup"."Group", "Cup"."Match", CAST("l21"."score" AS INTEGER) as "Team 1 Score", CAST("l22"."score" AS INTEGER) as "Team 2 Score", "Cup"."Match ID",
+    #        "lw"."t2_leg1",
+    #        "lw"."t1_leg1",
+    #        "lw"."t2_leg1" + "l21"."score" as "A",
+    #        "lw"."t1_leg1" + "l22"."score" as "B",
+    #        ("lw"."t2_leg1" + "l21"."score") - ("lw"."t1_leg1" + "l22"."score") as "C" 
+    #        FROM "Cup"
+    #        LEFT JOIN "ftbl_live_notro" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
+    #        LEFT JOIN "ftbl_live_notro" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
+    #        LEFT JOIN (
+    #        SELECT DISTINCT "Group", "Match", CAST("T2 Score" AS INTEGER) as "t2_leg1", CAST("T1 Score" AS INTEGER) as "t1_leg1", "Match ID", "Team 1 ID", "Team 2 ID" FROM "Cup"
+    #        WHERE "GW" = (SELECT * FROM "tbl_GW" limit 1) - 1
+    #        ) AS "lw" ON "Cup"."Team 1 ID" = "lw"."Team 2 ID"
+    #        WHERE "GW" = (SELECT * FROM "tbl_GW" limit 1)
+    #        ORDER BY "Cup"."Group"
+    #        """
+    #)
 
     cups = db.execute(""" 
         SELECT DISTINCT
@@ -74,7 +99,8 @@ def live():
     """)
 
     epls =  db.execute("SELECT * FROM \"ftbl_scoreboard2\" ORDER BY \"minutes_game\" DESC, \"id\" LIMIT 50")
-
+    
+    #actives = db.execute("SELECT * FROM ftbl_elli2 WHERE minutes_game < 90 AND ((minutes > 0 AND minutes_game < 60 AND points > 1) or (minutes > 60 AND points > 2) or t_bonus > 0)  ORDER BY BPS DESC ")
     actives = db.execute("""
         SELECT * FROM 
         (SELECT * FROM "ftbl_elli2") as a
@@ -87,7 +113,17 @@ def live():
         or (minutes > 60 AND points > 2) or t_bonus > 0) 
         ORDER BY BPS DESC 
     """) 
+    # """SELECT * FROM 
+    # (SELECT * FROM "ftbl_elli2") as a
+    # LEFT JOIN 
+    # (SELECT "id", "finished"
+    # FROM "fpl_picks_schedule") as b 
+    # on a.fixture = b.id
+    # WHERE "finished" = False"""
 
+
+
+    #sss =  db.execute("SELECT DISTINCT * FROM score_sheet ORDER BY \"Team\"")
     sss = db.execute("""
         SELECT "a"."element_id", "a"."web_name", "a"."team_name", "a"."goals_scored", "a"."assists", "b"."team_h_name", "b"."team_a_name", "c"."owner", "a"."minutes", "a"."minutes_game", "a"."t_bonus", "a"."points"
         FROM "ftbl_elli2" as "a"
@@ -97,7 +133,7 @@ def live():
         ORDER BY "a"."fixture"
     """)
     db.commit()
-
+    #time = time.item() #.datetime.strftime("%m/%d/%Y, %H:%M:%S")
     return render_template('live.html', message=message, elements=elements, time=time, cups=cups, epls=epls, actives=actives, sss=sss, bottoms=bottoms)
 
 @app.route('/cup_matchup/<int:cup_matchup_id>')
@@ -126,6 +162,13 @@ def cup_matchup(cup_matchup_id):
         """)
     db.commit()
     return render_template('cup_matchup.html', cups=cups, cups2=cups2, elements=elements, cup_matchup_id=cup_matchup_id)
+
+@app.route('/active_matches')
+def active_matches():
+    elements = db.execute("SELECT * FROM ftbl_elli2 WHERE minutes_game < 90 AND ((minutes > 0 AND minutes_game < 60 AND points > 1) or (minutes > 60 AND points > 2) or t_bonus > 0)  ORDER BY BPS DESC ")
+
+    db.commit()
+    return render_template('active_matches.html', elements=elements)
 
 @app.route('/elli')
 def elli():
