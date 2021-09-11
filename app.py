@@ -15,7 +15,7 @@ DATABASE_URL = DATABASE_URL.replace("s://", "sql://", 1)
 
 engine = create_engine(DATABASE_URL, isolation_level="AUTOCOMMIT")
 db = scoped_session(sessionmaker(bind=engine))
-#app.secret_key = 'pizza'
+app.secret_key = 'pizza'
 
 CURRENT_WEEK = 4
 
