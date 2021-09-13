@@ -16,22 +16,23 @@
     <script src="/static/sorttable.js" type="text/javascript"></script>
   </head>
 
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="/">Not Everyone Gets A Trophy</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div class="navbar-nav">
-          <a class="nav-item nav-link" href="/">Home</a>
-          <a class="nav-item nav-link" href="/live">EPL Live Scores</a>
-          <a class="nav-item nav-link" href="/elli">EPL Leaderboard</a>
-          <a class="nav-item nav-link" href="/hof">HOF</a>
-          <a class="nav-item nav-link" href="/lms">LMS</a>
-        </div>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/">Not Everyone Gets A Trophy</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+      aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-item nav-link" href="/">Home</a>
+        <a class="nav-item nav-link" href="/live">Live Scores<span class="sr-only">(current)</span></a>
+        <a class="nav-item nav-link" href="/elli">EPL Leaderboard</a>
+        <a class="nav-item nav-link" href="/cup_summary">Cup Summary</a>
+        <a class="nav-item nav-link" href="/hof">HOF</a>
+        <a class="nav-item nav-link" href="/lms">LMS</a>
       </div>
-    </nav>
+    </div>
+  </nav>
 
     <div class="container mt-2">
       {% for header in headers %}
