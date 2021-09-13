@@ -39,11 +39,11 @@ def live():
         SELECT * FROM 
         (SELECT * FROM "ftbl_live_notro") as scoreboard
         LEFT JOIN  
-        (SELECT "element_id" as "c_id", "points" as "c_pts", "minutes" as "c_mins"
+        (SELECT "element_id" as "c_id", "points" + "t_bonus" as "c_pts", "minutes" as "c_mins"
         FROM "ftbl_elli2") as c_points
         ON scoreboard.cap_id = c_points.c_id
         LEFT JOIN 
-        (SELECT "element_id" as "vc_id", "points" as "vc_pts", "minutes" as "vc_mins"
+        (SELECT "element_id" as "vc_id", "points" + "t_bonus" as "vc_pts", "minutes" as "vc_mins"
         FROM "ftbl_elli2") as vc_points
         ON scoreboard.vp_id = vc_points.vc_id
         ORDER BY rank_live
@@ -51,27 +51,27 @@ def live():
     bottoms =  db.execute("""SELECT "entry_name", "played", "price_played", "score", "Captain", "Vice Captain" 
                             FROM ftbl_live_notro WHERE entry not in (SELECT \"Team ID\" FROM \"lms_el\" WHERE \"Team ID\" IS NOT NULL)  ORDER BY score LIMIT 5 """)
                             
-    cups = db.execute(f"""SELECT DISTINCT "Group", "Match", "l21"."score" as "Team 1 Score", "l22"."score" as "Team 2 Score", "Match ID" FROM "Cup"
-        LEFT JOIN "ftbl_live_notro" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
-        LEFT JOIN "ftbl_live_notro" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
-        WHERE "GW" = (SELECT * FROM "tbl_GW" limit 1)
-        ORDER BY "Group"
-        """)
+    # cups = db.execute(f"""SELECT DISTINCT "Group", "Match", "l21"."score" as "Team 1 Score", "l22"."score" as "Team 2 Score", "Match ID" FROM "Cup"
+    #     LEFT JOIN "ftbl_live_notro" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
+    #     LEFT JOIN "ftbl_live_notro" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
+    #     WHERE "GW" = (SELECT * FROM "tbl_GW" limit 1)
+    #     ORDER BY "Group"
+    #     """)
 
-    cups = db.execute(""" 
-        SELECT DISTINCT
-        "Cup"."Group",
-        "Cup"."Match",
-        CAST("l21"."score" AS INTEGER) as "Team 1 Score",
-        CAST("l22"."score" AS INTEGER) as "Team 2 Score",
-        "Cup"."Match ID",
-        CAST(("l21"."score" -  "l22"."score") AS INTEGER)  as "c" 
-            FROM "Cup"
-                    LEFT JOIN "ftbl_live_notro" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
-                    LEFT JOIN "ftbl_live_notro" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
-                    WHERE "GW" = (SELECT * FROM "tbl_GW" limit 1)
-                    ORDER BY "Cup"."Group"
-    """)
+    # cups = db.execute(""" 
+    #     SELECT DISTINCT
+    #     "Cup"."Group",
+    #     "Cup"."Match",
+    #     CAST("l21"."score" AS INTEGER) as "Team 1 Score",
+    #     CAST("l22"."score" AS INTEGER) as "Team 2 Score",
+    #     "Cup"."Match ID",
+    #     CAST(("l21"."score" -  "l22"."score") AS INTEGER)  as "c" 
+    #         FROM "Cup"
+    #                 LEFT JOIN "ftbl_live_notro" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
+    #                 LEFT JOIN "ftbl_live_notro" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
+    #                 WHERE "GW" = (SELECT * FROM "tbl_GW" limit 1)
+    #                 ORDER BY "Cup"."Group"
+    # """)
 
     epls =  db.execute("SELECT * FROM \"ftbl_scoreboard2\" ORDER BY \"minutes_game\" DESC, \"id\" LIMIT 50")
 
@@ -98,7 +98,7 @@ def live():
     """)
     db.commit()
 
-    return render_template('live.html', message=message, elements=elements, time=time, cups=cups, epls=epls, actives=actives, sss=sss, bottoms=bottoms)
+    return render_template('live.html', message=message, elements=elements, time=time, epls=epls, actives=actives, sss=sss, bottoms=bottoms)
 
 @app.route('/cup_matchup/<int:cup_matchup_id>')
 def cup_matchup(cup_matchup_id):
