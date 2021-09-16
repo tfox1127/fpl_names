@@ -12,6 +12,7 @@ psycopg2-binary = "==2.8.6"
 flask-sqlalchemy = "*"
 gunicorn = "*"
 sqlalchemy = "==1.4.15" 
+pandas = "*"
 
 [requires]
 python_version = "3.8.10"
