@@ -136,7 +136,7 @@ def datatest():
     #test = df.to_html(classes='table table-sm text-xsmall table-hover sortable;')
     test = df.to_csv()
 
-    return render_template('datatest.html', test=test)
+    return render_template('datatest.html', test=test, tables=[df.to_html(classes='table-sm text-xsmall table-hover sortable')], titles=df.columns.values)
 
 @app.route('/elli')
 def elli():
