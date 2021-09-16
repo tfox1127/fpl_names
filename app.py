@@ -133,7 +133,8 @@ def datatest():
     d = db.execute("""SELECT * FROM ftbl_live_notro""")
     db.commit()
     df = pd.DataFrame(d.fetchall(), columns=d.keys())
-    test = df.to_json()
+    #test = df.to_html(classes='table table-sm text-xsmall table-hover sortable;')
+    test = df.to_csv()
 
     return render_template('datatest.html', test=test)
 
