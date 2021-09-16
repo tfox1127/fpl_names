@@ -1,4 +1,5 @@
 import random, os
+import pandas as pd
 from datetime import datetime as dt
 import datetime as dtt
 from flask import Flask, render_template, request, session, redirect, url_for
@@ -126,6 +127,15 @@ def cup_matchup(cup_matchup_id):
         """)
     db.commit()
     return render_template('cup_matchup.html', cups=cups, cups2=cups2, elements=elements, cup_matchup_id=cup_matchup_id)
+
+@app.route('/datatest')
+def datatest():
+    d = db.execute("""SELECT * FROM ftbl_live_notro""")
+    db.commit()
+    df = pd.DataFrame(d.fetchall(), columns=d.keys())
+    test = df.to_json()
+
+    return render_template('datatest.html', test=test)
 
 @app.route('/elli')
 def elli():
