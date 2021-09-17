@@ -49,6 +49,53 @@
         </div>
     </div>
 
+    <!-- SL POINTS -->
+    <div class="row">
+        <h3>Season Long Points</h3>
+        <div class="table-responsive text-nowrap">
+            <table class="table table-sm text-xsmall table-hover sortable ;">
+                <thead class="thead-light text-center">
+                    <td class="align-middle">Name</td>
+                    <td class="align-middle">Points</td>
+                </thead>
+                <tbody class="text-center align-middle">
+                    {% for sl_point in sl_points %}
+                    <tr>
+                        {% for s in sl_point %}
+                        <td class="align-left">{{s}}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- INDYS -->
+    <div class="row">
+        <h3>Awards</h3>
+        <div class="table-responsive text-nowrap">
+            <table class="table table-sm text-xsmall table-hover sortable ;">
+                <thead class="thead-light text-center">
+                    <td class="align-middle">Name</td>
+                    <td class="align-middle">Golden Boot</td>
+                    <td class="align-middle">Most Assists</td>
+                    <td class="align-middle">Golden Glove</td>
+                    <td class="align-middle">Sack Race 1</td>
+                </thead>
+                <tbody class="text-center align-middle">
+                    {% for indy in indys %}
+                    <tr>
+                        {% for i in indy %}
+                        <td class="align-left">{{i}}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <!-- TOP 4S -->
     <div class="row">
         <h3>Top 4</h3>

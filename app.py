@@ -433,29 +433,39 @@ def picks_scores_summary():
 
     scores_summ_sesn = db.execute(q + sq1)
     scores_summ_week  = db.execute(q + sq2, {"gameweek" : CURRENT_WEEK})
+    db.commit()
 
-    top4 = """SELECT "Name", "Champ", "Top 4 (2)", "Top 4 (3)", "Top 4 (4)" FROM fpl_picks_sesonlong """
+    season_long_pts = """SELECT "Name", "Current Pts" FROM fpl_picks_sesonlong"""
+    sl_points = db.execute(season_long_pts)
+    db.commit()
+
+    indy  = """SELECT "Name", "Golden Boot", "Most Assists", "Golden Glove", "Sack Race 1" FROM fpl_picks_sesonlong"""
+    indys = db.execute(indy)
+    db.commit()
+
+    top4  = """SELECT "Name", "Champ", "Top 4 (2)", "Top 4 (3)", "Top 4 (4)" FROM fpl_picks_sesonlong """
     top4s = db.execute(top4)
+    db.commit()
 
-    europa = """SELECT "Name", "Eurpoa (1)", "Eurpoa (2)", "Eurpoa (3)" FROM fpl_picks_sesonlong """
+    europa  = """SELECT "Name", "Eurpoa (1)", "Eurpoa (2)", "Eurpoa (3)" FROM fpl_picks_sesonlong """
     europas = db.execute(europa) 
+    db.commit()
 
-    mid = """SELECT "Name", "Mid Table (1)", "Mid Table (2)", "Mid Table (3)", "Mid Table (4)", "Mid Table (5)" FROM fpl_picks_sesonlong """
+    mid  = """SELECT "Name", "Mid Table (1)", "Mid Table (2)", "Mid Table (3)", "Mid Table (4)", "Mid Table (5)" FROM fpl_picks_sesonlong """
     mids = db.execute(mid) 
+    db.commit()
 
-    bot = """SELECT "Name", "Bottom Half (1)", "Bottom Half (2)", "Bottom Half (3)", "Bottom Half (4)", "Bottom Half (5)" FROM fpl_picks_sesonlong """
+    bot  = """SELECT "Name", "Bottom Half (1)", "Bottom Half (2)", "Bottom Half (3)", "Bottom Half (4)", "Bottom Half (5)" FROM fpl_picks_sesonlong """
     bots = db.execute(bot) 
+    db.commit()
 
-    relg = """SELECT "Name", "Relegation (1)", "Relegation (2)", "Relegation (3)" FROM fpl_picks_sesonlong """
+    relg  = """SELECT "Name", "Relegation (1)", "Relegation (2)", "Relegation (3)" FROM fpl_picks_sesonlong """
     relgs = db.execute(relg) 
-    
-    # "Golden Boot", "Most Assists", "Golden Glove", "Sack Race 1", 
-    # "Current Pts", 
 
     db.commit()
 
     return render_template('/picks/p_scores_summary.html', scores_summ_sesn = scores_summ_sesn, scores_summ_week=scores_summ_week, 
-        top4s=top4s, europas=europas, mids=mids, bots=bots, relgs=relgs)
+        sl_points=sl_points, indys=indys, top4s=top4s, europas=europas, mids=mids, bots=bots, relgs=relgs)
 
 @app.route('/picks/make_picks')
 def make_picks_router(): 
