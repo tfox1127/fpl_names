@@ -22,84 +22,75 @@ CURRENT_WEEK = 5
 
 @app.route('/')
 def index():
-    elements = db.execute("""
-        SELECT post_number, header, body FROM fpl_blog ORDER BY post_number DESC LIMIT 10
-    """)
+    elements = db.execute("""SELECT post_number, header, body FROM fpl_blog ORDER BY post_number DESC LIMIT 10""")
     db.commit()
     return render_template('index.html', elements=elements)
 
 @app.route('/live')
 def live():
-    messages = db.execute("""SELECT "message" FROM "fpl_messages" WHERE "page" = 'live' """)
+    #CHECK FOR MESSAGES 
+    messages = db.execute("""SELECT "message" FROM "fpl_messages" WHERE "page" = 'live' ORDER BY "id" DESC LIMIT 1 """)
     message = messages.fetchall()
     message = message[0][0]      
+    if message == "None": 
+        has_message = "No"
+    else: 
+        has_message = "Yes"
 
+    #GET TIME FOR HEADER 
     time = db.execute("SELECT DISTINCT * FROM ftbl_live_notro WHERE entry = 129150")
 
+    #MAIN TABLE 
     elements = db.execute("""
         SELECT * FROM 
         (SELECT * FROM "ftbl_live_notro") as scoreboard
-        LEFT JOIN  
-        (SELECT "element_id" as "c_id", "points" - "bonus" + "t_bonus" as "c_pts", "minutes" as "c_mins"
-        FROM "ftbl_elli2") as c_points
-        ON scoreboard.cap_id = c_points.c_id
-        LEFT JOIN 
-        (SELECT "element_id" as "vc_id", "points" - "bonus" + "t_bonus" as "vc_pts", "minutes" as "vc_mins"
-        FROM "ftbl_elli2") as vc_points
-        ON scoreboard.vp_id = vc_points.vc_id
+            LEFT JOIN  
+            (SELECT "element_id" as "c_id", "points" - "bonus" + "t_bonus" as "c_pts", "minutes" as "c_mins"
+            FROM "ftbl_elli2") as c_points
+            ON scoreboard.cap_id = c_points.c_id
+                LEFT JOIN 
+                (SELECT "element_id" as "vc_id", "points" - "bonus" + "t_bonus" as "vc_pts", "minutes" as "vc_mins"
+                FROM "ftbl_elli2") as vc_points
+                ON scoreboard.vp_id = vc_points.vc_id
         ORDER BY rank_live
     """)
+
+    #LAST MAN STANDING 
     bottoms =  db.execute("""SELECT "entry_name", "played", "price_played", "score", "Captain", "Vice Captain" 
-                            FROM ftbl_live_notro WHERE entry not in (SELECT \"Team ID\" FROM \"lms_el\" WHERE \"Team ID\" IS NOT NULL)  ORDER BY score LIMIT 5 """)
+                            FROM ftbl_live_notro WHERE entry not in (SELECT \"Team ID\" FROM \"lms_el\" 
+                            WHERE \"Team ID\" IS NOT NULL)  ORDER BY score LIMIT 5 """)
                             
-    # cups = db.execute(f"""SELECT DISTINCT "Group", "Match", "l21"."score" as "Team 1 Score", "l22"."score" as "Team 2 Score", "Match ID" FROM "Cup"
-    #     LEFT JOIN "ftbl_live_notro" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
-    #     LEFT JOIN "ftbl_live_notro" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
-    #     WHERE "GW" = (SELECT * FROM "tbl_GW" limit 1)
-    #     ORDER BY "Group"
-    #     """)
-
-    # cups = db.execute(""" 
-    #     SELECT DISTINCT
-    #     "Cup"."Group",
-    #     "Cup"."Match",
-    #     CAST("l21"."score" AS INTEGER) as "Team 1 Score",
-    #     CAST("l22"."score" AS INTEGER) as "Team 2 Score",
-    #     "Cup"."Match ID",
-    #     CAST(("l21"."score" -  "l22"."score") AS INTEGER)  as "c" 
-    #         FROM "Cup"
-    #                 LEFT JOIN "ftbl_live_notro" as "l21" on "Cup"."Team 1 ID" = "l21"."entry"
-    #                 LEFT JOIN "ftbl_live_notro" as "l22" on "Cup"."Team 2 ID" = "l22"."entry"
-    #                 WHERE "GW" = (SELECT * FROM "tbl_GW" limit 1)
-    #                 ORDER BY "Cup"."Group"
-    # """)
-
+    #PREMIRE LEAGUE SCOREBOARD 
     epls =  db.execute("SELECT * FROM \"ftbl_scoreboard2\" ORDER BY \"minutes_game\" DESC, \"id\" LIMIT 50")
 
+    #ACTIVE GAMES 
     actives = db.execute("""
         SELECT * FROM 
-        (SELECT * FROM "ftbl_elli2") as a
-        LEFT JOIN 
-        (SELECT "id", "finished"
-        FROM "fpl_picks_schedule") as b 
-        on a.fixture = b.id
-        WHERE "finished" = False 
-        AND ((minutes > 0 AND minutes_game < 60 AND points > 1) 
-        or (minutes > 60 AND points > 2) or t_bonus > 0) 
+            (SELECT * FROM "ftbl_elli2") as a
+            LEFT JOIN 
+                (SELECT "id", "finished"
+                FROM "fpl_picks_schedule") as b 
+                on a.fixture = b.id
+                WHERE "finished" = False 
+                AND ((minutes > 0 AND minutes_game < 60 AND points > 1) 
+                or (minutes > 60 AND points > 2) or t_bonus > 0) 
         ORDER BY BPS DESC 
     """) 
 
+    #SCORE SHEET 
     sss = db.execute("""
-        SELECT "a"."element_id", "a"."web_name", "a"."team_name", "a"."goals_scored", "a"."assists", "b"."team_h_name", "b"."team_a_name", "c"."owner", "a"."minutes", "a"."minutes_game", "a"."t_bonus", "a"."points"
+        SELECT "a"."element_id", "a"."web_name", "a"."team_name", "a"."goals_scored", 
+            "a"."assists", "b"."team_h_name", "b"."team_a_name", "c"."owner", "a"."minutes", 
+            "a"."minutes_game", "a"."t_bonus", "a"."points"
         FROM "ftbl_elli2" as "a"
         LEFT JOIN "ftbl_scoreboard2" as "b" on "a"."fixture" = "b"."id" 
         LEFT JOIN "df_owners" as "c" on "a"."element_id" = "c"."element_id"
         WHERE "goals_scored" > 0 OR "assists" > 0
         ORDER BY "a"."fixture"
     """)
-    db.commit()
 
-    return render_template('live.html', message=message, elements=elements, time=time, epls=epls, actives=actives, sss=sss, bottoms=bottoms)
+    db.commit()
+    return render_template('live.html', has_message=has_message, message=message, elements=elements, time=time, epls=epls, actives=actives, sss=sss, bottoms=bottoms)
 
 @app.route('/cup_matchup/<int:cup_matchup_id>')
 def cup_matchup(cup_matchup_id):
@@ -157,43 +148,6 @@ def elli():
     db.commit()
 
     return render_template('elli.html', ellis=ellis, nonellis=nonellis)
-
-@app.route('/team_picker')
-def team_picker():
-    #ellis = db.execute("SELECT * FROM ftbl_elli2 WHERE ownership != '0.0%' ORDER BY score DESC")
-    owner = 1
-    owner_name = "tFox"
-
-    team = db.execute("""
-        SELECT fpl_free_agent_base."element_id", "web_name", "element_type", "team_name", "now_cost" 
-        FROM fpl_lg2_team LEFT JOIN fpl_free_agent_base 
-        ON fpl_lg2_team.element_id = fpl_free_agent_base.element_id
-        """)    
-
-    free_agents = db.execute("""
-        SELECT "element_id", "web_name", "element_type", "team_name", "now_cost", "goals_scored", "assists", "bonus", "minutes", "total_points", "points_per_game", "value_season"
-    FROM fpl_free_agent_base""")
-
-    db.commit()
-
-    return render_template('team_picker.html', owner=owner, owner_name = owner_name, team=team, free_agents=free_agents)
-
-@app.route("/<int:owner>/add/<int:player>")
-def add_player(owner, player):
-  db.execute("INSERT INTO fpl_lg2_team (\"element_id\", \"owner\") VALUES (:x, :y)", {"x": player, "y": owner})
-
-  db.commit()
-  return redirect(url_for("team_picker"))
-
-@app.route("/<int:owner>/drop/<int:player>")
-def drop_player(owner, player):
-  db.execute(f"""
-    DELETE FROM "fpl_lg2_team" 
-    WHERE ctid = (SELECT ctid FROM "fpl_lg2_team"
-    WHERE "element_id" = {player} AND "owner" = '{owner}' LIMIT 1);""", {"x": player, "y": owner})
-
-  db.commit()
-  return redirect(url_for("team_picker"))
 
 @app.route("/player/<int:player_id>")
 def players(player_id):
@@ -263,9 +217,9 @@ def run_search():
         db.commit()
         return render_template('search_results.html', elements=elements, search_for=search_for)
 
+##################################################################
 #PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS 
 #PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS 
-
 @app.route('/picks')
 def picks():
     if "user" in session:
@@ -479,9 +433,29 @@ def picks_scores_summary():
 
     scores_summ_sesn = db.execute(q + sq1)
     scores_summ_week  = db.execute(q + sq2, {"gameweek" : CURRENT_WEEK})
+
+    top4 = """SELECT "Name", "Champ", "Top 4 (2)", "Top 4 (3)", "Top 4 (4)" FROM fpl_picks_sesonlong """
+    top4s = db.execute(top4)
+
+    europa = """SELECT "Name", "Eurpoa (1)", "Eurpoa (2)", "Eurpoa (3)" FROM fpl_picks_sesonlong """
+    europas = db.execute(europa) 
+
+    mid = """SELECT "Name", "Mid Table (1)", "Mid Table (2)", "Mid Table (3)", "Mid Table (4)", "Mid Table (5)" FROM fpl_picks_sesonlong """
+    mids = db.execute(mid) 
+
+    bot = """SELECT "Name", "Bottom Half (1)", "Bottom Half (2)", "Bottom Half (3)", "Bottom Half (4)", "Bottom Half (5)" FROM fpl_picks_sesonlong """
+    bots = db.execute(bot) 
+
+    relg = """SELECT "Name", "Relegation (1)", "Relegation (2)", "Relegation (3)" FROM fpl_picks_sesonlong """
+    relgs = db.execute(relg) 
+    
+    # "Golden Boot", "Most Assists", "Golden Glove", "Sack Race 1", 
+    # "Current Pts", 
+
     db.commit()
 
-    return render_template('/picks/p_scores_summary.html', scores_summ_sesn = scores_summ_sesn, scores_summ_week=scores_summ_week)
+    return render_template('/picks/p_scores_summary.html', scores_summ_sesn = scores_summ_sesn, scores_summ_week=scores_summ_week, 
+        top4s=top4s, europas=europas, mids=mids, bots=bots, relgs=relgs)
 
 @app.route('/picks/make_picks')
 def make_picks_router(): 
@@ -701,7 +675,9 @@ def picks_logout():
 
 #PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS 
 #PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS 
+##################################################################
 
+##################################################################
 #NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES 
 #NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES NAMES 
 def format_results(result):
@@ -1017,340 +993,6 @@ def signup():
         return redirect(url_for("profile", user=user))
     else:
         return render_template("/names/z2_signup.html")
-
-#FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB 
-#FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB FBB 
-@app.route("/fbb")
-def fbb(): 
-    if "fbb_user" in session:
-        return render_template('z3_fbb.html')
-    else:
-        return redirect(url_for("fbb_login"))
-
-@app.route("/fbb/login", methods = ["POST", "GET"])
-def fbb_login():
-    if request.method == "POST":
-        fbb_user = request.form["fbb_user"]
-        session['fbb_user'] = fbb_user
-
-        #fbb_team_name = db.execute(""" SELECT * FROM "fbb_teams" WHERE short_name = :fbb_user""", {"fbb_user" : fbb_user}) 
-        #session['fbb_team_name'] = fbb_team_name
-        return redirect(url_for("fbb_leaderboard", fbb_user=fbb_user)) #, fbb_team_name = fbb_team_name
-    else:
-        return render_template("z3_login.html")
-
-@app.route("/fbb/team/<int:team_id>")
-def fbb_team(team_id):
-    
-    time = db.execute("SELECT DISTINCT * FROM fbb_espn WHERE index = 0")
-
-    #hitters  = db.execute("""SELECT * FROM fbb_espn WHERE team_id = :team_id AND "fbb_espn.scoringPeriodId" = 7""", {"team_id": team_id})
-    hitters = db.execute("""SELECT * FROM fbb_espn 
-    WHERE team_id = :team_id AND 
-    "fbb_espn"."scoringPeriodId" = (SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) AND 
-    "fbb_espn"."lineupSlotId" NOT IN (13, 16, 17)
-    ORDER BY "fbb_espn"."lineupSlotId"
-    """, {"team_id": team_id})
-
-    pitchers = db.execute("""SELECT * FROM fbb_espn 
-    WHERE team_id = :team_id AND 
-    "fbb_espn"."scoringPeriodId" = (SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) AND 
-    "fbb_espn"."lineupSlotId" IN (13)
-    ORDER BY "fbb_espn"."lineupSlotId"
-    """, {"team_id": team_id})
-
-    bench = db.execute("""SELECT * FROM fbb_espn 
-    WHERE team_id = :team_id AND 
-    "fbb_espn"."scoringPeriodId" = (SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) AND 
-    "fbb_espn"."lineupSlotId" IN (16, 17)
-    ORDER BY "fbb_espn"."lineupSlotId"
-    """, {"team_id": team_id})
-
-    owner1 = db.execute("""
-    SELECT * FROM "fbb_teams" WHERE team_id = :team_id  
-    """, {"team_id": team_id})
-
-    owner2 = db.execute("""
-    SELECT * FROM "fbb_teams" WHERE team_id = :team_id  
-    """, {"team_id": team_id})
-
-    #owner = db.execute(owner, {"team_id": team_id})
-    #owner_f = format_results(owner)
-
-    #owner_name = owner_f[0]['owner']
-    db.commit()
-
-    return render_template("z3_team.html", hitters=hitters, pitchers=pitchers, bench=bench, owner1=owner1, owner2=owner2, time=time) #, owner_name=owner_name)
-
-@app.route("/fbb/team/<int:team_id>/<int:gameday>")
-def fbb_team_specific(team_id, gameday):
-    time = db.execute("SELECT DISTINCT * FROM fbb_espn WHERE index = 0")
-
-    hitters = db.execute("""SELECT * FROM fbb_espn_attic 
-    WHERE 
-    team_id = :team_id AND 
-    "fbb_espn_attic"."scoringPeriodId" = :gameday AND 
-    "fbb_espn_attic"."lineupSlotId" NOT IN (13, 16, 17)
-    ORDER BY "fbb_espn_attic"."lineupSlotId"
-    """, {"team_id": team_id, "gameday": gameday})
-
-    pitchers = db.execute("""SELECT * FROM fbb_espn_attic 
-    WHERE 
-    team_id = :team_id AND 
-    "fbb_espn_attic"."scoringPeriodId" = :gameday AND 
-    "fbb_espn_attic"."lineupSlotId" IN (13)
-    ORDER BY "fbb_espn_attic"."lineupSlotId"
-    """, {"team_id": team_id, "gameday": gameday})
-
-    bench = db.execute("""SELECT * FROM fbb_espn_attic 
-    WHERE 
-    team_id = :team_id AND 
-    "fbb_espn_attic"."scoringPeriodId" = :gameday AND 
-    "fbb_espn_attic"."lineupSlotId" IN (16, 17)
-    ORDER BY "fbb_espn_attic"."lineupSlotId"
-    """, {"team_id": team_id, "gameday": gameday})
-
-    owner1 = db.execute("""
-    SELECT * FROM "fbb_teams" WHERE team_id = :team_id  
-    """, {"team_id": team_id, "gameday": gameday})
-
-    owner2 = db.execute("""
-    SELECT * FROM "fbb_teams" WHERE team_id = :team_id  
-    """, {"team_id": team_id, "gameday": gameday})
-
-    #owner = db.execute(owner, {"team_id": team_id})
-    #owner_f = format_results(owner)
-
-    #owner_name = owner_f[0]['owner']
-    db.commit()
-
-    return render_template("z3_team.html", hitters=hitters, pitchers=pitchers, bench=bench, owner1=owner1, owner2=owner2, time=time) #, owner_name=owner_name)
-
-@app.route("/fbb/leaderboard")
-def fbb_leaderboard():
-    if "fbb_user" in session:
-        fbb_user = session['fbb_user']
-        #fbb_team_name = session['fbb_team_name']
-
-        time = db.execute("SELECT DISTINCT * FROM fbb_espn WHERE index = 0")
-        dates = db.execute("""SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ""")
-        today = dates.fetchall()[0][0]
-
-        playing_yet_test = db.execute("""SELECT "team_id_f", SUM("PA") as "PA" FROM fbb_espn WHERE 
-            "fbb_espn"."scoringPeriodId" = (SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) AND 
-            "fbb_espn"."PA" > 0
-        GROUP BY "team_id_f"
-        """)
-
-        if playing_yet_test.rowcount == 0: 
-            today_or_yest = today - 1 
-            live_or_attic = "fbb_espn_attic"
-        else: 
-            today_or_yest = today
-            live_or_attic = "fbb_espn"
-
-        scoreboard = db.execute(f"""SELECT "team_id_f" as a, SUM("TB") as "TB", SUM("BB") as "BB", 
-            SUM("R") as "R", SUM("RBI") as "RBI", SUM("SB") as "SB", 
-            TRUNC(((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")) + (SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "OPS"
-        FROM fbb_scoreboard    
-        GROUP BY "team_id_f"
-        HAVING SUM("AB") > 0 
-        ORDER BY "OPS" DESC
-        """)
-            #SUM("OUTS") as "OUTS", SUM("HD"), SUM("SV"), TRUNC(SUM("SO") / (SUM("OUTS") / 3) * 9, 2) AS "KP9", TRUNC((SUM("BBag") + SUM("HA")) / (SUM("OUTS") / 3), 2) AS "WHIP", TRUNC((SUM("ERAG") * 9) / (SUM("OUTS") / 3), 2) AS "ERA"
-
-        team_hitters = db.execute(f"""SELECT "team_id_f", SUM("PA") as "PA", SUM("AB") as AB, 
-            SUM("H") as "H", SUM("1B") as "1B", SUM("2B") as "2B", SUM("3B") as "3B", SUM("HR") as "HR", 
-            SUM("TB") as "TB", SUM("K") as "K", SUM("BB") as "BB", SUM("IBB") as "IBB", SUM("HBP") as "HBP", 
-            SUM("R") as "R", SUM("RBI") as "RBI", SUM("SB") as "SB", SUM("CS") as "CS", 
-            TRUNC(SUM("H") / SUM("AB"), 3) as "AVG", 
-            TRUNC(((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")), 3) as "OBP",
-            TRUNC(SUM("TB") / SUM("AB"), 3) as "SLG", 
-            TRUNC( (((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")) + SUM("TB") / SUM("AB")), 3   ) AS "OPS"
-        FROM {live_or_attic}    
-        WHERE 
-            {live_or_attic}."scoringPeriodId" = {today_or_yest} AND 
-            {live_or_attic}."PA" > 0
-        GROUP BY "team_id_f"
-        HAVING SUM("AB") > 0 
-        ORDER BY "OPS" DESC
-        """)
-        #TRUNC((SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "SLG", 
-        #(SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) - {yesterday} AND 
-
-        hitters = db.execute(f"""SELECT "team_id_f", "lineupSlotId_f", "fullName", "proTeamId_f", "PA", "AB", "H", "1B", "2B", "3B", "HR", "TB", "K", "BB", "IBB", "HBP", "R", "RBI", "SB", "CS", "AVG", "OBP", "SLG", "OPS"
-        FROM {live_or_attic} 
-        WHERE 
-            "{live_or_attic}"."scoringPeriodId" = {today_or_yest} AND 
-            "{live_or_attic}"."PA" > 0
-        ORDER BY "{live_or_attic}"."OPS" DESC, "{live_or_attic}"."PA" DESC
-        """)
-
-        db.commit()
-        return render_template("z3_lbd_hit.html", scoreboard=scoreboard, team_hitters=team_hitters, hitters=hitters, time=time, fbb_user=fbb_user, today_or_yest=today_or_yest, today=today) #, owner_name=owner_name)
-    else:
-        return redirect(url_for("fbb_login"))
-
-@app.route("/fbb/power_ranks")
-def fbb_power_ranks():
-    if "fbb_user" in session:
-        fbb_user = session['fbb_user']
-
-        pRanks = db.execute(f"""SELECT * FROM fbb_pr""")
-
-        db.commit()
-        return render_template("z3_power_ranks.html", fbb_user=fbb_user, pRanks=pRanks) #, owner_name=owner_name)
-    else:
-        return redirect(url_for("fbb_login"))
-
-@app.route("/fbb/power_ranks/<int:week>")
-def fbb_power_ranks_sp(week):
-    if "fbb_user" in session:
-        fbb_user = session['fbb_user']
-
-        pRanks = db.execute(f"""SELECT * FROM fbb_pr WHERE "fbb_pr"."Week" = :week""", {"week": week})
-
-        db.commit()
-        return render_template("z3_power_ranks.html", fbb_user=fbb_user, pRanks=pRanks) #, owner_name=owner_name)
-    else:
-        return redirect(url_for("fbb_login"))
-
-@app.route("/fbb/free_agents/<int:period>")
-def fbb_fas(period):
-    if "fbb_user" in session:
-        fbb_user = session['fbb_user']
-        #fbb_team_name = session['fbb_team_name']
-
-        if period == 7: 
-            this_table = "fbb_batters_07"
-            page_type  = "Last 7 Days"
-        elif period == 14:
-            this_table = "fbb_batters_14"
-            page_type  = "Last 14 Days"
-        elif period == 28:
-            this_table = "fbb_batters_28"
-            page_type  = "Last 28 Days"
-        else: 
-            this_table = "fbb_batters_99"
-            page_type  = "2021"
-
-        fa_batters = db.execute(f"""SELECT "fullName", SUM("PA") as "PA", SUM("AB") as AB, 
-            SUM("H") as "H", SUM("1B") as "1B", SUM("2B") as "2B", SUM("3B") as "3B", SUM("HR") as "HR", 
-            SUM("TB") as "TB", SUM("K") as "K", SUM("BB") as "BB", SUM("IBB") as "IBB", SUM("HBP") as "HBP", 
-            SUM("R") as "R", SUM("RBI") as "RBI", SUM("SB") as "SB", SUM("CS") as "CS", 
-            TRUNC(SUM("H") / SUM("AB"), 3) as "AVG", 
-            TRUNC(((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")), 3) as "OBP",
-            TRUNC((SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "SLG", 
-            TRUNC(((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")) + (SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "OPS"
-        FROM {this_table}   
-        WHERE "{this_table}"."AB" > 0 AND 
-        "{this_table}"."playerId" NOT IN (SELECT "fbb_espn"."playerId" FROM "fbb_espn")
-        GROUP BY "fullName"
-        ORDER BY "OPS" DESC
-        """)
-
-        db.commit()
-
-        return render_template("z3_free_agents.html", fa_batters=fa_batters, page_type=page_type) #, owner_name=owner_name)
-    else:
-        return redirect(url_for("fbb_login"))
-
-@app.route("/fbb/leaderboard/<int:gameday>")
-def fbb_leaderboard_specific(gameday):
-
-    if "fbb_user" in session:
-        time = db.execute("SELECT DISTINCT * FROM fbb_espn WHERE index = 0")
-        dates = db.execute("""SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ""")
-        today = dates.fetchall()[0][0]
-        fbb_user = session['fbb_user']
-
-        team_hitters = db.execute("""SELECT "team_id_f", SUM("PA") as "PA", SUM("AB") as AB, 
-            SUM("H") as "H", SUM("1B") as "1B", SUM("2B") as "2B", SUM("3B") as "3B", SUM("HR") as "HR", 
-            SUM("TB") as "TB", SUM("K") as "K", SUM("BB") as "BB", SUM("IBB") as "IBB", SUM("HBP") as "HBP", 
-            SUM("R") as "R", SUM("RBI") as "RBI", SUM("SB") as "SB", SUM("CS") as "CS", 
-            TRUNC(SUM("H") / SUM("AB"), 3) as "AVG", 
-            TRUNC(((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")), 3) as "OBP",
-            TRUNC((SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "SLG", 
-            TRUNC(((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")) + (SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "OPS"
-        FROM fbb_espn_attic
-        WHERE 
-            "fbb_espn_attic"."scoringPeriodId" = :gameday AND 
-            "fbb_espn_attic"."PA" > 0
-        GROUP BY "team_id_f"
-        ORDER BY "OPS" DESC
-        """, {"gameday": gameday})
-
-        live_or_attic = "fbb_espn_attic"
-        today_or_yest = gameday
-
-        hitters = db.execute(f"""SELECT "team_id_f", "lineupSlotId_f", "fullName", "proTeamId_f", "PA", "AB", "H", "1B", "2B", "3B", "HR", "TB", "K", "BB", "IBB", "HBP", "R", "RBI", "SB", "CS", "AVG", "OBP", "SLG", "OPS"
-        FROM {live_or_attic} 
-        WHERE 
-            "{live_or_attic}"."scoringPeriodId" = {today_or_yest} AND 
-            "{live_or_attic}"."PA" > 0
-        ORDER BY "{live_or_attic}"."OPS" DESC, "{live_or_attic}"."PA" DESC
-        """)
-
-        db.commit()
-
-        return render_template("z3_lbd_hit.html", team_hitters=team_hitters, hitters=hitters, time=time, dates=dates, fbb_user=fbb_user, today_or_yest=gameday, today=today)
-    else:
-        return redirect(url_for("fbb_login"))
-
-@app.route("/fbb/lbd_pitch")
-def fbb_lbd_pit():
-    if "fbb_user" in session:
-        fbb_user = session['fbb_user']
-        #fbb_team_name = session['fbb_team_name']
-
-        time = db.execute("SELECT DISTINCT * FROM fbb_espn WHERE index = 0")
-        dates = db.execute("""SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ""")
-        today = dates.fetchall()[0][0]
-
-        playing_yet_test = db.execute("""SELECT "team_id_f", SUM("PA") as "PA" FROM fbb_espn WHERE 
-            "fbb_espn"."scoringPeriodId" = (SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) AND 
-            "fbb_espn"."PA" > 0
-        GROUP BY "team_id_f"
-        """)
-
-        if playing_yet_test.rowcount == 0: 
-            today_or_yest = today - 1 
-            live_or_attic = "fbb_espn_attic"
-        else: 
-            today_or_yest = today
-            live_or_attic = "fbb_espn"
-
-        team_hitters = db.execute(f"""SELECT "team_id_f", SUM("G"), SUM("GS"), SUM("OUTS") as "OUTS", SUM("BF"), SUM("PITCH COUNT"), SUM("HA"), SUM("BBag"), 
-            SUM("SO"), SUM("RA"), SUM("ERAG"), SUM("HRA"), SUM("W"), SUM("L"), SUM("QS"), SUM("HD"), SUM("SVOPP"), SUM("SV"), SUM("BS")
-            ,
-            TRUNC(SUM("SO") / (SUM("OUTS") / 3) * 9, 2) AS "KP9",  
-            TRUNC(SUM("HA") / (SUM("BF") - SUM("BBag")), 3) AS "BAA", 
-            TRUNC((SUM("BBag") + SUM("HA")) / (SUM("OUTS") / 3), 2) AS "WHIP", 
-            TRUNC((SUM("HA") + SUM("BBag")) / SUM("BF"), 3) AS "OBPA",
-            TRUNC((SUM("ERAG") * 9) / (SUM("OUTS") / 3), 2) AS "ERA"
-        FROM {live_or_attic}    
-        WHERE 
-            {live_or_attic}."scoringPeriodId" = {today_or_yest} AND  
-            {live_or_attic}."OUTS" > 0
-        GROUP BY "team_id_f"
-        """)
-        #(SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) - {yesterday} AND 
-
-        hitters = db.execute(f"""SELECT "team_id_f", "lineupSlotId_f", "fullName", "proTeamId_f", 
-        "G", "GS", "OUTS", "BF", "PITCH COUNT", "HA", "BBag", "SO", "RA", "ERAG", "HRA", "W", "L", "QS", "HD", "SVOPP", "SV", "BS", "KP9", "BAA", "WHIP", "OBPA", "ERA", 
-        40 + (2 * "OUTS") + "SO" - (2 *  "BBag") - (2 *  "HA") - (3 *  "RA") - (6 * "HRA")  as "Game Score"
-        FROM {live_or_attic} 
-        WHERE 
-            "{live_or_attic}"."scoringPeriodId" = {today_or_yest} AND 
-            "{live_or_attic}"."OUTS" > 0
-        ORDER BY "Game Score" DESC
-        """)
-
-        db.commit()
-
-        return render_template("z3_lbd_pitch.html", team_hitters=team_hitters, hitters=hitters, time=time, fbb_user=fbb_user, today_or_yest=today_or_yest, today=today) #, owner_name=owner_name)
-    else:
-        return redirect(url_for("fbb_login"))
 
 if __name__ == '__main__':
     app.run()
