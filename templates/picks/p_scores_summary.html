@@ -5,7 +5,7 @@
 {% block content %}
 
 <div class="container">
-    <div class = "row">
+    <div class="row">
         <h3>Season Long</h3>
         <div class="table-responsive text-nowrap">
             <table class="table table-sm text-xsmall table-hover sortable ;">
@@ -16,11 +16,11 @@
                 </thead>
                 <tbody class="text-center align-middle">
                     {% for game in scores_summ_sesn %}
-                        <tr>
-                            <td class="align-left">{{game[0]}}</td>
-                            <td class="align-left">{{game[1]}}</td>
-                            <td class="align-left">{{game[2]}}</td>
-                        </tr>
+                    <tr>
+                        <td class="align-left">{{game[0]}}</td>
+                        <td class="align-left">{{game[1]}}</td>
+                        <td class="align-left">{{game[2]}}</td>
+                    </tr>
                     {% endfor %}
                 </tbody>
             </table>
@@ -38,11 +38,11 @@
                 </thead>
                 <tbody class="text-center align-middle">
                     {% for game in scores_summ_week %}
-                        <tr>
-                            <td class="align-left">{{game[0]}}</td>
-                            <td class="align-left">{{game[1]}}</td>
-                            <td class="align-left">{{game[2]}}</td>
-                        </tr>
+                    <tr>
+                        <td class="align-left">{{game[0]}}</td>
+                        <td class="align-left">{{game[1]}}</td>
+                        <td class="align-left">{{game[2]}}</td>
+                    </tr>
                     {% endfor %}
                 </tbody>
             </table>
