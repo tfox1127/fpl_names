@@ -435,7 +435,7 @@ def picks_scores_summary():
     scores_summ_week  = db.execute(q + sq2, {"gameweek" : CURRENT_WEEK})
     db.commit()
 
-    season_long_pts = """SELECT "Name", "Current Pts" FROM fpl_picks_sesonlong"""
+    season_long_pts = """SELECT "Name", "Current Pts" FROM fpl_picks_sesonlong ORDER BY "Current Pts" DESC """
     sl_points = db.execute(season_long_pts)
     db.commit()
 
