@@ -87,7 +87,12 @@
                     {% for indy in indys %}
                     <tr>
                         {% for i in indy %}
-                        <td class="align-left">{{i}}</td>
+                            {%if i in ['Antonio', 'Pogba', 'Mendy', 'Lloris', '
+                            Alisson', 'Ederson']%}
+                                <td class="align-left" style ="  background-color: #08ff87;" >{{i}}</td>
+                            {%else %}
+                                <td class="align-left">{{i}}</td>
+                            {%endif %}
                         {% endfor %}
                     </tr>
                     {% endfor %}

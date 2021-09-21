@@ -42,6 +42,11 @@ table {
   text: #37003c;
 }
 
+.dingding td {
+  background-color: #08ff87;
+  text: #37003c;
+}
+
 .thead-light {
   background: rgba(55, 0, 60, 0.9);
   color: white;
