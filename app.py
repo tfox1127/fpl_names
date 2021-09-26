@@ -18,7 +18,7 @@ engine = create_engine(DATABASE_URL, isolation_level="AUTOCOMMIT")
 db = scoped_session(sessionmaker(bind=engine))
 app.secret_key = 'pizza'
 
-CURRENT_WEEK = 5
+CURRENT_WEEK = 6
 
 @app.route('/')
 def index():
