@@ -6,7 +6,7 @@ from flask import Flask, render_template, request, session, redirect, url_for
 from sqlalchemy import create_engine
 from sqlalchemy import exc
 from sqlalchemy.orm import scoped_session, sessionmaker
-import api_check
+#import api_check
 
 app = Flask(__name__)
 #ENV = 'dev'
@@ -20,7 +20,9 @@ db = scoped_session(sessionmaker(bind=engine))
 app.secret_key = 'pizza'
 
 #CURRENT_WEEK = 9
-CURRENT_WEEK, FIRST_UNFINISHED_WEEK = api_check.pull_current_week()
+#CURRENT_WEEK, FIRST_UNFINISHED_WEEK = api_check.pull_current_week()
+CURRENT_WEEK = 9 
+FIRST_UNFINISHED_WEEK 9 
 
 @app.route('/')
 def index():
