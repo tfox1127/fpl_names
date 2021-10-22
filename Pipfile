@@ -13,6 +13,7 @@ flask-sqlalchemy = "*"
 gunicorn = "*"
 sqlalchemy = "==1.4.15" 
 pandas = "*"
+requests= "*"
 
 [requires]
 python_version = "3.8.10"
