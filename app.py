@@ -6,7 +6,7 @@ from flask import Flask, render_template, request, session, redirect, url_for
 from sqlalchemy import create_engine
 from sqlalchemy import exc
 from sqlalchemy.orm import scoped_session, sessionmaker
-#import api_check
+import api_check
 
 app = Flask(__name__)
 #ENV = 'dev'

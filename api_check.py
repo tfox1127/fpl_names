@@ -1,6 +1,6 @@
 import pandas as pd 
 import requests
-import sys, importlib
+import sys
 sys.path.append("/Users/tfox/OneDrive/Scripts/fpl_library")
 import pull_data 
 
@@ -24,6 +24,6 @@ def pull_current_week():
     THIS_EVENT = df.loc[df['is_current'] == True, 'id'].item()
     STILL_TO_PLAY = df.loc[df['finished'] == False, 'id'].to_list()
     NEXT_EVENT = STILL_TO_PLAY[0]
-    
+
     return THIS_EVENT, NEXT_EVENT
 
