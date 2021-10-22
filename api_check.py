@@ -2,7 +2,6 @@ import pandas as pd
 import requests
 import sys
 sys.path.append("/Users/tfox/OneDrive/Scripts/fpl_library")
-import pull_data 
 
 def pull(link):
     session = requests.session()
