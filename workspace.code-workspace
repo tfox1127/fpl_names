@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "../../OneDrive/Scripts/fpl_library"
+		},
+		{
+			"path": "../../OneDrive/Scripts/statcast_library"
 		}
 	],
 	"settings": {}
