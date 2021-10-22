@@ -6,6 +6,7 @@ from flask import Flask, render_template, request, session, redirect, url_for
 from sqlalchemy import create_engine
 from sqlalchemy import exc
 from sqlalchemy.orm import scoped_session, sessionmaker
+import api_check
 
 app = Flask(__name__)
 #ENV = 'dev'
@@ -18,7 +19,8 @@ engine = create_engine(DATABASE_URL, isolation_level="AUTOCOMMIT")
 db = scoped_session(sessionmaker(bind=engine))
 app.secret_key = 'pizza'
 
-CURRENT_WEEK = 9
+#CURRENT_WEEK = 9
+CURRENT_WEEK, FIRST_UNFINISHED_WEEK = api_check.pull_current_week()
 
 @app.route('/')
 def index():
@@ -469,7 +471,7 @@ def picks_scores_summary():
 
 @app.route('/picks/make_picks')
 def make_picks_router(): 
-    return redirect(f'/picks/make_picks/{CURRENT_WEEK}')
+    return redirect(f'/picks/make_picks/{FIRST_UNFINISHED_WEEK}')
     #return redirect(url_for(make_picks_router))
 
 @app.route('/picks/make_picks/<int:gameweek>')
