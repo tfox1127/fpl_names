@@ -22,7 +22,7 @@ app.secret_key = 'pizza'
 #CURRENT_WEEK = 9
 #CURRENT_WEEK, FIRST_UNFINISHED_WEEK = api_check.pull_current_week()
 CURRENT_WEEK = 9 
-FIRST_UNFINISHED_WEEK 9 
+FIRST_UNFINISHED_WEEK = 9 
 
 @app.route('/')
 def index():
