@@ -608,7 +608,7 @@ def picks_checker():
         FROM "fpl_picks_teams"
         ) as f
         on d.team_h = f.id
-        #WHERE "event" = :FIRST_UNFINISHED_WEEK
+        WHERE "event" = :FIRST_UNFINISHED_WEEK
         GROUP BY c.name, d.event
     """ #WHERE "event" = :CURRENT_WEEK OR "event" = :FIRST_UNFINISHED_WEEK
 
@@ -647,10 +647,10 @@ def picks_checker():
         FROM "fpl_picks_teams"
         ) as f
         on d.team_h = f.id
-        WHERE "event" = :CURRENT_WEEK
+        WHERE "event" = :FIRST_UNFINISHED_WEEK
         GROUP BY d.code, d.london, c.name, e.name, f.name
         ORDER BY d.london, d.code
-    """
+    """ #WHERE "event" = :CURRENT_WEEK
 
     details = db.execute(q, {"CURRENT_WEEK" : CURRENT_WEEK})
     db.commit()
