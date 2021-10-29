@@ -652,7 +652,7 @@ def picks_checker():
         ORDER BY d.london, d.code
     """ #WHERE "event" = :CURRENT_WEEK
 
-    details = db.execute(q, {"CURRENT_WEEK" : CURRENT_WEEK})
+    details = db.execute(q, {"CURRENT_WEEK" : CURRENT_WEEK, "FIRST_UNFINISHED_WEEK" : FIRST_UNFINISHED_WEEK})
     db.commit()
 
     return render_template('picks/p_checker.html', summary=summary, details=details)
