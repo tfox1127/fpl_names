@@ -577,7 +577,7 @@ def make_picks_match(match_number):
 def picks_checker():
 
     q = """ 
-        SELECT c.name, COUNT(b.choice)
+        SELECT c.name, COUNT(b.choice), d.event
         FROM 
         (SELECT "code", "user_id", MAX("timestamp") as ts
         FROM "fpl_picks_picks"
@@ -608,10 +608,10 @@ def picks_checker():
         FROM "fpl_picks_teams"
         ) as f
         on d.team_h = f.id
-        WHERE "event" = :CURRENT_WEEK
-        GROUP BY c.name
+        WHERE "event" = :CURRENT_WEEK OR "event" = :FIRST_UNFINISHED_WEEK
+        GROUP BY c.name, d.event
     """
-    summary = db.execute(q, {"CURRENT_WEEK" : CURRENT_WEEK})
+    summary = db.execute(q, {"CURRENT_WEEK" : CURRENT_WEEK, "FIRST_UNFINISHED_WEEK":FIRST_UNFINISHED_WEEK})
     db.commit()
 
     q = """

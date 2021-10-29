@@ -9,12 +9,14 @@
         <table class="table table-sm text-xsmall table-hover sortable ;">
             <thead class="thead-light text-center">
                 <td class="align-middle">Name</td>
+                <td class="align-middle">Event</td>
                 <td class="align-middle">Pick Count</td>
             </thead>
             <tbody class="text-center align-middle">
                 {% for s in summary %}
                     <tr>
                         <td class="align-left">{{s[0]}}</td>
+                        <td class="align-left">{{s[2]}}</td>
                         <td class="align-left">{{s[1]}}</td>
                     </tr>
                 {% endfor %}
