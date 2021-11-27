@@ -517,7 +517,7 @@ def make_picks(gameweek):
         ON tbl_p.p_code = tbl_u.u_code AND tbl_p.p_user_id = tbl_u.u_user_id AND tbl_p.p_ts = tbl_u.u_timestamp) as a
         WHERE "p_user_id" = :user_id) as picks
         ON sch.code = picks.code)
-        ORDER BY "london_str"
+        ORDER BY sch.code, "london_str"
     """ #(SELECT "code", "pick", "choice", "user_id" FROM "fpl_picks_picks" WHERE "user_id" = :user_id)
 
     #q = """SELECT * FROM fpl_picks_schedule WHERE event = :gameweek"""
