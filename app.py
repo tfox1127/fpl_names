@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import datetime as dt
 import datetime as dtt
 from flask import Flask, render_template, request, session, redirect, url_for
+from requests import NullHandler
 from sqlalchemy import create_engine
 from sqlalchemy import exc
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -314,62 +315,92 @@ def picks_login():
 def picks_home(): 
     return render_template('/picks/p_home.html')
 
-@app.route('/picks/scores')
-def picks_scores():
+@app.route('/picks/scores/event=<int:event>')
+def picks_scores_event(event):
+    test = request.args.get('username')
     q = """
-        SELECT d.event, d.code, a.ts, d.london, c.name, e.name as away, f.name as home, CAST("team_a_score" AS INTEGER), CAST("team_h_score" AS INTEGER),
-        CASE
-            WHEN team_a_score = team_h_score THEN 'pick_t'
-            WHEN team_a_score > team_h_score THEN 'pick_a'
-            ELSE 'pick_h'
-            END AS game_result,
-        b.pick as points, b.choice,
-        CASE
-            WHEN choice = (CASE
-            WHEN team_a_score = team_h_score THEN 'pick_t'
-            WHEN team_a_score > team_h_score THEN 'pick_a'
-            ELSE 'pick_h'
-            END) THEN b.pick
-            ELSE b.pick * -1 
-            END AS effective_points, 
-        d.london < (select now()) as game_started
-        FROM 
-        (SELECT "code", "user_id", MAX("timestamp") as ts
-        FROM "fpl_picks_picks"
-        GROUP BY "user_id", "code"
-        ) as a
-        LEFT JOIN
-        (SELECT "code", "user_id", "timestamp", "pick", "choice"
-        FROM "fpl_picks_picks"
-        ) as b
-        ON a.code = b.code AND a.user_id = b.user_id and a.ts = b.timestamp
-        LEFT JOIN 
-        (SELECT "user_id", "name", "active"
-        FROM "fpl_picks_users"
-        ) as c
-        ON a.user_id = c.user_id
-        LEFT JOIN
-        (SELECT "code", "team_a", "team_h", "london", "team_a_score", "team_h_score", "event"
-        FROM "fpl_picks_schedule"
-        ) as d
-        ON a.code = d.code
-        LEFT JOIN
-        (SELECT "id", "name"
-        FROM "fpl_picks_teams"
-        ) as e
-        on d.team_a = e.id
-        LEFT JOIN
-        (SELECT "id", "name"
-        FROM "fpl_picks_teams"
-        ) as f
-        on d.team_h = f.id
-        WHERE "active" = 1 AND  d.london < (select now())
-        ORDER BY d.london, d.code, name
-    """
-    scores = db.execute(q)
+            SELECT d.event, d.code, a.ts, d.london, c.name, e.short_name as away, f.short_name as home, CAST("team_a_score" AS INTEGER), CAST("team_h_score" AS INTEGER),
+            CASE
+                WHEN team_a_score = team_h_score THEN 'pick_t'
+                WHEN team_a_score > team_h_score THEN 'pick_a'
+                ELSE 'pick_h'
+                END AS game_result,
+            b.pick as points, b.choice,
+            CASE
+                WHEN choice = (CASE
+                WHEN team_a_score = team_h_score THEN 'pick_t'
+                WHEN team_a_score > team_h_score THEN 'pick_a'
+                ELSE 'pick_h'
+                END) THEN b.pick
+                ELSE b.pick * -1 
+                END AS effective_points, 
+            d.london < (select now()) as game_started
+            FROM 
+            (SELECT "code", "user_id", MAX("timestamp") as ts
+            FROM "fpl_picks_picks"
+            GROUP BY "user_id", "code"
+            ) as a
+            LEFT JOIN
+            (SELECT "code", "user_id", "timestamp", "pick", "choice"
+            FROM "fpl_picks_picks"
+            ) as b
+            ON a.code = b.code AND a.user_id = b.user_id and a.ts = b.timestamp
+            LEFT JOIN 
+            (SELECT "user_id", "name", "active"
+            FROM "fpl_picks_users"
+            ) as c
+            ON a.user_id = c.user_id
+            LEFT JOIN
+            (SELECT "code", "team_a", "team_h", "london", "team_a_score", "team_h_score", "event"
+            FROM "fpl_picks_schedule"
+            ) as d
+            ON a.code = d.code
+            LEFT JOIN
+            (SELECT "id", "short_name"
+            FROM "fpl_picks_teams"
+            ) as e
+            on d.team_a = e.id
+            LEFT JOIN
+            (SELECT "id", "short_name"
+            FROM "fpl_picks_teams"
+            ) as f
+            on d.team_h = f.id
+            WHERE "active" = 1 AND  d.london < (select now()) AND event = :event
+            ORDER BY d.london, d.code, name
+        """
+
+    scores = db.execute(q, {'event':int(event)})
     db.commit()
 
-    return render_template('picks/p_scores.html', scores=scores)
+    d = db.execute(q, {'event':int(event)})
+    db.commit()
+    df = pd.DataFrame(d.fetchall(), columns=d.keys())
+    df['match_name'] = df['home'] + "_" + df['away']
+    dfp = pd.pivot_table(df, index='name', columns='match_name', values='effective_points', aggfunc=sum, margins=True).reset_index().sort_values('All', ascending=False)
+    #dfp["name2"] = '<a href="/' + dfp["name"] + '">' + dfp["name"] + "</a>"
+
+    return render_template('picks/p_scores.html', 
+        scores=scores, 
+        test=test, 
+        tables=[
+            dfp.to_html(index=False, 
+                index_names=False, 
+                justify='center', 
+                bold_rows='False', 
+                classes=['table table-sm text-xsmall table-hover sortable align-middle'], 
+                render_links=True, 
+                escape=False)], 
+        titles=event)
+
+@app.route('/picks/scores')
+def picks_scores():
+    event = request.args.get('event')
+
+    if event == None: 
+        event = FIRST_UNFINISHED_WEEK
+
+    return redirect(f'/picks/scores/event={event}')
+    
 
 @app.route('/picks/scores/summary')
 def picks_scores_summary():
