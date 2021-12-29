@@ -65,6 +65,21 @@ def live():
                             FROM ftbl_live_notro WHERE entry not in (SELECT \"Team ID\" FROM \"lms_el\" 
                             WHERE \"Team ID\" IS NOT NULL)  ORDER BY score LIMIT 5 """)
                             
+    groups = db.execute("""SELECT 
+                        "Team 1 ID", "Team 1 Name", "score_1", "price_played_1",
+                        "Team 2 ID", "Team 2 Name", "score_2", "price_played_2",
+                        "Group"
+                        FROM 
+        (SELECT "Group", "Team 1 ID", "Team 2 ID", "Team 1 Name", "Team 2 Name" FROM tbl_2122_groups WHERE "GW" = 20) as GROUPS
+        LEFT JOIN 
+            (SELECT "entry" as entry_1, "score" as score_1, "price_played" as price_played_1 FROM "ftbl_live_notro") as SCOREBOARD_1
+                ON GROUPS."Team 1 ID" = SCOREBOARD_1.entry_1
+        LEFT JOIN 
+            (SELECT "entry" as entry_2, "score" as score_2, "price_played" as price_played_2 FROM "ftbl_live_notro") as SCOREBOARD_2
+                ON GROUPS."Team 2 ID" = SCOREBOARD_2.entry_2
+        ORDER BY "Group"
+        """)
+
     #PREMIRE LEAGUE SCOREBOARD 
     epls =  db.execute("SELECT * FROM \"ftbl_scoreboard2\" ORDER BY \"minutes_game\" DESC, \"id\" LIMIT 50")
 
@@ -95,7 +110,7 @@ def live():
     """)
 
     db.commit()
-    return render_template('live.html', has_message=has_message, message=message, elements=elements, time=time, epls=epls, actives=actives, sss=sss, bottoms=bottoms)
+    return render_template('live.html', has_message=has_message, message=message, elements=elements, time=time, epls=epls, actives=actives, sss=sss, bottoms=bottoms, groups=groups)
 
 @app.route('/cup_matchup/<int:cup_matchup_id>')
 def cup_matchup(cup_matchup_id):
