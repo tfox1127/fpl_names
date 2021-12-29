@@ -22,8 +22,8 @@ app.secret_key = 'pizza'
 
 #CURRENT_WEEK = 9
 CURRENT_WEEK, FIRST_UNFINISHED_WEEK = api_check.pull_current_week()
-CURRENT_WEEK = 20
-FIRST_UNFINISHED_WEEK = 20
+#CURRENT_WEEK = 20
+#FIRST_UNFINISHED_WEEK = 20
 
 @app.route('/')
 def index():
@@ -65,12 +65,12 @@ def live():
                             FROM ftbl_live_notro WHERE entry not in (SELECT \"Team ID\" FROM \"lms_el\" 
                             WHERE \"Team ID\" IS NOT NULL)  ORDER BY score LIMIT 5 """)
                             
-    groups = db.execute("""SELECT 
+    groups = db.execute(f"""SELECT 
                         "Team 1 ID", "Team 1 Name", "score_1", "price_played_1",
                         "Team 2 ID", "Team 2 Name", "score_2", "price_played_2",
                         "Group"
                         FROM 
-        (SELECT "Group", "Team 1 ID", "Team 2 ID", "Team 1 Name", "Team 2 Name" FROM tbl_2122_groups WHERE "GW" = 20) as GROUPS
+        (SELECT "Group", "Team 1 ID", "Team 2 ID", "Team 1 Name", "Team 2 Name" FROM tbl_2122_groups WHERE "GW" = {CURRENT_WEEK}) as GROUPS
         LEFT JOIN 
             (SELECT "entry" as entry_1, "score" as score_1, "price_played" as price_played_1 FROM "ftbl_live_notro") as SCOREBOARD_1
                 ON GROUPS."Team 1 ID" = SCOREBOARD_1.entry_1
