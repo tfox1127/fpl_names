@@ -50,12 +50,14 @@ def live():
         SELECT * FROM 
         (SELECT * FROM "ftbl_live_notro") as scoreboard
             LEFT JOIN  
-            (SELECT DISTINCT "element_id" as "c_id", "points" - "bonus" + "t_bonus" as "c_pts", "minutes" as "c_mins"
-            FROM "ftbl_elli2") as c_points
+            (SELECT "element_id" as "c_id", sum("points" - "bonus" + "t_bonus") as "c_pts", sum("minutes") as "c_mins"
+            FROM "ftbl_elli2"
+            GROUP BY "element_id") as c_points
             ON scoreboard.cap_id = c_points.c_id
                 LEFT JOIN 
-                (SELECT DISTINCT "element_id" as "vc_id", "points" - "bonus" + "t_bonus" as "vc_pts", "minutes" as "vc_mins"
-                FROM "ftbl_elli2") as vc_points
+                (SELECT "element_id" as "vc_id", sum("points" - "bonus" + "t_bonus") as "vc_pts", sum("minutes") as "vc_mins"
+                FROM "ftbl_elli2"
+                GROUP BY "element_id") as vc_points
                 ON scoreboard.vp_id = vc_points.vc_id
         ORDER BY rank_live
     """)
