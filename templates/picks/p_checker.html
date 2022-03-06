@@ -1,0 +1,52 @@
+{% extends "/picks/p_base.html" %}
+
+{% block title %}EPL Picks - Checker{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="table-responsive text-nowrap">
+        <table class="table table-sm text-xsmall table-hover sortable ;">
+            <thead class="thead-light text-center">
+                <td class="align-middle">Name</td>
+                <td class="align-middle">Event</td>
+                <td class="align-middle">Pick Count</td>
+            </thead>
+            <tbody class="text-center align-middle">
+                {% for s in summary %}
+                    <tr>
+                        <td class="align-left">{{s[0]}}</td>
+                        <td class="align-left">{{s[2]}}</td>
+                        <td class="align-left">{{s[1]}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-responsive text-nowrap">
+        <table class="table table-sm text-xsmall table-hover sortable ;">
+            <thead class="thead-light text-center">
+                <td class="align-middle">Match ID</td>
+                <td class="align-middle">Kickoff Time</td>
+                <td class="align-middle">Name</td>
+                <td class="align-middle">Home</td>
+                <td class="align-middle">Away</td>
+                <td class="align-middle">Pick Count</td>
+            </thead>
+            <tbody class="text-center align-middle">
+                {% for d in details %}
+                    <tr>
+                        <td class="align-left">{{d[0]}}</td>
+                        <td class="align-left">{{d[1]}}</td>
+                        <td class="align-left">{{d[2]}}</td>
+                        <td class="align-left">{{d[3]}}</td>
+                        <td class="align-left">{{d[4]}}</td>
+                        <td class="align-left">{{d[5]}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

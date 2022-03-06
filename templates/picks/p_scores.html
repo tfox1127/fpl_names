@@ -1,0 +1,59 @@
+{% extends "/picks/p_base.html" %}
+
+{% block title %}EPL Picks - Scores{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="table-responsive text-nowrap">
+        {% for table in tables %}
+            <h3>Gameweek {{titles}}</h3>
+            {{ table|safe }}
+        {% endfor %}
+    </div>
+</div>
+
+<div class="container">
+    <div class="table-responsive text-nowrap">
+        <table class="table table-sm text-xsmall table-hover sortable ;">
+            <thead class="thead-light text-center">
+                <td class="align-middle">Event</td>
+                <td class="align-middle">Match ID</td>
+                <td class="align-middle">Pick Time</td>
+                <td class="align-middle">Kickoff Time</td>
+                <td class="align-middle">Name</td>
+                <td class="align-middle">Away</td>
+                <td class="align-middle">Home</td>
+                <td class="align-middle">Away Score</td>
+                <td class="align-middle">Home Score</td>
+                <td class="align-middle">Game Result</td>
+                <td class="align-middle">Pick</td>
+                <td class="align-middle">Wager</td>
+                <td class="align-middle">Points</td>
+                <td class="align-middle">Check</td>
+            </thead>
+            <tbody class="text-center align-middle">
+
+                {% for game in scores %}
+                <tr>
+                    {% if game[4] == test %}
+                <tr style="  background-color: #08ff87;">
+                    {% for td in game %}
+                    <td class="align-left">{{ td }}</td>
+                    {% endfor %}
+                </tr>
+                {% else %}
+                <tr>
+                    {% for td in game %}
+                    <td class="align-left">{{ td }}</td>
+                    {% endfor %}
+                </tr>
+                {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}

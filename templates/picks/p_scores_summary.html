@@ -1,0 +1,231 @@
+{% extends "/picks/p_base.html" %}
+
+{% block title %}EPL Picks - Tables{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <h3>Season Long</h3>
+        <div class="table-responsive text-nowrap">
+            <table class="table table-sm text-xsmall table-hover sortable ;">
+                <thead class="thead-light text-center">
+                    <td class="align-middle">Name</td>
+                    <td class="align-middle">Wagered</td>
+                    <td class="align-middle">Points</td>
+                </thead>
+                <tbody class="text-center align-middle">
+                    {% for game in scores_summ_sesn %}
+                    <tr>
+                        <td class="align-left">{{game[0]}}</td>
+                        <td class="align-left">{{game[1]}}</td>
+                        <td class="align-left">{{game[2]}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row">
+        <h3>Current Week</h3>
+        <div class="table-responsive text-nowrap">
+            <table class="table table-sm text-xsmall table-hover sortable ;">
+                <thead class="thead-light text-center">
+                    <td class="align-middle">Name</td>
+                    <td class="align-middle">Wagered</td>
+                    <td class="align-middle">Points</td>
+                </thead>
+                <tbody class="text-center align-middle">
+                    {% for game in scores_summ_week %}
+                    <tr>
+                        <td class="align-left">{{game[0]}}</td>
+                        <td class="align-left">{{game[1]}}</td>
+                        <td class="align-left">{{game[2]}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- SL POINTS -->
+    <div class="row">
+        <h3>Season Long Points</h3>
+        <div class="table-responsive text-nowrap">
+            <table class="table table-sm text-xsmall table-hover sortable ;">
+                <thead class="thead-light text-center">
+                    <td class="align-middle">Name</td>
+                    <td class="align-middle">Points</td>
+                </thead>
+                <tbody class="text-center align-middle">
+                    {% for sl_point in sl_points %}
+                    <tr>
+                        {% for s in sl_point %}
+                        <td class="align-left">{{s}}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- INDYS -->
+    <div class="row">
+        <h3>Awards</h3>
+        <div class="table-responsive text-nowrap">
+            <table class="table table-sm text-xsmall table-hover sortable ;">
+                <thead class="thead-light text-center">
+                    <td class="align-middle">Name</td>
+                    <td class="align-middle">Golden Boot</td>
+                    <td class="align-middle">Most Assists</td>
+                    <td class="align-middle">Golden Glove</td>
+                    <td class="align-middle">Sack Race 1</td>
+                </thead>
+                <tbody class="text-center align-middle">
+                    {% for indy in indys %}
+                    <tr>
+                        {% for i in indy %}
+                            {%if i in ['Antonio', 'Pogba', 'Mendy', 'Lloris', '
+                            Alisson', 'Ederson']%}
+                                <td class="align-left" style ="  background-color: #08ff87;" >{{i}}</td>
+                            {%else %}
+                                <td class="align-left">{{i}}</td>
+                            {%endif %}
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- TOP 4S -->
+    <div class="row">
+        <h3>Top 4</h3>
+        <div class="table-responsive text-nowrap">
+            <table class="table table-sm text-xsmall table-hover sortable ;">
+                <thead class="thead-light text-center">
+                    <td class="align-middle">Name</td>
+                    <td class="align-middle">Champion</td>
+                    <td class="align-middle">Top 4 (2)</td>
+                    <td class="align-middle">Top 4 (3)</td>
+                    <td class="align-middle">Top 4 (4)</td>
+                </thead>
+                <tbody class="text-center align-middle">
+                    {% for top4 in top4s %}
+                    <tr>
+                        {% for t in top4 %}
+                        <td class="align-left">{{t}}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- EUROPAS -->
+    <div class="row">
+        <h3>Europa</h3>
+        <div class="table-responsive text-nowrap">
+            <table class="table table-sm text-xsmall table-hover sortable ;">
+                <thead class="thead-light text-center">
+                    <td class="align-middle">Name</td>
+                    <td class="align-middle">Eurpoa (1)</td>
+                    <td class="align-middle">Eurpoa (2)</td>
+                    <td class="align-middle">Eurpoa (3)</td>
+                </thead>
+                <tbody class="text-center align-middle">
+                    {% for europa in europas %}
+                    <tr>
+                        {% for e in europa %}
+                        <td class="align-left">{{e}}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MIDS -->
+    <div class="row">
+        <h3>Mid Table</h3>
+        <div class="table-responsive text-nowrap">
+            <table class="table table-sm text-xsmall table-hover sortable ;">
+                <thead class="thead-light text-center">
+                    <td class="align-middle">Name</td>
+                    <td class="align-middle">Mid Table (1)</td>
+                    <td class="align-middle">Mid Table (2)</td>
+                    <td class="align-middle">Mid Table (3)</td>
+                    <td class="align-middle">Mid Table (4)</td>
+                    <td class="align-middle">Mid Table (5)</td>
+                </thead>
+                <tbody class="text-center align-middle">
+                    {% for mid in mids %}
+                    <tr>
+                        {% for m in mid %}
+                        <td class="align-left">{{m}}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- BOTS -->
+    <div class="row">
+        <h3>Bottom Half</h3>
+        <div class="table-responsive text-nowrap">
+            <table class="table table-sm text-xsmall table-hover sortable ;">
+                <thead class="thead-light text-center">
+                    <td class="align-middle">Name</td>
+                    <td class="align-middle">Bottom Half (1)</td>
+                    <td class="align-middle">Bottom Half (2)</td>
+                    <td class="align-middle">Bottom Half (3)</td>
+                    <td class="align-middle">Bottom Half (4)</td>
+                    <td class="align-middle">Bottom Half (5)</td>
+                </thead>
+                <tbody class="text-center align-middle">
+                    {% for bot in bots %}
+                    <tr>
+                        {% for b in bot %}
+                        <td class="align-left">{{b}}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- RELGS -->
+    <div class="row">
+        <h3>Relegation</h3>
+        <div class="table-responsive text-nowrap">
+            <table class="table table-sm text-xsmall table-hover sortable ;">
+                <thead class="thead-light text-center">
+                    <td class="align-middle">Name</td>
+                    <td class="align-middle">Relegation (1)</td>
+                    <td class="align-middle">Relegation (2)</td>
+                    <td class="align-middle">Relegation (3)</td>
+                </thead>
+                <tbody class="text-center align-middle">
+                    {% for relg in relgs %}
+                    <tr>
+                        {% for r in relg %}
+                        <td class="align-left">{{r}}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+</div>
+{% endblock %}

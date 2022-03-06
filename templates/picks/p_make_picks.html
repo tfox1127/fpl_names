@@ -1,0 +1,84 @@
+{% extends "/picks/p_base.html" %}
+
+{% block title %}EPL Picks - Pick Games{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    {{asdf}}
+    <div class="table-responsive text-nowrap">
+        <table class="table table-sm text-xsmall table-hover sortable ;">
+            <thead class="thead-light text-center">
+                <td class="align-middle">Match Code</td>
+                <td class="align-middle">Kickoff Time (LDN)</td>
+                <td class="align-middle">Home</td>
+                <td class="align-middle">Away</td>
+                <td class="align-middle">Your Pick</td>
+                <td class="align-middle">Open</td>
+            </thead>
+            <tbody class="text-center align-middle">
+                {% for game in week_schedule %}
+                    <tr>
+                        {% if game[6].replace(tzinfo=None) > asdf %}
+                            <td class="align-left"><a href="/picks/make_picks/match/{{game[0]}}">{{game[0]}}</a></td>
+                        {% else %}
+                            <td class="align-left">{{game[0]}}</td>
+                        {% endif %}
+                        <!-- <td class="align-left">{{game[1]}}</td> -->
+                        <td class="align-left">{{game[1]}}</td>
+                        <td class="align-left">{{game[2]}}</td>
+                        <td class="align-left">{{game[3]}}</td>
+                            {% if game[4] == 'pick_a' %}
+                                <td class="align-left">{{game[3]}} ({{game[5]}}pts)</td>
+                            {% elif game[4] == 'pick_h' %}
+                                <td class="align-left">{{game[2]}} ({{game[5]}}pts)</td>
+                            {% elif game[4] == 'pick_t' %}
+                                <td class="align-left">Tie ({{game[5]}}pts)</td>
+                            {% else %}
+                                <td class="align-left"></td>
+                            {% endif %}
+                        <td class="align-left">{{game[6].replace(tzinfo=None) > asdf}}</td>    
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- <div class="row d-flex justify-content-center text-center">
+        <div class="col-sm">
+          <form  action="#" method="post">
+            <div class="form-group col-xs-5 col-lg-5 mx-auto">
+              <label for="exampleInputPassword1">Name</label>
+              <input type="text" class="form-control" name='name'>
+            </div>
+  
+            <div class="form-group col-xs-5 col-lg-5 mx-auto">
+              <label for="exampleInputPassword1">Password</label>
+              <input type="text" class="form-control" name='password'>
+            </div>
+  
+
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                <label class="form-check-label" for="inlineRadio1">1</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                <label class="form-check-label" for="inlineRadio2">2</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3" disabled>
+                <label class="form-check-label" for="inlineRadio3">3 (disabled)</label>
+            </div>
+
+
+            <p><input type='submit' value='Submit' /></p>
+  
+          </form>
+        </div>
+      </div> -->
+
+
+
+</div>
+{% endblock %}

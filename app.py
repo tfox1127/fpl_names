@@ -673,5 +673,507 @@ def fpl_cup():
         cup_table_d=cup_table_d, 
         cup_table_e=cup_table_e)
 
+
+##################################################################
+#PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS 
+#PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS 
+@app.route('/picks')
+def picks():
+    if "user" in session:
+        #return render_template('picks.html')
+        return redirect(url_for('picks_home'))
+    else:
+        return redirect(url_for("picks_login"))
+
+@app.route('/picks/register', methods = ["POST", "GET"])
+def picks_register():
+    if request.method == 'POST':
+        session['name'] = request.form["name"]
+        #session['user'] = request.form["email"]
+        session['password_choice'] = request.form["password_choice"]
+        session['userid'] = request.form["userid"]       
+        session['user_id'] = request.form["userid"]       
+
+        db.execute(
+            """INSERT INTO fpl_picks_users ("user_id", "name", "password") VALUES (:x, :y, :z)""", 
+            {"x": session['userid'], "y": session['name'], "z": session['password_choice']})
+        #db.execute("UPDATE name_list_g SET \"Michelle\" = (:x) WHERE \"Name\" = (:y)", {"x": x, "y":y})
+        db.commit()
+
+        return redirect(url_for('picks_home'))
+
+    if request.method == 'GET':
+        if "user" in session:
+            pass # logout and send to register 
+        else:
+            #get password 
+            r_word_list = db.execute("""SELECT words_med FROM z_wordlist_med """)
+            db.commit()
+
+            word_list = r_word_list.fetchall()
+            LIST_LEN = len(word_list)
+
+            passwords = [] 
+            for i in range(5): 
+                x = word_list[random.choice(range(LIST_LEN))][0]
+                y = word_list[random.choice(range(LIST_LEN))][0]
+                password = x + "_" + y
+                passwords.append(password)
+
+            #get new user key
+            r_userid = db.execute("""SELECT max(user_id) FROM fpl_picks_users """)
+            db.commit()
+
+            userid = r_userid.fetchall()
+
+            userid = userid[0][0] + 1 
+
+            #send to register
+            return render_template('/picks/p_register.html', passwords=passwords, userid=userid)
+
+@app.route('/picks/login', methods = ["POST", "GET"])
+def picks_login():
+
+    if request.method == "POST":
+        subbed_name = request.form["name"]
+        subbed_password = request.form["password"]
+
+        q = """SELECT user_id, password FROM fpl_picks_users WHERE UPPER(name) = UPPER((:subbed_name))"""
+        user_check = db.execute(q, {"subbed_name": subbed_name})
+        db.commit()
+
+        if user_check.rowcount == 0: 
+            #TODO
+            print("error")
+        else: 
+            user_check = user_check.fetchall()
+
+            user_id = user_check[0][0]            
+            password_answer = user_check[0][1]
+            
+        if password_answer == subbed_password:
+            session['user_id'] = user_id
+            session['name'] = subbed_name
+
+            return redirect(url_for("picks_home"))   
+
+        else: 
+            return redirect(url_for("picks_login"))    
+        
+    else:
+        return render_template("/picks/p_login.html")
+
+@app.route('/picks/home')
+def picks_home(): 
+    return render_template('/picks/p_home.html')
+
+@app.route('/picks/scores/event=<int:event>')
+def picks_scores_event(event):
+    test = request.args.get('username')
+    q = """
+            SELECT d.event, d.code, a.ts, d.london, c.name, e.short_name as away, f.short_name as home, CAST("team_a_score" AS INTEGER), CAST("team_h_score" AS INTEGER),
+            CASE
+                WHEN team_a_score = team_h_score THEN 'pick_t'
+                WHEN team_a_score > team_h_score THEN 'pick_a'
+                ELSE 'pick_h'
+                END AS game_result,
+            b.pick as points, b.choice,
+            CASE
+                WHEN choice = (CASE
+                WHEN team_a_score = team_h_score THEN 'pick_t'
+                WHEN team_a_score > team_h_score THEN 'pick_a'
+                ELSE 'pick_h'
+                END) THEN b.pick
+                ELSE b.pick * -1 
+                END AS effective_points, 
+            d.london < (select now()) as game_started
+            FROM 
+            (SELECT "code", "user_id", MAX("timestamp") as ts
+            FROM "fpl_picks_picks"
+            GROUP BY "user_id", "code"
+            ) as a
+            LEFT JOIN
+            (SELECT "code", "user_id", "timestamp", "pick", "choice"
+            FROM "fpl_picks_picks"
+            ) as b
+            ON a.code = b.code AND a.user_id = b.user_id and a.ts = b.timestamp
+            LEFT JOIN 
+            (SELECT "user_id", "name", "active"
+            FROM "fpl_picks_users"
+            ) as c
+            ON a.user_id = c.user_id
+            LEFT JOIN
+            (SELECT "code", "team_a", "team_h", "london", "team_a_score", "team_h_score", "event"
+            FROM "fpl_picks_schedule"
+            ) as d
+            ON a.code = d.code
+            LEFT JOIN
+            (SELECT "id", "short_name"
+            FROM "fpl_picks_teams"
+            ) as e
+            on d.team_a = e.id
+            LEFT JOIN
+            (SELECT "id", "short_name"
+            FROM "fpl_picks_teams"
+            ) as f
+            on d.team_h = f.id
+            WHERE "active" = 1 AND  d.london < (select now()) AND event = :event
+            ORDER BY d.london, d.code, name
+        """
+
+    scores = db.execute(q, {'event':int(event)})
+    db.commit()
+
+    d = db.execute(q, {'event':int(event)})
+    db.commit()
+    df = pd.DataFrame(d.fetchall(), columns=d.keys())
+    df['match_name'] = df['home'] + "_" + df['away']
+    dfp = pd.pivot_table(df, index='name', columns='match_name', values='effective_points', aggfunc=sum, margins=True).reset_index().sort_values('All', ascending=False)
+    #dfp["name2"] = '<a href="/' + dfp["name"] + '">' + dfp["name"] + "</a>"
+
+    return render_template('picks/p_scores.html', 
+        scores=scores, 
+        test=test, 
+        tables=[
+            dfp.to_html(index=False, 
+                index_names=False, 
+                justify='center', 
+                bold_rows='False', 
+                classes=['table table-sm text-xsmall table-hover sortable align-middle'], 
+                render_links=True, 
+                escape=False)], 
+        titles=event)
+
+@app.route('/picks/scores')
+def picks_scores():
+    event = request.args.get('event')
+
+    if event == None: 
+        event = FIRST_UNFINISHED_WEEK
+
+    return redirect(f'/picks/scores/event={event}')
+    
+
+@app.route('/picks/scores/summary')
+def picks_scores_summary():
+    
+    q = """
+    SELECT aa.name as Name, SUM(points) as Wagered, SUM(test3) as Score FROM  
+    (SELECT a.code, a.user_id, a.ts, c.name, d.team_a, d.team_h, e.name as away, f.name as home, 
+    b.pick as points, b.choice, d.london, "team_a_score", "team_h_score", d.london < (select now()) as test,
+        CASE
+            WHEN team_a_score = team_h_score THEN 'pick_t'
+            WHEN team_a_score > team_h_score THEN 'pick_a'
+            ELSE 'pick_h'
+        END AS test2,
+        CASE
+            WHEN choice = (CASE
+            WHEN team_a_score = team_h_score THEN 'pick_t'
+            WHEN team_a_score > team_h_score THEN 'pick_a'
+            ELSE 'pick_h'
+        END) THEN b.pick
+            ELSE b.pick * -1 
+        END AS test3
+    FROM 
+    (SELECT "code", "user_id", MAX("timestamp") as ts
+    FROM "fpl_picks_picks"
+    GROUP BY "user_id", "code"
+    ) as a
+    LEFT JOIN
+    (SELECT "code", "user_id", "timestamp", "pick", "choice"
+    FROM "fpl_picks_picks"
+    ) as b
+    ON a.code = b.code AND a.user_id = b.user_id and a.ts = b.timestamp
+    LEFT JOIN 
+    (SELECT "user_id", "name", "active"
+    FROM "fpl_picks_users"
+    ) as c
+    ON a.user_id = c.user_id
+    LEFT JOIN
+    (SELECT "code", "team_a", "team_h", "london", "team_a_score", "team_h_score", event
+    FROM "fpl_picks_schedule"
+    ) as d
+    ON a.code = d.code
+    LEFT JOIN
+    (SELECT "id", "name"
+    FROM "fpl_picks_teams"
+    ) as e
+    on d.team_a = e.id
+    LEFT JOIN
+    (SELECT "id", "name"
+    FROM "fpl_picks_teams"
+    ) as f
+    on d.team_h = f.id
+    """ 
+
+    sq1 = """
+    WHERE "active" = 1 AND  d.london < (select now())) as aa 
+    GROUP BY aa.user_id, aa.name
+    ORDER BY Score DESC
+    """
+
+    sq2 = """
+    WHERE "active" = 1 AND  d.london < (select now()) AND d.event = :gameweek) as aa 
+    GROUP BY aa.user_id, aa.name
+    ORDER BY Score DESC
+    """
+
+    scores_summ_sesn = db.execute(q + sq1)
+    scores_summ_week  = db.execute(q + sq2, {"gameweek" : CURRENT_WEEK})
+    db.commit()
+
+    season_long_pts = """SELECT "Name", "Current Pts" FROM fpl_picks_sesonlong ORDER BY "Current Pts" DESC """
+    sl_points = db.execute(season_long_pts)
+    db.commit()
+
+    indy  = """SELECT "Name", "Golden Boot", "Most Assists", "Golden Glove", "Sack Race 1" FROM fpl_picks_sesonlong"""
+    indys = db.execute(indy)
+    db.commit()
+
+    top4  = """SELECT "Name", "Champ", "Top 4 (2)", "Top 4 (3)", "Top 4 (4)" FROM fpl_picks_sesonlong """
+    top4s = db.execute(top4)
+    db.commit()
+
+    europa  = """SELECT "Name", "Eurpoa (1)", "Eurpoa (2)", "Eurpoa (3)" FROM fpl_picks_sesonlong """
+    europas = db.execute(europa) 
+    db.commit()
+
+    mid  = """SELECT "Name", "Mid Table (1)", "Mid Table (2)", "Mid Table (3)", "Mid Table (4)", "Mid Table (5)" FROM fpl_picks_sesonlong """
+    mids = db.execute(mid) 
+    db.commit()
+
+    bot  = """SELECT "Name", "Bottom Half (1)", "Bottom Half (2)", "Bottom Half (3)", "Bottom Half (4)", "Bottom Half (5)" FROM fpl_picks_sesonlong """
+    bots = db.execute(bot) 
+    db.commit()
+
+    relg  = """SELECT "Name", "Relegation (1)", "Relegation (2)", "Relegation (3)" FROM fpl_picks_sesonlong """
+    relgs = db.execute(relg) 
+
+    db.commit()
+
+    return render_template('/picks/p_scores_summary.html', scores_summ_sesn = scores_summ_sesn, scores_summ_week=scores_summ_week, 
+        sl_points=sl_points, indys=indys, top4s=top4s, europas=europas, mids=mids, bots=bots, relgs=relgs)
+
+@app.route('/picks/make_picks')
+def make_picks_router(): 
+    return redirect(f'/picks/make_picks/{FIRST_UNFINISHED_WEEK}')
+    #return redirect(url_for(make_picks_router))
+
+@app.route('/picks/make_picks/<int:gameweek>')
+def make_picks(gameweek): 
+    
+    #print("browser time: ", request.args.get("time"))
+
+    #print("server time : ", time.strftime('%A %B, %d %Y %H:%M:%S'));
+    asdf = dt.datetime.now()
+
+    # q = """SELECT "code", "kickoff_time", h_team."team_h", a_team."team_a" FROM
+    # ((SELECT "code", "kickoff_time", "minutes", "team_a", "team_h" FROM fpl_picks_schedule WHERE event = :gameweek) as sch
+    # LEFT JOIN 
+    # (SELECT "id", "short_name" as "team_h", "points" as "points_h" FROM "fpl_picks_teams") as h_team
+    # ON sch.team_h = h_team.id
+    # LEFT JOIN 
+    # (SELECT "id", "short_name" as "team_a", "points" as "points_a" FROM "fpl_picks_teams") as a_team
+    # ON sch.team_a = a_team.id)"""
+
+    q = """ 
+        SELECT sch."code", "london_str", h_team."team_h", a_team."team_a", picks."choice", picks."pick", "london" FROM
+        ((SELECT "code", "london_str", "minutes", "team_a", "team_h", "london" FROM fpl_picks_schedule WHERE event = :gameweek) as sch
+        LEFT JOIN 
+        (SELECT "id", "name" as "team_h", "points" as "points_h" FROM "fpl_picks_teams") as h_team
+        ON sch.team_h = h_team.id
+        LEFT JOIN 
+        (SELECT "id", "name" as "team_a", "points" as "points_a" FROM "fpl_picks_teams") as a_team
+        ON sch.team_a = a_team.id
+        LEFT JOIN 
+        (SELECT "p_code" as "code", "u_pick" as "pick", "u_choice" as "choice", "p_user_id" as "user_id" FROM 
+        ((SELECT "code" as "p_code", "user_id" as "p_user_id", MAX(timestamp) as p_ts FROM "fpl_picks_picks" WHERE "user_id" = :user_id
+        GROUP BY "code", "user_id"
+        ) AS tbl_p
+        LEFT JOIN
+        (SELECT "code" as "u_code",
+        "user_id" as "u_user_id",
+        "timestamp" as "u_timestamp",
+        "pick" as "u_pick",
+        "choice" as "u_choice" FROM "fpl_picks_picks" 
+        ) AS tbl_u
+        ON tbl_p.p_code = tbl_u.u_code AND tbl_p.p_user_id = tbl_u.u_user_id AND tbl_p.p_ts = tbl_u.u_timestamp) as a
+        WHERE "p_user_id" = :user_id) as picks
+        ON sch.code = picks.code)
+        ORDER BY  "london_str", sch.code
+    """ #(SELECT "code", "pick", "choice", "user_id" FROM "fpl_picks_picks" WHERE "user_id" = :user_id)
+
+    #q = """SELECT * FROM fpl_picks_schedule WHERE event = :gameweek"""
+    week_schedule = db.execute(q, {"gameweek" : gameweek, "user_id": session["user_id"]})
+    db.commit()
+
+    return render_template('picks/p_make_picks.html', current_week=CURRENT_WEEK, week_schedule=week_schedule, asdf=asdf)
+
+@app.route('/picks/make_picks/match/<int:match_number>', methods=['POST', 'GET'])
+def make_picks_match(match_number): 
+    if request.method == 'GET':
+        #check user in session 
+        q = """SELECT "london_str", h_team."team_h", a_team."team_a" FROM
+        ((SELECT "code", "london_str", "minutes", "team_a", "team_h" FROM fpl_picks_schedule WHERE code = :match_number) as sch
+        LEFT JOIN 
+        (SELECT "id", "name" as "team_h", "points" as "points_h" FROM "fpl_picks_teams") as h_team
+        ON sch.team_h = h_team.id
+        LEFT JOIN 
+        (SELECT "id", "name" as "team_a", "points" as "points_a" FROM "fpl_picks_teams") as a_team
+        ON sch.team_a = a_team.id)"""
+
+ 
+        single_game = db.execute(q, {"match_number" : match_number})
+        db.commit()
+
+        single_game = single_game.fetchall()
+
+        match_number = match_number
+        #date_time = dt.strptime(single_game[0][0], '%d/%m/%y %H:%M:%S')
+        #date_time = date_time.dt.tz_convert('US/Central')
+        #date_time = dt.fromisoformat(single_game[0][0])
+
+        #date_time = parser.isoparse(single_game[0][0])
+        #date_time = date_time.strftime("%a %m-%d at %H:%M")
+
+        date_time = single_game[0][0]
+        team_h = single_game[0][1]
+        team_a = single_game[0][2]
+        
+        return render_template('picks/p_match.html', match_number=match_number, date_time=date_time, team_h=team_h, team_a=team_a)
+
+    else: 
+        
+        choice = request.form["choice"]
+        wager = request.form["wager"]
+        ts_now = dt.now()
+
+        db.execute(
+            """INSERT INTO fpl_picks_picks ("user_id", "code", "pick", "timestamp", "choice") VALUES (:v, :w, :x, :y, :z)""", 
+            {"v": session["user_id"], "w": match_number, "x": wager, "y": ts_now, "z": choice})
+
+        db.commit()
+
+        return redirect("/picks/make_picks")
+
+@app.route('/picks/checker')
+def picks_checker():
+
+    q = """ 
+        SELECT c.name, COUNT(b.choice), d.event
+        FROM 
+        (SELECT "code", "user_id", MAX("timestamp") as ts
+        FROM "fpl_picks_picks"
+        GROUP BY "user_id", "code"
+        ) as a
+        LEFT JOIN
+        (SELECT "code", "user_id", "timestamp", "pick", "choice"
+        FROM "fpl_picks_picks"
+        ) as b
+        ON a.code = b.code AND a.user_id = b.user_id and a.ts = b.timestamp
+        LEFT JOIN 
+        (SELECT "user_id", "name", "active"
+        FROM "fpl_picks_users"
+        ) as c
+        ON a.user_id = c.user_id
+        LEFT JOIN
+        (SELECT "code", "team_a", "team_h", "london", "team_a_score", "team_h_score", "event"
+        FROM "fpl_picks_schedule"
+        ) as d
+        ON a.code = d.code
+        LEFT JOIN
+        (SELECT "id", "name"
+        FROM "fpl_picks_teams"
+        ) as e
+        on d.team_a = e.id
+        LEFT JOIN
+        (SELECT "id", "name"
+        FROM "fpl_picks_teams"
+        ) as f
+        on d.team_h = f.id
+        WHERE "event" = :FIRST_UNFINISHED_WEEK
+        GROUP BY c.name, d.event
+    """ #WHERE "event" = :CURRENT_WEEK OR "event" = :FIRST_UNFINISHED_WEEK
+
+    summary = db.execute(q, {"CURRENT_WEEK" : CURRENT_WEEK, "FIRST_UNFINISHED_WEEK":FIRST_UNFINISHED_WEEK})
+    db.commit()
+
+    q = """
+        SELECT d.code, d.london, c.name, e.name, f.name, COUNT(b.choice)
+        FROM 
+        (SELECT "code", "user_id", MAX("timestamp") as ts
+        FROM "fpl_picks_picks"
+        GROUP BY "user_id", "code"
+        ) as a
+        LEFT JOIN
+        (SELECT "code", "user_id", "timestamp", "pick", "choice"
+        FROM "fpl_picks_picks"
+        ) as b
+        ON a.code = b.code AND a.user_id = b.user_id and a.ts = b.timestamp
+        LEFT JOIN 
+        (SELECT "user_id", "name", "active"
+        FROM "fpl_picks_users"
+        ) as c
+        ON a.user_id = c.user_id
+        LEFT JOIN
+        (SELECT "code", "team_a", "team_h", "london", "team_a_score", "team_h_score", "event"
+        FROM "fpl_picks_schedule"
+        ) as d
+        ON a.code = d.code
+        LEFT JOIN
+        (SELECT "id", "name"
+        FROM "fpl_picks_teams"
+        ) as e
+        on d.team_a = e.id
+        LEFT JOIN
+        (SELECT "id", "name"
+        FROM "fpl_picks_teams"
+        ) as f
+        on d.team_h = f.id
+        WHERE "event" = :FIRST_UNFINISHED_WEEK
+        GROUP BY d.code, d.london, c.name, e.name, f.name
+        ORDER BY d.london, d.code
+    """ #WHERE "event" = :CURRENT_WEEK
+
+    details = db.execute(q, {"CURRENT_WEEK" : CURRENT_WEEK, "FIRST_UNFINISHED_WEEK" : FIRST_UNFINISHED_WEEK})
+    db.commit()
+
+    return render_template('picks/p_checker.html', summary=summary, details=details)
+
+@app.route("/picks/logout", methods = ["POST", "GET"])
+def picks_logout():
+    try: 
+        session.pop('name')
+    except:
+        pass
+
+    try:
+        session.pop('password_choice')
+    except:
+        pass    
+
+    try:
+        session.pop('userid')
+    except:
+        pass        
+
+    try: 
+        session.pop('user_id')
+    except:
+        pass
+
+    try: 
+        session.pop('user')
+    except:
+        pass
+
+    db.remove()
+
+    return redirect(url_for("picks_login"))
+
+#PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS 
+#PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS 
+##################################################################
+
 if __name__ == '__main__':
     app.run()
