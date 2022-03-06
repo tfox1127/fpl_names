@@ -1046,7 +1046,7 @@ def make_picks_match(match_number):
         
         choice = request.form["choice"]
         wager = request.form["wager"]
-        ts_now = dt.now()
+        ts_now = dt.datetime.now()
 
         db.execute(
             """INSERT INTO fpl_picks_picks ("user_id", "code", "pick", "timestamp", "choice") VALUES (:v, :w, :x, :y, :z)""", 
