@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block content %}
+<!-- PUT SEARCH BOX HERE ? -->
+
+  <div class="container mt-2">
+    <h3>Search Results</h3>
+    <h4>Serching for: {{search_for}}</h4>
+
+  <div class="row">
+    <div class="col-lg-12 col-sm-12">
+        <div class="table-responsive text-nowrap">
+            <table class="table table-sm text-xsmall table-hover sortable;">
+                <thead class="thead-light text-center">
+                    <td>Player</td>
+                    <td>POS</td>
+                    <td>Team</td>
+                    <td>Match</td>
+                    <td>Mins (pl/gm)</td>
+                    <td>G</td>
+                    <td>A</td>
+                    <td>CS</td>
+                    <td>GC</td>
+                    <td>OG</td>
+                    <td>PS</td>
+                    <td>PM</td>
+                    <td>YC</td>
+                    <td>RC</td>
+                    <td>SV</td>
+                    <td>Bonus</td>
+                    <td>BPS</td>
+                    <td>Points</td>
+                </thead>
+                <tbody class="text-center align-middle">
+                    {% for i in stats %}
+                        <tr >
+                            <!-- <td><a href="team/{{i[1]}}" class="text-dark">{{i[2]}}</a></td> -->
+                            <td><a href="/player/{{i[0]}}" class="text-dark">{{i[3]}}</a></td>
+                            <td>{{i[5]}}</td>
+                            <td>{{i[24]}}</td>
+                            <td>{{i[33]}}|{{i[35]}}</td>
+                            <td>{{i[9]}}/{{i[28]}}</td>
+                            <td>{{i[10]}}</td>
+                            <td>{{i[11]}}</td>
+                            <td>{{i[12]}}</td>
+                            <td>{{i[13]}}</td>
+                            <td>{{i[14]}}</td>
+                            <td>{{i[15]}}</td>
+                            <td>{{i[16]}}</td>
+                            <td>{{i[17]}}</td>
+                            <td>{{i[18]}}</td>
+                            <td>{{i[19]}}</td>
+                            <td>{{i[20]}}</td>
+                            <td>{{i[21]}}</td>
+                            <td>{{i[37]}}</td>
+                        </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

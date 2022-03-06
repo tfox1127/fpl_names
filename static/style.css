@@ -1,19 +1,53 @@
-#tfox {
-	font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
-	color: green;
-	margin-top: 50px;
-	margin-left: auto;
-	margin-right: auto;
-}
+body {
+    font-family: gill sans, sans-sans-serif;
+  }
+
 
 body {
-	font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
+  background-color: #fcfcfc;
 }
 
-a {
-	font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
+nav {
+  font-family: gill sans, sans-sans-serif;
+
 }
 
-p {
-	font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
+.form-check {
+  padding: 30px;
+}
+
+.container-fluid {
+  margin-top: 50px;
+  margin-left: 500px;
+  margin-right: 500px;
+  padding: 500px;
+}
+
+table {
+  font-size: .8rem;
+  vertical-align: middle;
+}
+
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover {
+  background-color: #08ff87;
+  text: #37003c;
+}
+
+.dingding td {
+  background-color: #08ff87;
+  text: #37003c;
+}
+
+.thead-light {
+  background: rgba(55, 0, 60, 0.9);
+  color: white;
+  vertical-align: middle;
+}
+
+.table > tbody > tr > td {
+     vertical-align: middle;
+}
+
+.table-responsive > tbody > tr > td {
+     vertical-align: middle;
 }
