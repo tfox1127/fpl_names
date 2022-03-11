@@ -252,6 +252,12 @@ def epl_player(epl_player_id):
   
     #owned_by = current_rank, name, status
 
+@app.route('/admin', methods= ["POST", "GET"])
+def admin(): 
+    #status = GET STATUS FROM DB 
+
+    return render_template("admin.html", status=status)
+
 
 def make_roster(df, team): 
     df1_roster = df.loc[df['entry'] == team, 'element'].drop_duplicates().to_list()
@@ -853,7 +859,6 @@ def picks_scores():
 
     return redirect(f'/picks/scores/event={event}')
     
-
 @app.route('/picks/scores/summary')
 def picks_scores_summary():
     
