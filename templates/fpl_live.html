@@ -32,6 +32,8 @@
                         <td>SP</td>
                         <td>Captian</td>
                         <td>Vice</td>
+                        <td>Hits</td>
+                        <td>Bench Pts</td>
                     </thead>
                     <tbody class="text-center align-middle">
                         {% for i in live_table %}
@@ -48,6 +50,8 @@
                                     <td>{{i[6]}} of {{i[13]}}</td>
                                     <td><a href="player/{{i[7]}}" class="text-dark">{{i[8]}} ({{i[14]}})</a></td>
                                     <td><a href="player/{{i[9]}}" class="text-dark">{{i[10]}} ({{i[15]}})</a></td>
+                                    <td>{{i[16]}}</td>
+                                    <td>{{i[17]}}</td>
                                 </tr>
                         {% endfor %}
 

@@ -60,7 +60,7 @@ def login():
 def fpl_live():
     CURRENT_WEEK, FIRST_UNFINISHED_WEEK = api_check.pull_current_week()
     
-    q = """ 
+    q = f""" 
         SELECT rank_live, 
             calc_score_parts.entry, 
             CASE name
@@ -79,7 +79,9 @@ def fpl_live():
             CAST(expected_games AS int), 
             ROUND(CAST(salary_possible AS numeric), 1) as salary_possible,
             CAST(cap_score.score as numeric) as cap_score,
-            CAST(vc_score.score as numeric) as vc_score
+            CAST(vc_score.score as numeric) as vc_score, 
+            hits.event_transfers_cost as hits,
+            CASE WHEN bench_pts.pts IS NULL THEN 0 ELSE bench_pts.pts END as bench_pts
         FROM calc_score_parts
         LEFT JOIN 
             (SELECT entry, player_name FROM api_standings) as names
@@ -96,7 +98,12 @@ def fpl_live():
         LEFT JOIN 
             (SELECT element_id, score FROM epl_live_score_gwl) AS vc_score
             ON vc.vc_player_id = vc_score.element_id
-
+        LEFT JOIN 
+            (SELECT entry, event_transfers_cost FROM api_history_entry WHERE event = {CURRENT_WEEK}) as hits
+            on calc_score_parts.entry = hits.entry
+        LEFT JOIN 
+            (SELECT entry, SUM(points) as pts FROM scores_player_lvl WHERE multiplier = 0 GROUP BY entry) as bench_pts
+            on calc_score_parts.entry = bench_pts.entry
         ORDER BY rank_live
 
     """
