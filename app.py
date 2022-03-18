@@ -8,8 +8,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 import api_check 
 
-CURRENT_WEEK, FIRST_UNFINISHED_WEEK = api_check.pull_current_week()
-
 app = Flask(__name__)
 
 #DATABASE_URL = os.environ['HEROKU_POSTGRESQL_GAS_URL']
@@ -22,6 +20,9 @@ app.secret_key = 'pizza'
 
 @app.route('/')
 def index():
+    
+    CURRENT_WEEK, FIRST_UNFINISHED_WEEK = api_check.pull_current_week()
+
     posts = db.execute("""SELECT post_number, header, body FROM fpl_blog ORDER BY post_number DESC LIMIT 10""")
     db.commit()
     return render_template('index.html', posts=posts)
@@ -60,6 +61,8 @@ def login():
 def fpl_live():
     CURRENT_WEEK, FIRST_UNFINISHED_WEEK = api_check.pull_current_week()
     
+    UPDATED_AT = dt.datetime.now().strftime("%Y-%m-%d at %-I:%M")
+
     q = f""" 
         SELECT rank_live, 
             calc_score_parts.entry, 
@@ -81,7 +84,7 @@ def fpl_live():
             CAST(cap_score.score as numeric) as cap_score,
             CAST(vc_score.score as numeric) as vc_score, 
             hits.event_transfers_cost as hits,
-            CASE WHEN bench_pts.pts IS NULL THEN 0 ELSE bench_pts.pts END as bench_pts
+            CAST(CASE WHEN bench_pts.pts IS NULL THEN 0 ELSE bench_pts.pts END as numeric) as bench_pts
         FROM calc_score_parts
         LEFT JOIN 
             (SELECT entry, player_name FROM api_standings) as names
@@ -170,7 +173,7 @@ def fpl_live():
     #d = groups2
     #db.commit()
 
-    return render_template('fpl_live.html', live_table=live_table, groups=groups)   #LEG 1 
+    return render_template('fpl_live.html', live_table=live_table, groups=groups, UPDATED_AT=UPDATED_AT)   #LEG 1 
     # return render_template('fpl_live.html', live_table=live_table, groups2=groups2)         #LEG 2
 
 @app.route('/team/<int:fpl_team_id>')
@@ -1002,6 +1005,9 @@ def picks_scores_summary():
 
 @app.route('/picks/make_picks')
 def make_picks_router(): 
+    
+    CURRENT_WEEK, FIRST_UNFINISHED_WEEK = api_check.pull_current_week()
+
     return redirect(f'/picks/make_picks/{FIRST_UNFINISHED_WEEK}')
     #return redirect(url_for(make_picks_router))
 
