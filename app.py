@@ -1,4 +1,4 @@
-import os, sys
+import os, sys, pytz
 from telnetlib import STATUS
 from webbrowser import get
 import pandas as pd
@@ -61,7 +61,8 @@ def login():
 def fpl_live():
     CURRENT_WEEK, FIRST_UNFINISHED_WEEK = api_check.pull_current_week()
     
-    UPDATED_AT = dt.datetime.now().strftime("%Y-%m-%d at %-I:%M")
+    UPDATED_AT = dt.datetime.now(pytz.timezone('US/Central'))
+    UPDATED_AT = UPDATED_AT.strftime("%Y-%m-%d at %-I:%M")
 
     q = f""" 
         SELECT rank_live, 
