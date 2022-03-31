@@ -14,7 +14,7 @@ app = Flask(__name__)
 try: 
     DATABASE_URL = os.environ['WORK']
     DATABASE_URL = DATABASE_URL.replace("s://", "sql://", 1)
-else: 
+except: 
     DATABASE_URL = os.environ['DATABASE_URL']
     DATABASE_URL = DATABASE_URL.replace("s://", "sql://", 1)
 
