@@ -10,6 +10,7 @@ import api_check
 
 app = Flask(__name__)
 
+CURRENT_WEEK, FIRST_UNFINISHED_WEEK = api_check.pull_current_week()
 #DATABASE_URL = os.environ['HEROKU_POSTGRESQL_GAS_URL']
 try: 
     DATABASE_URL = os.environ['WORK']
