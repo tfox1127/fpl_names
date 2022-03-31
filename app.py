@@ -11,8 +11,12 @@ import api_check
 app = Flask(__name__)
 
 #DATABASE_URL = os.environ['HEROKU_POSTGRESQL_GAS_URL']
-DATABASE_URL = os.environ['DATABASE_URL']
-DATABASE_URL = DATABASE_URL.replace("s://", "sql://", 1)
+try: 
+    DATABASE_URL = os.environ['WORK']
+    DATABASE_URL = DATABASE_URL.replace("s://", "sql://", 1)
+else: 
+    DATABASE_URL = os.environ['DATABASE_URL']
+    DATABASE_URL = DATABASE_URL.replace("s://", "sql://", 1)
 
 engine = create_engine(DATABASE_URL, isolation_level="AUTOCOMMIT")
 db = scoped_session(sessionmaker(bind=engine))
