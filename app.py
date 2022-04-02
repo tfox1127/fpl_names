@@ -69,6 +69,13 @@ def fpl_live():
     UPDATED_AT = dt.datetime.now(pytz.timezone('US/Central'))
     UPDATED_AT = UPDATED_AT.strftime("%Y-%m-%d at %-I:%M")
 
+    #q =  f"""SELECT * FROM UPDATE_TIME """
+    #UPDATED_AT = db.execute(q)
+    #db.commit()
+    
+    #UPDATED_AT = pd.DataFrame(UPDATED_AT.fetchall(), columns=UPDATED_AT.keys())
+    #UPDATED_AT = UPDATED_AT.iloc[0].item()
+
     q = f""" 
         SELECT rank_live, 
             calc_score_parts.entry, 
@@ -180,7 +187,7 @@ def fpl_live():
     db.commit()
 
     # return render_template('fpl_live.html', live_table=live_table, groups=groups, UPDATED_AT=UPDATED_AT)   #LEG 1 
-    return render_template('fpl_live.html', live_table=live_table, groups2=groups2)         #LEG 2
+    return render_template('fpl_live.html', live_table=live_table, groups2=groups2, UPDATED_AT=UPDATED_AT)         #LEG 2
 
 @app.route('/team/<int:fpl_team_id>')
 def fpl_team(fpl_team_id):
