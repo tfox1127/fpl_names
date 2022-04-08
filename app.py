@@ -4,6 +4,7 @@ from webbrowser import get
 import pandas as pd
 import datetime as dt
 from flask import Flask, render_template, request, redirect, url_for, session
+from werkzeug.exceptions import HTTPException
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 import api_check 
@@ -22,6 +23,20 @@ except:
 engine = create_engine(DATABASE_URL, isolation_level="AUTOCOMMIT")
 db = scoped_session(sessionmaker(bind=engine))
 app.secret_key = 'pizza'
+
+@app.errorhandler(HTTPException)
+def handle_exception(e):
+    """Return JSON instead of HTML for HTTP errors."""
+    # start with the correct headers and status code from the error
+    response = e.get_response()
+    # replace the body with JSON
+    response.data = json.dumps({
+        "code": e.code,
+        "name": e.name,
+        "description": e.description,
+    })
+    response.content_type = "application/json"
+    return request.referrer
 
 @app.route('/')
 def index():
@@ -1351,73 +1366,78 @@ def fbb_team_specific(team_id, gameday):
 
 @app.route("/fbb/leaderboard")
 def fbb_leaderboard():
-    if "fbb_user" in session:
-        fbb_user = session['fbb_user']
-        #fbb_team_name = session['fbb_team_name']
 
-        time = db.execute("SELECT DISTINCT * FROM fbb_espn WHERE index = 0")
-        dates = db.execute("""SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ""")
-        today = dates.fetchall()[0][0]
+    try: 
+        if "fbb_user" in session:
+            fbb_user = session['fbb_user']
+            #fbb_team_name = session['fbb_team_name']
+            time = db.execute("SELECT DISTINCT * FROM fbb_espn WHERE index = 0")
+            dates = db.execute("""SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ""")
+            today = dates.fetchall()[0][0]
 
-        playing_yet_test = db.execute("""SELECT "team_id_f", SUM("PA") as "PA" FROM fbb_espn WHERE 
-            "fbb_espn"."scoringPeriodId" = (SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) AND 
-            "fbb_espn"."PA" > 0
-        GROUP BY "team_id_f"
-        """)
+            playing_yet_test = db.execute("""SELECT "team_id_f", SUM("PA") as "PA" FROM fbb_espn WHERE 
+                "fbb_espn"."scoringPeriodId" = (SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) AND 
+                "fbb_espn"."PA" > 0
+            GROUP BY "team_id_f"
+            """)
 
-        if playing_yet_test.rowcount == 0: 
-            today_or_yest = today - 1 
-            live_or_attic = "fbb_espn_attic"
-        else: 
-            today_or_yest = today
-            live_or_attic = "fbb_espn"
+            if playing_yet_test.rowcount == 0: 
+                today_or_yest = today - 1 
+                live_or_attic = "fbb_espn_attic"
+            else: 
+                today_or_yest = today
+                live_or_attic = "fbb_espn"
 
-        scoreboard = db.execute(f"""SELECT "team_id_f" as a, SUM("TB") as "TB", SUM("BB") as "BB", 
-            SUM("R") as "R", SUM("RBI") as "RBI", SUM("SB") as "SB", 
-            TRUNC(((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")) + (SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "OPS"
-        FROM fbb_scoreboard    
-        GROUP BY "team_id_f"
-        HAVING SUM("AB") > 0 
-        ORDER BY "OPS" DESC
-        """)
-            #SUM("OUTS") as "OUTS", SUM("HD"), SUM("SV"), TRUNC(SUM("SO") / (SUM("OUTS") / 3) * 9, 2) AS "KP9", TRUNC((SUM("BBag") + SUM("HA")) / (SUM("OUTS") / 3), 2) AS "WHIP", TRUNC((SUM("ERAG") * 9) / (SUM("OUTS") / 3), 2) AS "ERA"
+            scoreboard = db.execute(f"""SELECT "team_id_f" as a, SUM("TB") as "TB", SUM("BB") as "BB", 
+                SUM("R") as "R", SUM("RBI") as "RBI", SUM("SB") as "SB", 
+                TRUNC(((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")) + (SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "OPS"
+            FROM {live_or_attic}    
+            GROUP BY "team_id_f"
+            HAVING SUM("AB") > 0 
+            ORDER BY "OPS" DESC
+            """)
+                #SUM("OUTS") as "OUTS", SUM("HD"), SUM("SV"), TRUNC(SUM("SO") / (SUM("OUTS") / 3) * 9, 2) AS "KP9", TRUNC((SUM("BBag") + SUM("HA")) / (SUM("OUTS") / 3), 2) AS "WHIP", TRUNC((SUM("ERAG") * 9) / (SUM("OUTS") / 3), 2) AS "ERA"
 
-        team_hitters = db.execute(f"""SELECT "team_id_f", SUM("PA") as "PA", SUM("AB") as AB, 
-            SUM("H") as "H", SUM("1B") as "1B", SUM("2B") as "2B", SUM("3B") as "3B", SUM("HR") as "HR", 
-            SUM("TB") as "TB", SUM("K") as "K", SUM("BB") as "BB", SUM("IBB") as "IBB", SUM("HBP") as "HBP", 
-            SUM("R") as "R", SUM("RBI") as "RBI", SUM("SB") as "SB", SUM("CS") as "CS", 
-            TRUNC(SUM("H") / SUM("AB"), 3) as "AVG", 
-            TRUNC(((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")), 3) as "OBP",
-            TRUNC(SUM("TB") / SUM("AB"), 3) as "SLG", 
-            TRUNC( (((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")) + SUM("TB") / SUM("AB")), 3   ) AS "OPS"
-        FROM {live_or_attic}    
-        WHERE 
-            {live_or_attic}."scoringPeriodId" = {today_or_yest} AND 
-            {live_or_attic}."PA" > 0
-        GROUP BY "team_id_f"
-        HAVING SUM("AB") > 0 
-        ORDER BY "OPS" DESC
-        """)
-        #TRUNC((SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "SLG", 
-        #(SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) - {yesterday} AND 
+            team_hitters = db.execute(f"""SELECT "team_id_f", SUM("PA") as "PA", SUM("AB") as AB, 
+                SUM("H") as "H", SUM("1B") as "1B", SUM("2B") as "2B", SUM("3B") as "3B", SUM("HR") as "HR", 
+                SUM("TB") as "TB", SUM("K") as "K", SUM("BB") as "BB", SUM("IBB") as "IBB", SUM("HBP") as "HBP", 
+                SUM("R") as "R", SUM("RBI") as "RBI", SUM("SB") as "SB", SUM("CS") as "CS", 
+                TRUNC(SUM("H") / SUM("AB"), 3) as "AVG", 
+                TRUNC(((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")), 3) as "OBP",
+                TRUNC(SUM("TB") / SUM("AB"), 3) as "SLG", 
+                TRUNC( (((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")) + SUM("TB") / SUM("AB")), 3   ) AS "OPS"
+            FROM {live_or_attic}    
+            WHERE 
+                {live_or_attic}."scoringPeriodId" = {today_or_yest} AND 
+                {live_or_attic}."PA" > 0
+            GROUP BY "team_id_f"
+            HAVING SUM("AB") > 0 
+            ORDER BY "OPS" DESC
+            """)
+            #TRUNC((SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "SLG", 
+            #(SELECT max("squ"."scoringPeriodId") FROM fbb_espn as squ) - {yesterday} AND 
 
-        hitters = db.execute(f"""SELECT "team_id_f", "lineupSlotId_f", "fullName", "proTeamId_f", "PA", "AB", "H", "1B", "2B", "3B", "HR", "TB", "K", "BB", "IBB", "HBP", "R", "RBI", "SB", "CS", "AVG", "OBP", "SLG", "OPS"
-        FROM {live_or_attic} 
-        WHERE 
-            "{live_or_attic}"."scoringPeriodId" = {today_or_yest} AND 
-            "{live_or_attic}"."PA" > 0
-        ORDER BY "{live_or_attic}"."OPS" DESC, "{live_or_attic}"."PA" DESC
-        """)
+            hitters = db.execute(f"""SELECT "team_id_f", "lineupSlotId_f", "fullName", "proTeamId_f", "PA", "AB", "H", "1B", "2B", "3B", "HR", "TB", "K", "BB", "IBB", "HBP", "R", "RBI", "SB", "CS", "AVG", "OBP", "SLG", "OPS"
+            FROM {live_or_attic} 
+            WHERE 
+                "{live_or_attic}"."scoringPeriodId" = {today_or_yest} AND 
+                "{live_or_attic}"."PA" > 0
+            ORDER BY "{live_or_attic}"."OPS" DESC, "{live_or_attic}"."PA" DESC
+            """)
 
-        db.commit()
+            db.commit()
 
-        df = pd.DataFrame(hitters.fetchall(), columns=hitters.keys())
-        try_this = df.to_records(index=False)
-        THIS_MANY = len(df)
 
-        return render_template("fbb/z3_lbd_hit.html", scoreboard=scoreboard, team_hitters=team_hitters, hitters=try_this, time=time, fbb_user=fbb_user, today_or_yest=today_or_yest, today=today, THIS_MANY=THIS_MANY) #, owner_name=owner_name)
-    else:
-        return redirect(url_for("fbb/fbb_login"))
+            df = pd.DataFrame(hitters.fetchall(), columns=hitters.keys())
+            try_this = df.to_records(index=False)
+            THIS_MANY = len(df)
+
+            return render_template("fbb/z3_lbd_hit.html", scoreboard=scoreboard, team_hitters=team_hitters, hitters=try_this, time=time, fbb_user=fbb_user, today_or_yest=today_or_yest, today=today, THIS_MANY=THIS_MANY) #, owner_name=owner_name)
+
+        else:
+            return redirect(request.referrer)
+    except: 
+            return redirect(request.referrer)
 
 @app.route("/fbb/lbd_pitch")
 def fbb_lbd_pit():
