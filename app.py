@@ -10,9 +10,14 @@ import api_check
 
 app = Flask(__name__)
 
+CURRENT_WEEK, FIRST_UNFINISHED_WEEK = api_check.pull_current_week()
 #DATABASE_URL = os.environ['HEROKU_POSTGRESQL_GAS_URL']
-DATABASE_URL = os.environ['DATABASE_URL']
-DATABASE_URL = DATABASE_URL.replace("s://", "sql://", 1)
+try: 
+    DATABASE_URL = os.environ['WORK']
+    DATABASE_URL = DATABASE_URL.replace("s://", "sql://", 1)
+except: 
+    DATABASE_URL = os.environ['DATABASE_URL']
+    DATABASE_URL = DATABASE_URL.replace("s://", "sql://", 1)
 
 engine = create_engine(DATABASE_URL, isolation_level="AUTOCOMMIT")
 db = scoped_session(sessionmaker(bind=engine))
@@ -70,6 +75,13 @@ def fpl_live():
     
     UPDATED_AT = dt.datetime.now(pytz.timezone('US/Central'))
     UPDATED_AT = UPDATED_AT.strftime("%Y-%m-%d at %-I:%M")
+
+    #q =  f"""SELECT * FROM UPDATE_TIME """
+    #UPDATED_AT = db.execute(q)
+    #db.commit()
+    
+    #UPDATED_AT = pd.DataFrame(UPDATED_AT.fetchall(), columns=UPDATED_AT.keys())
+    #UPDATED_AT = UPDATED_AT.iloc[0].item()
 
     q = f""" 
         SELECT rank_live, 
@@ -151,38 +163,38 @@ def fpl_live():
 
     #LEG 2
     # GROUP STAGE
-    # CURRENT_WEEK_TEMP = 29
-    # groups2 = db.execute(f"""SELECT 
-    #                     "Team 1 ID", "Team 1 Name", "score_1", "price_pct_str_1",
-    #                     "Team 2 ID", "Team 2 Name", "score_2", "price_pct_str_2",
-    #                     "Group", "Match ID", h_leg_1.points as h_leg_1_points, a_leg_1.points as a_leg_1_points
-    #                     FROM 
-    #         (SELECT "Match ID", "Group", "Team 1 ID", "Team 2 ID", "Team 1 Name", "Team 2 Name" 
-    #             FROM tbl_2122_groups WHERE "GW" = {CURRENT_WEEK_TEMP}) as GROUPS
-    #         LEFT JOIN 
-    #             (SELECT "entry" as entry_1, "score_3" as score_1, "price_pct_str" as "price_pct_str_1" 
-    #             FROM "calc_score_parts") as SCOREBOARD_1
-    #                 ON GROUPS."Team 1 ID" = SCOREBOARD_1.entry_1
-    #         LEFT JOIN 
-    #             (SELECT "entry" as entry_2, "score_3" as score_2, "price_pct_str" as "price_pct_str_2" 
-    #             FROM "calc_score_parts") as SCOREBOARD_2
-    #                 ON GROUPS."Team 2 ID" = SCOREBOARD_2.entry_2
-    #         LEFT JOIN 
-    #             (SELECT entry, points 
-    #             FROM api_history_entry WHERE event = {CURRENT_WEEK_TEMP - 1}) as h_leg_1
-    #             ON GROUPS."Team 1 ID" = h_leg_1.entry
-    #         LEFT JOIN 
-    #             (SELECT entry, points 
-    #             FROM api_history_entry WHERE event = {CURRENT_WEEK_TEMP - 1}) as a_leg_1
-    #             ON GROUPS."Team 2 ID" = a_leg_1.entry
-    #     ORDER BY "Match ID"
-    #     """)
+    CURRENT_WEEK_TEMP = 31
+    groups2 = db.execute(f"""SELECT 
+                        "Team 1 ID", "Team 1 Name", "score_1", "price_pct_str_1",
+                        "Team 2 ID", "Team 2 Name", "score_2", "price_pct_str_2",
+                        "Group", "Match ID", h_leg_1.points as h_leg_1_points, a_leg_1.points as a_leg_1_points
+                        FROM 
+            (SELECT "Match ID", "Group", "Team 1 ID", "Team 2 ID", "Team 1 Name", "Team 2 Name" 
+                FROM tbl_2122_groups WHERE "GW" = {CURRENT_WEEK_TEMP}) as GROUPS
+            LEFT JOIN 
+                (SELECT "entry" as entry_1, "score_3" as score_1, "price_pct_str" as "price_pct_str_1" 
+                FROM "calc_score_parts") as SCOREBOARD_1
+                    ON GROUPS."Team 1 ID" = SCOREBOARD_1.entry_1
+            LEFT JOIN 
+                (SELECT "entry" as entry_2, "score_3" as score_2, "price_pct_str" as "price_pct_str_2" 
+                FROM "calc_score_parts") as SCOREBOARD_2
+                    ON GROUPS."Team 2 ID" = SCOREBOARD_2.entry_2
+            LEFT JOIN 
+                (SELECT entry, points 
+                FROM api_history_entry WHERE event = {CURRENT_WEEK_TEMP - 1}) as h_leg_1
+                ON GROUPS."Team 1 ID" = h_leg_1.entry
+            LEFT JOIN 
+                (SELECT entry, points 
+                FROM api_history_entry WHERE event = {CURRENT_WEEK_TEMP - 1}) as a_leg_1
+                ON GROUPS."Team 2 ID" = a_leg_1.entry
+        ORDER BY "Match ID"
+        """)
 
-    #d = groups2
-    #db.commit()
+    d = groups2
+    db.commit()
 
-    return render_template('fpl_live.html', live_table=live_table, groups=groups, UPDATED_AT=UPDATED_AT)   #LEG 1 
-    # return render_template('fpl_live.html', live_table=live_table, groups2=groups2)         #LEG 2
+    # return render_template('fpl_live.html', live_table=live_table, groups=groups, UPDATED_AT=UPDATED_AT)   #LEG 1 
+    return render_template('fpl_live.html', live_table=live_table, groups2=groups2, UPDATED_AT=UPDATED_AT)         #LEG 2
 
 @app.route('/team/<int:fpl_team_id>')
 def fpl_team(fpl_team_id):
