@@ -105,7 +105,7 @@
 
     <div class="container mt-2">
         <h5>Today's Hitters</h5>
-        <div class="table-responsive text-nowrap">
+        <div class="table-responsive text-nowrap ">
             <table class="table table-sm text-xsmall table-hover sortable ;" >
                 
                 <thead class="thead-light text-center">
@@ -135,23 +135,25 @@
                     <td class="align-middle">OPS</td>
                 </thead>
                 <tbody class="text-center align-middle">
-                    {% for hit in hitters %}
-                        <tr>
-                            {% if hit[0] == fbb_user %}
-                            <tr style ="  background-color: #08ff87;">
-                                {% for td in hit %}
-                                    <td class="align-left">{{ td }}</td>
-                                {% endfor %}
-                            </tr>
-                        {% else %}
+
+
+                        {% for hit in hitters %}
                             <tr>
-                                {% for td in hit %}
-                                    <td class="align-left">{{ td }}</td>
-                                {% endfor %}
+                                {% if hit[0] == fbb_user %}
+                                <tr style ="  background-color: #08ff87;">
+                                    {% for td in hit %}
+                                        <td class="align-left">{{ td }}</td>
+                                    {% endfor %}
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    {% for td in hit %}
+                                        <td class="align-left">{{ td }}</td>
+                                    {% endfor %}
+                                </tr>
+                            {% endif %}
                             </tr>
-                        {% endif %}
-                        </tr>
-                    {% endfor %}
+                        {% endfor %}
 
                     <tr style ="  background-color: rgba(55, 0, 60, 0.9); color: white;">
                         <td class="align-middle">Owner</td>

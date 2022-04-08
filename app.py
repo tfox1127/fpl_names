@@ -1410,7 +1410,12 @@ def fbb_leaderboard():
         """)
 
         db.commit()
-        return render_template("fbb/z3_lbd_hit.html", scoreboard=scoreboard, team_hitters=team_hitters, hitters=hitters, time=time, fbb_user=fbb_user, today_or_yest=today_or_yest, today=today) #, owner_name=owner_name)
+
+        df = pd.DataFrame(hitters.fetchall(), columns=hitters.keys())
+        try_this = df.to_records(index=False)
+        THIS_MANY = len(df)
+
+        return render_template("fbb/z3_lbd_hit.html", scoreboard=scoreboard, team_hitters=team_hitters, hitters=try_this, time=time, fbb_user=fbb_user, today_or_yest=today_or_yest, today=today, THIS_MANY=THIS_MANY) #, owner_name=owner_name)
     else:
         return redirect(url_for("fbb/fbb_login"))
 
