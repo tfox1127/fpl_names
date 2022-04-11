@@ -752,6 +752,12 @@ def fpl_cup():
         cup_table_d=cup_table_d, 
         cup_table_e=cup_table_e)
 
+@app.route('/fpl_hof')
+def fpl_hof():
+    elements = db.execute('SELECT * FROM hof_rk ORDER BY "Overall" DESC LIMIT 50').fetchall()
+    champs   = db.execute('SELECT * FROM hof_ch ORDER BY "tID" ').fetchall()
+    db.commit()
+    return render_template('fpl_hof.html', elements=elements, champs = champs)
 
 ##################################################################
 #PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS PICKS 

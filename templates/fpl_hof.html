@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}FPL - HOF{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+    <div class="container mt-2">
+        <h2>Current Champions</h2>
+        <div class="table-responsive">
+            <table class="table table-sm text-xsmall table-hover sortable ;">
+                <thead class="thead-light text-center align-middle">
+                    <td class="align-middle">Competition</td>
+                    <td class="align-middle">Manager Name</td>
+                    <td class="align-middle">Season</td>
+                </thead>
+                <tbody class="text-center align-middle">
+                    {% for champ in champs %}
+                    <tr>
+                        <td class="align-middle">{{champ[1]}}</td>
+                        <td class="align-middle">{{champ[2]}}</td>
+                        <td class="align-middle">{{champ[3]}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <h2>All Time Rankings</h2>
+    <div class="table-responsive">
+        <table class="table table-sm text-xsmall table-hover sortable ;">
+            <thead class="thead-light text-center align-middle">
+                <td class="align-middle">Pos</td>
+                <td class="align-middle">Manager Name</td>
+                <td class="align-middle">Best Lg Result</td>
+                <td class="align-middle">Best LMS Result</td>
+                <td class="align-middle">Best Cup Result</td>
+                <td class="align-middle">Best LCS Result</td>
+                <td class="align-middle">2018-19</td>
+                <td class="align-middle">2019-20</td>
+                <td class="align-middle">2020-21</td>
+                <td class="align-middle">2021-22</td>
+                <td class="align-middle">Overall</td>
+            </thead>
+            <tbody class="text-center align-middle text-nowrap">
+                {% for element in elements %}
+                <tr>
+                    <td class="align-middle">{{element[1]}}</td>
+                    <td class="align-middle">{{element[2]}}</td>
+                    <td class="align-middle">{{element[3]}}</td>
+                    <td class="align-middle">{{element[4]}}</td>
+                    <td class="align-middle">{{element[5]}}</td>
+                    <td class="align-middle">{{element[6]}}</td>
+                    <td class="align-middle">{{element[7]}}</td>
+                    <td class="align-middle">{{element[8]}}</td>
+                    <td class="align-middle">{{element[9]}}</td>
+                    <td class="align-middle">{{element[10]}}</td>
+                    <td class="align-middle">{{element[11]}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
