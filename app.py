@@ -1397,6 +1397,7 @@ def fbb_leaderboard():
             SUM("R") as "R", SUM("RBI") as "RBI", SUM("SB") as "SB", 
             TRUNC(((SUM("H") + SUM("BB") + SUM("HBP"))  / SUM("PA")) + (SUM("1B") + (SUM("2B") * 2) + (SUM("3B") * 3) + (SUM("HR") * 4)) / SUM("AB"), 3) as "OPS"
         FROM fbb_espn_attic
+        WHERE NOT ("lineupSlotId_f" = 'BEN')
         GROUP BY "team_id_f"
         HAVING SUM("AB") > 0 
         ORDER BY "OPS" DESC
