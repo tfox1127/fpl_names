@@ -209,7 +209,7 @@ def fpl_live():
     db.commit()
 
     # return render_template('fpl_live.html', live_table=live_table, groups=groups, UPDATED_AT=UPDATED_AT)   #LEG 1 
-    return render_template('fpl_live.html', live_table=live_table, groups2=groups2, UPDATED_AT=UPDATED_AT)         #LEG 2
+    return render_template('fpl_live.html', live_table=live_table, groups2=groups2, UPDATED_AT=UPDATED_AT)   #LEG 2
 
 @app.route('/team/<int:fpl_team_id>')
 def fpl_team(fpl_team_id):
